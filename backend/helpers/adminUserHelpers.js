@@ -19,16 +19,16 @@ exports.fetchAllUsers=async (search,page,limit)=>{
 exports.toggleUserBlockStatus=async (userId)=>{
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-        throw new Error('Invalid User ID');
+        throw { status: 400, message: 'Invalid user ID format' };
     }
     const user = await User.findById(userId)
-    console.log(user,'this is user');
+    // console.log(user,'this is user');
     if (!user)
         throw { status: 404, message: 'User not found' }
 
-    console.log(user);
+    // console.log(user);
     
     user.isBlocked=!user.isBlocked
     await user.save()
-    return(user.isBlocked)
+    return({isBlocked:user.isBlocked,name:user.name})
 }
