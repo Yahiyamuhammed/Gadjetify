@@ -2,7 +2,7 @@ const User=require('../models/userModal')
 const generateOTP=require('../utils/generateOTP')
 const sendMail=require('../utils/sendMail')
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcryptjs'); 
 
 
 exports.signup = async (req, res) => {

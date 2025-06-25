@@ -7,6 +7,7 @@ const app = express();
 
 const {signup}=require('./controllers/authController')
 const authRoutes = require('./routes/authRoutes');
+const adminAuthRoutes = require('./routes/adminAuthRoutes');
 
 
 // Middleware
@@ -14,6 +15,8 @@ app.use(cors());
 app.use(express.json()); // for parsing JSON
 
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminAuthRoutes);
+
 
 
 // MongoDB connection
