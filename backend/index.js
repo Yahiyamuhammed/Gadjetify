@@ -8,14 +8,16 @@ const app = express();
 const {signup}=require('./controllers/authController')
 const authRoutes = require('./routes/authRoutes');
 const adminAuthRoutes = require('./routes/adminAuthRoutes');
+const adminUserRoutes=require('./routes/adminUserRoute')
 
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // for parsing JSON
+app.use(express.json()); // for parsing JSONa
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminAuthRoutes);
+app.use('/api/admin', adminUserRoutes);
 
 
 
