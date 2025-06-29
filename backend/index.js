@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const adminAuthRoutes = require('./routes/adminAuthRoutes');
 const adminUserRoutes=require('./routes/adminUserRoute')
 const adminProductRoutes=require('./routes/adminProductRoutes')
+const adminBrandRoutes=require('./routes/adminBrandRoutes')
 
 
 // Middleware
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminAuthRoutes);
 app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', adminProductRoutes);
+app.use('/api/admin', adminBrandRoutes);
 
 
 
