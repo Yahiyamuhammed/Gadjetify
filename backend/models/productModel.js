@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: String,
-  brand: String,
+  // brand: String,
+  brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' },
   model: String,
   returnPolicy: String,
   codAvailable: { type: Boolean, default: true },
