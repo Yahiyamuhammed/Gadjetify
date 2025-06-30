@@ -12,6 +12,8 @@ const adminUserRoutes=require('./routes/adminUserRoute')
 const adminProductRoutes=require('./routes/adminProductRoutes')
 const adminBrandRoutes=require('./routes/adminBrandRoutes')
 
+const userProductRoutes=require('./routes/userProductRoutes')
+
 
 // Middleware
 app.use(cors());
@@ -23,7 +25,7 @@ app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', adminProductRoutes);
 app.use('/api/admin', adminBrandRoutes);
 
-
+app.use('/api',userProductRoutes)
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

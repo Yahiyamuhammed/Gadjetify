@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Brand = require("../models/brandModel");
+
 const Product = require("../models/productModel");
 exports.deleteProduct = async (userId) => {
   try {
@@ -24,5 +26,15 @@ exports.deleteProduct = async (userId) => {
   }
 };
 exports.editProduct = async (id, data) => {
+  if (data.brand) {
+    if (!mongoose.Types.ObjectId.isValid(data.brand)) {
+      throw new Error('Invalid brand ID');
+    }
+
+    const existingBrand = await Brand.findOne({ _id: data.brand, isDeleted: false });
+    if (!existingBrand) {
+      throw new Error('Brand does not exist or is deleted');
+    }
+  }
   return await Product.findByIdAndUpdate(id, data, { new: true });
 };
