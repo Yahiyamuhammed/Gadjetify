@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Form from "@/components/common/Form";
 import { loginSchema } from "@/utils/validation/loginSchema";
-
+import { api } from "@/utils/api";
 const LoginForm = () => {
+    const [error, setError] = useState("");
+
   const fields = [
     {
       name: "email",
@@ -20,9 +22,22 @@ const LoginForm = () => {
     },
   ];
 
-  const handleLogin = (data) => {
-    console.log("Login Data:", data);
-    // You can call your backend API here
+  const handleLogin = async (formData) => {
+    try {
+      setError(""); // reset
+      const res = await api.post("/auth/login", formData);
+      console.log("Login Success:", res.data);
+
+      
+
+      // optionally store token, redirect user, etc.
+      localStorage.setItem("token", res.data.token);
+    //   navigate("/dashboard");
+
+    } catch (err) {
+      console.error("Login Error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Login failed");
+    }
   };
 
   const extraLinks = [
