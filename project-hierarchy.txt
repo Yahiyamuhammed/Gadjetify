@@ -1,0 +1,71 @@
+Shoping_Cart_Using_React
+├─ backend
+│  ├─ .env
+│  ├─ .gitignore
+│  ├─ controllers
+│  │  ├─ adminAuthController.js
+│  │  ├─ adminBrandControllers.js
+│  │  ├─ adminProductController.js
+│  │  ├─ adminUserController.js
+│  │  ├─ authController.js
+│  │  └─ userProductController.js
+│  ├─ helpers
+│  │  ├─ adminBrandHelpers.js
+│  │  ├─ adminProductHelpers.js
+│  │  ├─ adminUserHelpers.js
+│  │  └─ userProductHelpers.js
+│  ├─ index.js
+│  ├─ middlewares
+│  │  ├─ adminAuth.js
+│  │  └─ uploadProductImage.js
+│  ├─ models
+│  │  ├─ adminModal.js
+│  │  ├─ brandModel.js
+│  │  ├─ productModel.js
+│  │  └─ userModal.js
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ routes
+│  │  ├─ adminAuthRoutes.js
+│  │  ├─ adminBrandRoutes.js
+│  │  ├─ adminProductRoutes.js
+│  │  ├─ adminUserRoute.js
+│  │  ├─ authRoutes.js
+│  │  └─ userProductRoutes.js
+│  └─ utils
+│     ├─ generateOTP.js
+│     └─ sendMail.js
+├─ frontend
+│  ├─ frontend
+│  └─ frontend-user
+│     ├─ .gitignore
+│     ├─ eslint.config.js
+│     ├─ index.html
+│     ├─ package-lock.json
+│     ├─ package.json
+│     ├─ public
+│     │  └─ vite.svg
+│     ├─ README.md
+│     ├─ src
+│     │  ├─ App.css
+│     │  ├─ App.jsx
+│     │  ├─ assets
+│     │  │  └─ react.svg
+│     │  ├─ components
+│     │  │  ├─ auth
+│     │  │  │  └─ LoginForm.jsx
+│     │  │  ├─ common
+│     │  │  │  └─ Form.jsx
+│     │  │  └─ forms
+│     │  ├─ index.css
+│     │  ├─ main.jsx
+│     │  ├─ pages
+│     │  │  ├─ Login.jsx
+│     │  │  └─ Signup.jsx
+│     │  ├─ services
+│     │  │  └─ api.js
+│     │  └─ utils
+│     │     └─ validation
+│     │        └─ loginSchema.js
+│     └─ vite.config.js
+└─ README.md
