@@ -43,6 +43,7 @@ Shoping_Cart_Using_React
 │     ├─ index.html
 │     ├─ package-lock.json
 │     ├─ package.json
+│     ├─ postcss.config.js
 │     ├─ public
 │     │  └─ vite.svg
 │     ├─ README.md
@@ -53,19 +54,32 @@ Shoping_Cart_Using_React
 │     │  │  └─ react.svg
 │     │  ├─ components
 │     │  │  ├─ auth
-│     │  │  │  └─ LoginForm.jsx
+│     │  │  │  ├─ LoginForm.jsx
+│     │  │  │  └─ SignupForm.jsx
 │     │  │  ├─ common
 │     │  │  │  └─ Form.jsx
-│     │  │  └─ forms
+│     │  │  ├─ forms
+│     │  │  ├─ navbar.jsx
+│     │  │  └─ toast.js
 │     │  ├─ index.css
 │     │  ├─ main.jsx
 │     │  ├─ pages
 │     │  │  ├─ Login.jsx
-│     │  │  └─ Signup.jsx
+│     │  │  ├─ Signup.jsx
+│     │  │  └─ user
+│     │  │     ├─ SignUp.jsx
+│     │  │     └─ VerifyOtp.jsx
+│     │  ├─ routes
+│     │  │  └─ userRoutes.jsx
 │     │  ├─ services
 │     │  │  └─ api.js
 │     │  └─ utils
+│     │     ├─ api.js
 │     │     └─ validation
-│     │        └─ loginSchema.js
+│     │        ├─ loginSchema.js
+│     │        ├─ otpSchema.js
+│     │        └─ signupSchema.js
+│     ├─ tailwind.config.js
 │     └─ vite.config.js
+├─ project-hierarchy.txt
 └─ README.md

@@ -56,6 +56,7 @@ const LoginForm = () => {
       buttonText="Log In"
       extraLinks={extraLinks}
       validationRules={loginSchema}
+      serverError={error}
     />
   );
 };

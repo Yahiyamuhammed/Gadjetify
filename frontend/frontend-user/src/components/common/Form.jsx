@@ -10,6 +10,7 @@ const Form = ({
   buttonText,
   extraLinks,
   validationRules,
+  serverError,
 }) => {
   const {
     control,
@@ -32,9 +33,7 @@ const Form = ({
       onSubmit={handleSubmit(onFormSubmit)}
       className="max-w-lg w-full mx-auto p-8 bg-white shadow-md rounded-md space-y-6 overflow-auto max-h-[90vh]"
     >
-      <h2 className="text-2xl font-bold text-gray-800 text-center">
-        {title}
-      </h2>
+      <h2 className="text-2xl font-bold text-gray-800 text-center">{title}</h2>
 
       {fields.map((field) => (
         <div key={field.name} className="space-y-2">
@@ -86,12 +85,15 @@ const Form = ({
           />
 
           {errors[field.name] && (
-            <p className="text-red-500 text-sm">
-              {errors[field.name].message}
-            </p>
+            <p className="text-red-500 text-sm">{errors[field.name].message}</p>
           )}
         </div>
       ))}
+      {serverError && (
+        <p className="text-red-500 text-center text-sm font-medium">
+          {serverError}
+        </p>
+      )}
 
       <button
         type="submit"
@@ -102,18 +104,21 @@ const Form = ({
 
       {extraLinks &&
         extraLinks.map((link, index) => (
-          <p
-            key={index}
-            className="text-md text-gray-600 text-center"
-          >
+          <p key={index} className="text-md text-gray-600 text-center">
             {link.text}{" "}
-            <Link
-              to={link.path || undefined}
-              onClick={link.onclick}
-              className="text-indigo-600 hover:underline"
-            >
-              {link.linkText}
-            </Link>
+            {link.path ? (
+              <Link to={link.path} className="text-indigo-600 hover:underline">
+                {link.linkText}.
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={link.onClick}
+                className="text-indigo-600 hover:underline"
+              >
+                {link.linkText}
+              </button>
+            )}
           </p>
         ))}
     </form>

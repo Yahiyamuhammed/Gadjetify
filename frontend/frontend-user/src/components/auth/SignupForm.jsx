@@ -3,7 +3,7 @@ import Form from "@/components/common/Form";
 import { signupSchema } from "@/utils/validation/signupSchema";
 import { api } from "@/utils/api";
 
-const Signup = () => {
+const SignupForm = () => {
   const [error, setError] = useState("");
 
   const formFields = [
@@ -79,4 +79,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignupForm;
