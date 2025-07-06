@@ -5,6 +5,7 @@ import Login from "@/pages/Login";
 import SignUp from "@/pages/user/SignUp";
 import VerifyOtp from "@/pages/user/VerifyOtp";
 import UserRoutes from "./routes/userRoutes"
+import AdminRoutes from "./routes/adminRoutes";
 
 
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/verify-otp/:email" element={<VerifyOtp />} />. */}
 
         <Route path="/*" element={<UserRoutes />} />
+        <Route path="/admin/*" element={<AdminRoutes />} />
 
         {/* Add signup, homepage, etc. later */}
       </Routes>

@@ -53,9 +53,6 @@ Shoping_Cart_Using_React
 │     │  ├─ assets
 │     │  │  └─ react.svg
 │     │  ├─ components
-│     │  │  ├─ auth
-│     │  │  │  ├─ LoginForm.jsx
-│     │  │  │  └─ SignupForm.jsx
 │     │  │  ├─ common
 │     │  │  │  └─ Form.jsx
 │     │  │  ├─ forms
@@ -64,18 +61,22 @@ Shoping_Cart_Using_React
 │     │  ├─ index.css
 │     │  ├─ main.jsx
 │     │  ├─ pages
+│     │  │  ├─ admin
+│     │  │  │  └─ AdminLogin.jsx
 │     │  │  ├─ Login.jsx
 │     │  │  ├─ Signup.jsx
 │     │  │  └─ user
 │     │  │     ├─ SignUp.jsx
 │     │  │     └─ VerifyOtp.jsx
 │     │  ├─ routes
+│     │  │  ├─ adminRoutes.jsx
 │     │  │  └─ userRoutes.jsx
 │     │  ├─ services
 │     │  │  └─ api.js
 │     │  └─ utils
 │     │     ├─ api.js
 │     │     └─ validation
+│     │        ├─ adminLoginSchema.js
 │     │        ├─ loginSchema.js
 │     │        ├─ otpSchema.js
 │     │        └─ signupSchema.js
