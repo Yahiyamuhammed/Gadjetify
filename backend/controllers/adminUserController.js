@@ -17,6 +17,7 @@ exports.blockUnblockUser =async (req,res)=>{
         const {isBlocked,name}=await toggleUserBlockStatus(userId)
         res.status(200).json({message:(isBlocked)?`user Blocked ${name}`:`user Unblocked ${name}`})
     } catch (err) {
+        console.log(err.message)
         res.status(err.status || 500).json({ message: 'Error toggling block', error: err.message });
     }
   

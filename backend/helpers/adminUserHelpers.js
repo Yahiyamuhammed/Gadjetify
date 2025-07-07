@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 exports.fetchAllUsers=async (search,page,limit)=>{
     const skip=(page-1)*limit
     const query={
-        isVerified:true,
+        // isVerified:true,
         $or:[
             {email:{$regex:search,$options:'i'}},
             {name:{$regex:search,$options:'i'}}
@@ -12,9 +12,12 @@ exports.fetchAllUsers=async (search,page,limit)=>{
     }
 
     const totalUsers=await User.countDocuments(query)
+    const totalPages = Math.ceil(totalUsers / limit);
+
+
     const users=await User.find(query).sort({createdAt:-1}).skip(skip).limit(limit)
 
-    return {totalUsers,users}
+    return {totalUsers,users,currentPage: page,totalPages }
 }
 exports.toggleUserBlockStatus=async (userId)=>{
 
