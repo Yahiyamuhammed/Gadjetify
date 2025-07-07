@@ -181,7 +181,7 @@ const ProductManagement = () => {
             <option value="null">All Products</option>
             <option value="false">Active Products</option>
             <option value="true">Inactive Products</option>
-            <option value="low stock">Low Stock</option>
+            {/* <option value="low stock">Low Stock</option> */}
           </select>
 
           {/* <select
