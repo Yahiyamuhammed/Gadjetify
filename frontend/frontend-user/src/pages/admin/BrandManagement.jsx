@@ -6,6 +6,8 @@ import BrandForm from "../../components/admin/brand/BrandAddForm.jsx";
 import SearchBar from "../../components/SearchBar.jsx";
 import { Ban, ChevronRight, DatabaseBackup, Home } from "lucide-react";
 import { Link } from "react-router";
+import { useFetchBrands } from "@/hooks/queries/useBrandQueries";
+
 
 const BrandManagement = () => {
   const [isModalFormOpen, setIsModalFormOpen] = useState(false);
@@ -13,26 +15,34 @@ const BrandManagement = () => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [brands, setBrands] = useState([
-    {
-      _id: "1",
-      name: "Apple",
-      website: "https://apple.com",
-      isSoftDeleted: false,
-    },
-    {
-      _id: "2",
-      name: "Samsung",
-      website: "https://samsung.com",
-      isSoftDeleted: false,
-    },
-    {
-      _id: "3",
-      name: "OnePlus",
-      website: "https://oneplus.com",
-      isSoftDeleted: true,
-    },
-  ]);
+
+  const {
+  data: brands = [],
+  isLoading: isBrandLoading,
+  isError: isBrandError,
+  error: brandError,
+} = useFetchBrands();
+
+//   const [brands, setBrands] = useState([
+//     {
+//       _id: "1",
+//       name: "Apple",
+//       website: "https://apple.com",
+//       isSoftDeleted: false,
+//     },
+//     {
+//       _id: "2",
+//       name: "Samsung",
+//       website: "https://samsung.com",
+//       isSoftDeleted: false,
+//     },
+//     {
+//       _id: "3",
+//       name: "OnePlus",
+//       website: "https://oneplus.com",
+//       isSoftDeleted: true,
+//     },
+//   ]);
 
   const displayedBrands =
     searchTerm.trim() === ""
