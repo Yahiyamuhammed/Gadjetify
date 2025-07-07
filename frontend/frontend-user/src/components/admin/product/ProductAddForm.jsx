@@ -4,6 +4,8 @@ import Form from "@/components/common/Form";
 import { getProductFields } from "../product/productFields.js";
 // import { productValidation } from "../../validationSchemas.js";
 import { productValidation } from "@/utils/validation/productSchema";
+import { useFetchBrands } from "@/hooks/queries/useBrandQueries";
+
 
 // import { useGetAllCategoryQuery } from "../../redux/slices/categoryApiSlices.js";
 
@@ -12,17 +14,17 @@ const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit ,serverError}) => {
   //   filterBy: "All",
   // });
 
-  const categories = [
-    { _id: "c1", name: "Smartphones" },
-    { _id: "c2", name: "Laptops" },
-    { _id: "686134fedcb4ff6a9f3d9891", name: "Accessories" },
-  ];
-  
+  const { data: brandData = [], isLoading, isError } = useFetchBrands({search:''});
+
+  console.log('this is the brands',brandData)
+const brands = brandData.brands
+  .filter((b) => !b.isDeleted) 
+
   if (!isModalFormOpen) return null;
 
-  const categoryOptions = categories.map((category) => ({
-    label: category.name,
-    value: category._id,
+  const categoryOptions = brands.map((brands) => ({
+    label: brands.name,
+    value: brands._id,
   }));
 
   const productFields = getProductFields(categoryOptions);

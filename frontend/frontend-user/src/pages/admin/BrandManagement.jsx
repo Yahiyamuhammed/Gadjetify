@@ -206,12 +206,12 @@ const BrandManagement = () => {
         isModalFormOpen={isModalFormOpen}
         onClose={() => {
           setIsModalFormOpen(false);
-          setEditingBrand(null); // clear after use
+          setEditingBrand(null); 
         }}
         onSubmit={editingBrand ? handleEditBrand : handleAddBrand}
         serverError={serverError}
-        initialValues={editingBrand} // ✅ pass selected brand for editing
-        mode={editingBrand ? "edit" : "add"} // ✅ control title/button text
+        initialValues={editingBrand} 
+        mode={editingBrand ? "edit" : "add"}
       />
 
       <SearchBar searchTerm={setSearchTerm} />
