@@ -7,8 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProductList from "../../components/admin/product/ProductList.jsx";
 // import Button from "../../components/ui/Button";
 import Pagination from "../../components/common/Pagination.jsx";
+
+import { toast } from "react-hot-toast";
+
 import { useAddProduct } from "../../hooks/mutations/useProductMutations.js";
-import { toast } from 'react-hot-toast';
+import { useFetchProducts } from "@/hooks/queries/useProductQueries";
 
 // import { RotatingLines } from "react-loader-spinner";
 // import { successToast, errorToast } from "../../components/toast/index.js"; // 🔗 API PLACEHOLDER
@@ -18,66 +21,86 @@ const ProductManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+//   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 8;
   const [categoryFilter, setCategoryFilter] = useState("");
   const [serverError, setServerError] = useState("");
 
+  const { mutate, isPending, error } = useAddProduct();
 
-  const { mutate, isPending, error } = useAddProduct(); // rename to match login pattern
+  const {
+    data: productsData,
+    isLoading,
+    isError,
+    error: fetchError,
+  } = useFetchProducts({ page: currentPage,limit: pageSize,search: searchTerm,brand: "",isDeleted:filter, });
 
+  const products = productsData?.products || [];
+  // const products = productsData?.products || [];
+  const totalPages = productsData?.totalPages || 1;
+  const currentPageFromApi = productsData?.currentPage || 1;
+
+  // const totalCount = productsData?.totalCount || 0;
+
+  useEffect(() => {
+//   if (currentPageFromApi !== currentPage) {
+    setCurrentPage(currentPageFromApi);
+//   }
+}, [currentPageFromApi]);
+
+  console.log(products);
 
   // 🔗 API PLACEHOLDER: Mock product data (replace this with fetched data later)
-  const [products, setProducts] = useState([
-    {
-      _id: "1",
-      name: "iPhone 15 Pro",
-      model: "A3101",
-      categoryDetails: { name: "Smartphones" },
-      price: 129999,
-      offerPercent: 10,
-      stock: 15,
-      isSoftDelete: false,
-      images: [{ secure_url: "https://via.placeholder.com/100" }],
-    },
-    {
-      _id: "2",
-      name: "Samsung Galaxy S23",
-      model: "SM-S911B",
-      categoryDetails: { name: "Smartphones" },
-      price: 109999,
-      offerPercent: 15,
-      stock: 7,
-      isSoftDelete: false,
-      images: [{ secure_url: "https://via.placeholder.com/100" }],
-    },
-    {
-      _id: "3",
-      name: "Redmi Note 13",
-      model: "RN13",
-      categoryDetails: { name: "Smartphones" },
-      price: 17999,
-      offerPercent: 5,
-      stock: 0,
-      isSoftDelete: true,
-      images: [],
-    },
-  ]);
+  //   const [products, setProducts] = useState([
+  //     {
+  //       _id: "1",
+  //       name: "iPhone 15 Pro",
+  //       model: "A3101",
+  //       categoryDetails: { name: "Smartphones" },
+  //       price: 129999,
+  //       offerPercent: 10,
+  //       stock: 15,
+  //       isSoftDelete: false,
+  //       images: [{ secure_url: "https://via.placeholder.com/100" }],
+  //     },
+  //     {
+  //       _id: "2",
+  //       name: "Samsung Galaxy S23",
+  //       model: "SM-S911B",
+  //       categoryDetails: { name: "Smartphones" },
+  //       price: 109999,
+  //       offerPercent: 15,
+  //       stock: 7,
+  //       isSoftDelete: false,
+  //       images: [{ secure_url: "https://via.placeholder.com/100" }],
+  //     },
+  //     {
+  //       _id: "3",
+  //       name: "Redmi Note 13",
+  //       model: "RN13",
+  //       categoryDetails: { name: "Smartphones" },
+  //       price: 17999,
+  //       offerPercent: 5,
+  //       stock: 0,
+  //       isSoftDelete: true,
+  //       images: [],
+  //     },
+  //   ]);
 
   // 🔗 API PLACEHOLDER: Mock category data
-  const [categories] = useState([
-    { _id: "c1", name: "Smartphones" },
-    { _id: "c2", name: "Laptops" },
-    { _id: "686134fedcb4ff6a9f3d9891", name: "Accessorieses" },
-  ]);
+//   const [categories] = useState([
+//     { _id: "c1", name: "Smartphones" },
+//     { _id: "c2", name: "Laptops" },
+//     { _id: "686134fedcb4ff6a9f3d9891", name: "Accessorieses" },
+//   ]);
 
   const totalCount = products.length;
 
-  useEffect(() => {
-    if (totalCount) {
-      setTotalPages(Math.ceil(totalCount / pageSize));
-    }
-  }, [totalCount]);
+//   useEffect(() => {
+//     if (totalCount) {
+//       setTotalPages(Math.ceil(totalCount / pageSize));
+//     }
+//   }, [totalCount]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -85,27 +108,25 @@ const ProductManagement = () => {
     }
   };
 
-
-
   const handleAddProduct = async (formData) => {
-    setServerError('');
-  mutate(formData, {
-    onSuccess: (data) => {
-      console.log("✅ Product Added Successfully:", data);
-      toast.success("Product added successfully");
-      setIsModalFormOpen(false); // ✅ only closes on success
-    },
-    onError: (err) => {
-      // ✅ stays open on error
-      const message =
-        err?.response?.data?.message || err.message || "Something went wrong";
-      console.error("❌ Product Add Error:", message);
-      toast.error(`Something went wrong!, ${message}`);
+    setServerError("");
+    mutate(formData, {
+      onSuccess: (data) => {
+        console.log("✅ Product Added Successfully:", data);
+        toast.success("Product added successfully");
+        setIsModalFormOpen(false); // ✅ only closes on success
+      },
+      onError: (err) => {
+        // ✅ stays open on error
+        const message =
+          err?.response?.data?.message || err.message || "Something went wrong";
+        console.error("❌ Product Add Error:", message);
+        toast.error(`Something went wrong!, ${message}`);
 
-      setServerError(message);
-    },
-  });
-};
+        setServerError(message);
+      },
+    });
+  };
 
   // 🔍 Filter logic
   const displayedProduct =
@@ -157,13 +178,13 @@ const ProductManagement = () => {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           >
-            <option value="all">All Products</option>
-            <option value="active">Active Products</option>
-            <option value="inactive">Inactive Products</option>
+            <option value="null">All Products</option>
+            <option value="false">Active Products</option>
+            <option value="true">Inactive Products</option>
             <option value="low stock">Low Stock</option>
           </select>
 
-          <select
+          {/* <select
             className="px-1 py-2 border border-gray-300 rounded-md dark:bg-darkBackground"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -174,7 +195,7 @@ const ProductManagement = () => {
                 {cat.name}
               </option>
             ))}
-          </select>
+          </select> */}
 
           <button
             onClick={() => setIsModalFormOpen(true)}
@@ -187,7 +208,7 @@ const ProductManagement = () => {
       </div>
 
       {/* Product List */}
-      <ProductList products={displayedProduct} icon="fa-solid fa-box" />
+      <ProductList products={products} icon="fa-solid fa-box" />
 
       {/* Pagination */}
       <div className="flex justify-center mt-5">

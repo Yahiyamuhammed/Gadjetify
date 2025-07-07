@@ -1,11 +1,20 @@
 const Product = require('../models/productModel');
 const Brand = require('../models/brandModel');
 
-const {deleteProduct,editProduct}=require('../helpers/adminProductHelpers')
+const {deleteProduct,editProduct,fetchFilteredProducts}=require('../helpers/adminProductHelpers')
 const mongoose = require('mongoose');
 
 
+exports.getProduct =async (req,res)=>{
 
+  try {
+      const data = await fetchFilteredProducts(req.query);
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to fetch products', error: err.message });
+    }
+
+}
 exports.addProduct = async (req, res) => {
   
   
@@ -34,7 +43,7 @@ exports.addProduct = async (req, res) => {
   }
 };
 
-exports.softDeleteProduct = async (req, res) => {
+exports.unListProduct = async (req, res) => {
   try {
     const product = await deleteProduct(req.params.id)
     if (!product) return res.status(404).json({ message: 'Product not found' });

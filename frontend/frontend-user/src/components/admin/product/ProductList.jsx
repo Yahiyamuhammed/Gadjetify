@@ -5,47 +5,14 @@ import noImage from "@/assets/noImage.png";
 // import Logo from "../assets/react.svg";
 import { Eye } from "lucide-react";
 
-const ProductList = ({  }) => {
+const ProductList = ({  products}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
-    const products = [
-    {
-      _id: "1",
-      name: "iPhone 15 Pro",
-      model: "A3101",
-      categoryDetails: { name: "Smartphones" },
-      price: 129999,
-      offerPercent: 10,
-      stock: 15,
-      isSoftDelete: false,
-      images: [{ secure_url: "https://via.placeholder.com/100" }],
-    },
-    {
-      _id: "2",
-      name: "Samsung Galaxy S23",
-      model: "SM-S911B",
-      categoryDetails: { name: "Smartphones" },
-      price: 109999,
-      offerPercent: 15,
-      stock: 7,
-      isSoftDelete: false,
-      images: [{ secure_url: "https://via.placeholder.com/100" }],
-    },
-    {
-      _id: "3",
-      name: "Redmi Note 13",
-      model: "RN13",
-      categoryDetails: { name: "Smartphones" },
-      price: 17999,
-      offerPercent: 5,
-      stock: 0,
-      isSoftDelete: true,
-      images: [], // No image to show fallback
-    },
-  ];
-
+  console.log('this is inside list ', products);
+  
+   
   const productColumns = [
     {
       key: "images",
@@ -61,42 +28,35 @@ const ProductList = ({  }) => {
     { key: "name", label: "Name" },
     { key: "model", label: "Model" },
     {
-      key: "categoryDetails",
-      label: "Category",
+      key: "brand",
+      label: "brand",
       render: (value) => value?.name || "Not Available",
     },
+    // {
+    //   key: "price",
+    //   label: "Original Price",
+    //   render: (value) => `₹${value.toLocaleString("en-IN")}`,
+    // },
     {
-      key: "price",
-      label: "Original Price",
-      render: (value) => `₹${value.toLocaleString("en-IN")}`,
-    },
-    {
-      key: "offerPercent",
+      key: "offerPercentage",
       label: "Offer",
       render: (value) => `${value}%`,
     },
     {
-      key: "stock",
-      label: "Stock",
-      render: (value) => (
-        <span
-          className={`
-          px-2 py-1 rounded-full text-sm 
-          ${
-            value > 10
-              ? "bg-green-200 text-green-800"
-              : value > 0
-              ? "bg-yellow-200 text-yellow-800"
-              : "bg-red-200 text-red-800"
-          }
-        `}
-        >
-          {value}
-        </span>
-      ),
-    },
+  key: "codAvailable",
+  label: "COD",
+  render: (value) => (
+    <span
+      className={`px-2 py-1 rounded-full text-sm ${
+        value ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"
+      }`}
+    >
+      {value ? "Yes" : "No"}
+    </span>
+  ),
+},
     {
-      key: "isSoftDelete",
+      key: "isDeleted",
       label: "Status",
       render: (value) => (
         <span
