@@ -7,6 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProductList from "../../components/admin/product/ProductList.jsx";
 // import Button from "../../components/ui/Button";
 import Pagination from "../../components/common/Pagination.jsx";
+import { useAddProduct } from "../../hooks/mutations/useProductMutations.js";
+import { toast } from 'react-hot-toast';
+
 // import { RotatingLines } from "react-loader-spinner";
 // import { successToast, errorToast } from "../../components/toast/index.js"; // 🔗 API PLACEHOLDER
 
@@ -18,6 +21,11 @@ const ProductManagement = () => {
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 8;
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [serverError, setServerError] = useState("");
+
+
+  const { mutate, isPending, error } = useAddProduct(); // rename to match login pattern
+
 
   // 🔗 API PLACEHOLDER: Mock product data (replace this with fetched data later)
   const [products, setProducts] = useState([
@@ -60,7 +68,7 @@ const ProductManagement = () => {
   const [categories] = useState([
     { _id: "c1", name: "Smartphones" },
     { _id: "c2", name: "Laptops" },
-    { _id: "c3", name: "Accessories" },
+    { _id: "686134fedcb4ff6a9f3d9891", name: "Accessorieses" },
   ]);
 
   const totalCount = products.length;
@@ -77,20 +85,27 @@ const ProductManagement = () => {
     }
   };
 
-  // 🔗 API PLACEHOLDER: Replace this when connecting actual add product API
-  const handleAddProduct = async (data) => {
-    console.log('product');
-    
-    try {
-      // await addProduct(data).unwrap(); 
-      // successToast("Product added successfully");
-      console.log("Product added:", data);
-      setIsModalFormOpen(false);
-    } catch (error) {
-      // errorToast("Error adding product");
-      console.error(error);
-    }
-  };
+
+
+  const handleAddProduct = async (formData) => {
+    setServerError('');
+  mutate(formData, {
+    onSuccess: (data) => {
+      console.log("✅ Product Added Successfully:", data);
+      toast.success("Product added successfully");
+      setIsModalFormOpen(false); // ✅ only closes on success
+    },
+    onError: (err) => {
+      // ✅ stays open on error
+      const message =
+        err?.response?.data?.message || err.message || "Something went wrong";
+      console.error("❌ Product Add Error:", message);
+      toast.error(`Something went wrong!, ${message}`);
+
+      setServerError(message);
+    },
+  });
+};
 
   // 🔍 Filter logic
   const displayedProduct =
@@ -127,6 +142,7 @@ const ProductManagement = () => {
         isModalFormOpen={isModalFormOpen}
         onClose={() => setIsModalFormOpen(false)}
         onSubmit={handleAddProduct}
+        serverError={serverError}
       />
 
       <div className="mb-5">

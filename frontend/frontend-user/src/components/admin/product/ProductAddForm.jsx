@@ -7,7 +7,7 @@ import { productValidation } from "@/utils/validation/productSchema";
 
 // import { useGetAllCategoryQuery } from "../../redux/slices/categoryApiSlices.js";
 
-const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit }) => {
+const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit ,serverError}) => {
   // const { data: categories = [], isLoading } = useGetAllCategoryQuery({
   //   filterBy: "All",
   // });
@@ -15,7 +15,7 @@ const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit }) => {
   const categories = [
     { _id: "c1", name: "Smartphones" },
     { _id: "c2", name: "Laptops" },
-    { _id: "c3", name: "Accessories" },
+    { _id: "686134fedcb4ff6a9f3d9891", name: "Accessories" },
   ];
   
   if (!isModalFormOpen) return null;
@@ -65,6 +65,7 @@ const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit }) => {
           buttonText="Add Product"
           onSubmit={onSubmit}
           validationRules={productValidation}
+          serverError={serverError}
         />
       </div>
     </div>
