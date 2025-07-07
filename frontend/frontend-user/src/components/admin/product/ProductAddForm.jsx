@@ -14,11 +14,20 @@ const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit ,serverError ,initi
   //   filterBy: "All",
   // });
 
+  const transformedInitialValues = {
+  ...initialValues,
+  brand: initialValues?.brand?._id || initialValues?.brand || "",
+};
+
+
+
   const { data: brandData = [], isLoading, isError } = useFetchBrands({search:''});
 
   // console.log('this is the brands',brandData)
-const brands = brandData.brands
+// const brands = brandData.brands
   // .filter((b) => !b.isDeleted) 
+  const brands = (brandData?.brands || []).filter((b) => !b.isDeleted);
+
 
   if (!isModalFormOpen) return null;
 
@@ -68,7 +77,7 @@ const brands = brandData.brands
           onSubmit={onSubmit}
           validationRules={productValidation}
           serverError={serverError}
-          initialValues={initialValues}
+          initialValues={transformedInitialValues}
         />
       </div>
     </div>

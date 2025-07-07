@@ -63,15 +63,15 @@ const ProductManagement = () => {
     setServerError("");
     mutate(formData, {
       onSuccess: (data) => {
-        // console.log("✅ Product Added Successfully:", data);
+        // console.log(" Product Added Successfully:", data);
         toast.success("Product added successfully");
-        setIsModalFormOpen(false); // ✅ only closes on success
+        setIsModalFormOpen(false);
       },
       onError: (err) => {
         // ✅ stays open on error
         const message =
           err?.response?.data?.message || err.message || "Something went wrong";
-        console.error("❌ Product Add Error:", message);
+        console.error("Product Add Error:", message);
         toast.error(`Something went wrong!, ${message}`);
 
         setServerError(message);

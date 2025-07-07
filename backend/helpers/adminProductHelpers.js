@@ -84,9 +84,9 @@ exports.fetchFilteredProducts = async (query) => {
   console.log('delted os ',isDeleted);
   
   if (isDeleted === 'true') {
-    filter.isDeleted = true;
+    filter.isListed = false;
   } else if (isDeleted === 'false') {
-    filter.isDeleted = false;
+    filter.isListed = true;
   }
 
   if (search) {
