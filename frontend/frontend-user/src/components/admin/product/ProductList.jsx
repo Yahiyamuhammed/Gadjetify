@@ -12,6 +12,7 @@ import {
   useRestoreProduct,
 } from "@/hooks/mutations/useProductMutations";
 import { toast } from "react-hot-toast";
+import ProductAddForm from "./ProductAddForm.jsx";
 
 const ProductList = ({ products }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,12 +20,14 @@ const ProductList = ({ products }) => {
   const navigate = useNavigate();
   const [editingProduct, setEditingProduct] = useState("");
   const [isModalFormOpen, setIsModalFormOpen] = useState(false);
+    const [serverError, setServerError] = useState("");
+  
 
   const { mutate: unlistProduct } = useUnlistProduct();
   const { mutate: updateProduct } = useUpdateProduct();
   const { mutate: restoreProduct } = useRestoreProduct();
 
-  console.log("this is inside list ", products);
+//   console.log("this is inside list ", products);
 
   const productColumns = [
     {
@@ -110,7 +113,7 @@ const ProductList = ({ products }) => {
       },
       onError: (err) => {
         toast.error(
-          err?.response?.data?.message || "❌ Failed to restore product"
+          err?.response?.data?.message || " Failed to restore product"
         );
       },
     });
@@ -193,6 +196,18 @@ const ProductList = ({ products }) => {
           ]}
         />
       )}
+      <ProductAddForm
+  isModalFormOpen={isModalFormOpen}
+  onClose={() => {
+    setIsModalFormOpen(false);
+    setEditingProduct(null);
+  }}
+  onSubmit={handleEditProduct }
+  serverError={serverError}
+  initialValues={editingProduct}         // ✅ pass selected product
+  mode={editingProduct ? "edit" : "add"} // ✅ for dynamic title/button
+/>
+
       <Table
         items={products || []}
         columns={productColumns}

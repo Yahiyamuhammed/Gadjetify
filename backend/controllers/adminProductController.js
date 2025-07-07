@@ -73,6 +73,8 @@ exports.updateProduct = async (req, res) => {
 
     res.status(200).json({ message: 'Product updated', updated });
   } catch (err) {
+    console.log(err);
+    
     res.status(500).json({ message: 'Failed to update', error: err.message });
   }
 };

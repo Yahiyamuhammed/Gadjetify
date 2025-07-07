@@ -67,7 +67,7 @@ const BrandManagement = () => {
   };
 
  const handleEditBrand = async (formData) => {
-    console.log('edit is called',selectedBrand)
+    
   if (!editingBrand?._id) return;
 
   editBrand(
@@ -82,7 +82,7 @@ const BrandManagement = () => {
         setEditingBrand(null);
       },
       onError: (err) => {
-        const message = err?.response?.data?.message || "Update failed";
+        const message = err?.response?.data?.error || "Update failed";
         setServerError(message);
         toast.error(message);
 
@@ -208,7 +208,7 @@ const BrandManagement = () => {
           setIsModalFormOpen(false);
           setEditingBrand(null); 
         }}
-        onSubmit={editingBrand ? handleEditBrand : handleAddBrand}
+        onSubmit={ handleEditBrand }
         serverError={serverError}
         initialValues={editingBrand} 
         mode={editingBrand ? "edit" : "add"}

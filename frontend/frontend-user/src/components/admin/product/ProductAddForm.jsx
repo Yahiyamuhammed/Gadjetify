@@ -9,7 +9,7 @@ import { useFetchBrands } from "@/hooks/queries/useBrandQueries";
 
 // import { useGetAllCategoryQuery } from "../../redux/slices/categoryApiSlices.js";
 
-const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit ,serverError}) => {
+const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit ,serverError ,initialValues,mode = "add",}) => {
   // const { data: categories = [], isLoading } = useGetAllCategoryQuery({
   //   filterBy: "All",
   // });
@@ -63,11 +63,12 @@ const brands = brandData.brands
       >
         <Form
           fields={productFields}
-          title="Add Product"
-          buttonText="Add Product"
+          title={mode === "edit" ? "Edit Product" : "Add Product"}
+          buttonText={mode === "edit" ? "Update Product" : "Add Product"}
           onSubmit={onSubmit}
           validationRules={productValidation}
           serverError={serverError}
+          initialValues={initialValues}
         />
       </div>
     </div>
