@@ -14,7 +14,7 @@ const BrandList = ({
     { key: "description", label: "Description", render: (value) => value },
     { key: "website", label: "Website", render: (value) => value },
     {
-      key: "isSoftDeleted",
+      key: "isDeleted",
       style: ``,
       label: "Status",
       render: (value) => (

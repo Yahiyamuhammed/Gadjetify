@@ -7,6 +7,9 @@ import SearchBar from "../../components/SearchBar.jsx";
 import { Ban, ChevronRight, DatabaseBackup, Home } from "lucide-react";
 import { Link } from "react-router";
 import { useFetchBrands } from "@/hooks/queries/useBrandQueries";
+import { useAddBrand ,useDeleteBrand, useRestoreBrand} from "@/hooks/mutations/useBrandMutations";
+import { toast } from "react-hot-toast";
+
 
 
 const BrandManagement = () => {
@@ -14,6 +17,14 @@ const BrandManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const { mutate, isPending, error } = useAddBrand();
+  const [serverError, setServerError] = useState("");
+
+  const { mutate: deleteBrand, isPending:isDeletePending, error:errorDelete } = useDeleteBrand();
+  const { mutate: restoreBrand, isPending: isRestoring } = useRestoreBrand();
+
+
+
 
 
   const {
@@ -53,28 +64,57 @@ const BrandManagement = () => {
             brand.website.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-  const handleAddBrand = (data) => {
-    const newBrand = {
-      _id: Date.now().toString(),
-      ...data,
-      isSoftDeleted: false,
-    };
-    setBrands((prev) => [...prev, newBrand]);
-    setIsModalFormOpen(false);
-  };
+  const handleAddBrand = (formData) => {
+  setServerError("");
 
-  const handleDeleteBrand = () => {
-    if (selectedBrand) {
-      const updated = brands.map((b) =>
-        b._id === selectedBrand._id
-          ? { ...b, isSoftDeleted: !b.isSoftDeleted }
-          : b
-      );
-      setBrands(updated);
+  mutate(formData, {
+    onSuccess: () => {
+      toast.success("Brand added successfully!");
+      setIsModalFormOpen(false);
+    },
+    onError: (err) => {
+      const msg =
+        err?.response?.data?.message || err.message || "Something went wrong";
+      setServerError(msg);
+      toast.error(`❌ ${msg}`);
+    },
+  });
+};
+
+
+const handleDeleteBrand = () => {
+  if (!selectedBrand) return;
+
+  deleteBrand(selectedBrand._id, {
+    onSuccess: () => {
+      toast.success("Brand status updated successfully");
       setIsModalOpen(false);
       setSelectedBrand(null);
-    }
-  };
+    },
+    onError: (err) => {
+      const msg = err?.response?.data?.message || "Error updating brand";
+      toast.error(msg);
+    },
+  });
+};
+
+const handleRestoreBrand = () => {
+  if (!selectedBrand) return;
+    console.log('brand is restoring');
+    
+  restoreBrand(selectedBrand._id, {
+    onSuccess: () => {
+      toast.success("Brand restored successfully");
+      setIsModalOpen(false);
+      setSelectedBrand(null);
+    },
+    onError: (err) => {
+      const msg = err?.response?.data?.message || "Failed to restore brand";
+      toast.error(msg);
+    },
+  });
+};
+
 
   const getBrandControles = (brand) => [
     {
@@ -83,7 +123,7 @@ const BrandManagement = () => {
         setIsModalOpen(true);
       },
       style: "",
-      icon: brand.isSoftDeleted ? (
+      icon: brand.isDeleted ? (
         <DatabaseBackup
           className="text-gray-500 hover:text-green-600"
           size={20}
@@ -102,9 +142,9 @@ const BrandManagement = () => {
         "text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700",
     },
     {
-      text: selectedBrand?.isSoftDeleted ? "Restore" : "Delete",
-      action: handleDeleteBrand,
-      style: selectedBrand?.isSoftDeleted
+      text: selectedBrand?.isDeleted ? "Restore" : "Delete",
+      action: selectedBrand?.isDeleted ? handleRestoreBrand : handleDeleteBrand,
+      style: selectedBrand?.isDeleted
         ? "text-white bg-green-600 hover:bg-green-800"
         : "text-white bg-red-600 hover:bg-red-800",
     },
@@ -142,6 +182,7 @@ const BrandManagement = () => {
         isModalFormOpen={isModalFormOpen}
         onClose={() => setIsModalFormOpen(false)}
         onSubmit={handleAddBrand}
+        serverError={serverError}
       />
 
       <SearchBar searchTerm={setSearchTerm} />
