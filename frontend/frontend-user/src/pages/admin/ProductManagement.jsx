@@ -51,20 +51,7 @@ const ProductManagement = () => {
 
 //   console.log(products);
 
-  // 🔗 API PLACEHOLDER: Mock category data
-//   const [categories] = useState([
-//     { _id: "c1", name: "Smartphones" },
-//     { _id: "c2", name: "Laptops" },
-//     { _id: "686134fedcb4ff6a9f3d9891", name: "Accessorieses" },
-//   ]);
-
   const totalCount = products.length;
-
-//   useEffect(() => {
-//     if (totalCount) {
-//       setTotalPages(Math.ceil(totalCount / pageSize));
-//     }
-//   }, [totalCount]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {

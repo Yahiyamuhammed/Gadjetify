@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Brand = require("../models/brandModel");
 
 const Product = require("../models/productModel");
-exports.deleteProduct = async (userId) => {
+exports.unListProduct = async (userId) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw { status: 400, message: "Invalid user ID format" };
@@ -25,6 +25,31 @@ exports.deleteProduct = async (userId) => {
     throw {status:500,message:err.message}
   }
 };
+exports.restoreProduct = async (productId) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      throw { status: 400, message: "Invalid product ID format" };
+    }
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      throw { status: 404, message: "Product not found" };
+    }
+
+    if (product.isListed) {
+      throw { status: 400, message: "Product is already listed" };
+    }
+
+    product.isListed = true;
+    await product.save();
+    return product;
+
+  } catch (err) {
+    throw { status: 500, message: err.message };
+  }
+};
+
 exports.editProduct = async (id, data) => {
   if (data.brand) {
     if (!mongoose.Types.ObjectId.isValid(data.brand)) {

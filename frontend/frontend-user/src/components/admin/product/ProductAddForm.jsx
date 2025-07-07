@@ -16,9 +16,9 @@ const ProductAddForm = ({ isModalFormOpen, onClose, onSubmit ,serverError}) => {
 
   const { data: brandData = [], isLoading, isError } = useFetchBrands({search:''});
 
-  console.log('this is the brands',brandData)
+  // console.log('this is the brands',brandData)
 const brands = brandData.brands
-  .filter((b) => !b.isDeleted) 
+  // .filter((b) => !b.isDeleted) 
 
   if (!isModalFormOpen) return null;
 
