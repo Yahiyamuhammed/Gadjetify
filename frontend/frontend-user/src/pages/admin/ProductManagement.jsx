@@ -79,7 +79,7 @@ const ProductManagement = () => {
 
   // 🔗 API PLACEHOLDER: Replace this when connecting actual add product API
   const handleAddProduct = async (data) => {
-    console.log('product adding');
+    console.log('product');
     
     try {
       // await addProduct(data).unwrap(); 

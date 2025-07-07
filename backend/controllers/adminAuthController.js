@@ -2,7 +2,7 @@ const Admin = require('../models/adminModal');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// ✅ Admin Login
+
 exports.adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
