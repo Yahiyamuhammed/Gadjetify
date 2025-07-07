@@ -45,3 +45,17 @@ export const useRestoreBrand = () => {
     },
   });
 };
+
+export const useEditBrand = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, updatedData }) => {
+      const res = await api.put(`/admin/brands/${id}`, updatedData);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["brands"] }); // 🔁 refetch updated brand list
+    },
+  });
+};

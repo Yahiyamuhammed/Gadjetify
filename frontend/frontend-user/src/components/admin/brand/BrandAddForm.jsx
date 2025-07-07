@@ -1,7 +1,14 @@
 import React from "react";
 import Form from "@/components/common/Form";
 import { brandValidationSchema } from "@/utils/validation/brandSchema";
-const BrandForm = ({ isModalFormOpen, onClose, onSubmit,serverError }) => {
+const BrandForm = ({
+  isModalFormOpen,
+  onClose,
+  onSubmit,
+  serverError,
+  initialValues = null,
+  mode = "add",
+}) => {
   const brandFields = [
     {
       name: "name",
@@ -42,11 +49,12 @@ const BrandForm = ({ isModalFormOpen, onClose, onSubmit,serverError }) => {
       >
         <Form
           fields={brandFields}
-          title="Add Category"
-          buttonText="Add Category"
+          title={mode === "edit" ? "Edit Brand" : "Add Brand"}
+          buttonText={mode === "edit" ? "Update Brand" : "Add Brand"}
           onSubmit={onSubmit}
           validationRules={brandValidationSchema}
           serverError={serverError}
+          initialValues={initialValues}
         />
       </div>
     </div>

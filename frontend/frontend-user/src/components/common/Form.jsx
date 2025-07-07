@@ -11,18 +11,21 @@ const Form = ({
   extraLinks,
   validationRules,
   serverError,
+   initialValues = {},
 }) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: fields.reduce((acc, field) => {
-      acc[field.name] = field.defaultValue || "";
-      return acc;
-    }, {}),
-    resolver: yupResolver(validationRules),
-  });
+ const {
+  control,
+  handleSubmit,
+  formState: { errors },
+  reset,
+} = useForm({
+  defaultValues: fields.reduce((acc, field) => {
+    acc[field.name] =
+      initialValues[field.name] ?? field.defaultValue ?? "";
+    return acc;
+  }, {}),
+  resolver: yupResolver(validationRules),
+});
 
   const onFormSubmit = (data) => {
     onSubmit(data);

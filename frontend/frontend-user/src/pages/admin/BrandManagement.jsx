@@ -4,91 +4,132 @@ import Modal from "../../components/admin/Modal";
 import BrandList from "../../components/admin/brand/BrandList.jsx";
 import BrandForm from "../../components/admin/brand/BrandAddForm.jsx";
 import SearchBar from "../../components/SearchBar.jsx";
-import { Ban, ChevronRight, DatabaseBackup, Home } from "lucide-react";
+import { Pencil, Ban, ChevronRight, DatabaseBackup, Home } from "lucide-react";
 import { Link } from "react-router";
 import { useFetchBrands } from "@/hooks/queries/useBrandQueries";
-import { useAddBrand ,useDeleteBrand, useRestoreBrand} from "@/hooks/mutations/useBrandMutations";
+import {useAddBrand,useDeleteBrand,useRestoreBrand,useEditBrand,} from "@/hooks/mutations/useBrandMutations";
 import { toast } from "react-hot-toast";
-
-
+import Pagination from "../../components/common/Pagination.jsx";
 
 const BrandManagement = () => {
   const [isModalFormOpen, setIsModalFormOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const { mutate, isPending, error } = useAddBrand();
   const [serverError, setServerError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  //   const [totalPages, setTotalPages] = useState(1);
+  const [editingBrand, setEditingBrand] = useState(null);
 
-  const { mutate: deleteBrand, isPending:isDeletePending, error:errorDelete } = useDeleteBrand();
+  const pageSize = 10;
+
+  const { mutate, isPending, error } = useAddBrand();
+  const {
+    mutate: deleteBrand,
+    isPending: isDeletePending,
+    error: errorDelete,
+  } = useDeleteBrand();
   const { mutate: restoreBrand, isPending: isRestoring } = useRestoreBrand();
-
-
-
+  const { mutate: editBrand, isPending: isEditing } = useEditBrand();
 
 
   const {
-  data: brands = [],
-  isLoading: isBrandLoading,
-  isError: isBrandError,
-  error: brandError,
-} = useFetchBrands({search: searchTerm});
+    data: brands = [],
+    isLoading: isBrandLoading,
+    isError: isBrandError,
+    error: brandError,
+  } = useFetchBrands({
+    search: searchTerm,
+    page: currentPage,
+    limit: pageSize,
+  });
 
+  const brandList = brands?.brands || [];
+  const totalPages = brands?.totalPages || 1;
 
-const brandList = brands?.brands || [];
-// console.log(' this inside the brand list', brands,searchTerm)
+  // console.log(' this inside the brand list', brands,searchTerm)
 
   const handleAddBrand = (formData) => {
-  setServerError("");
+    setServerError("");
 
-  mutate(formData, {
-    onSuccess: () => {
-      toast.success("Brand added successfully!");
-      setIsModalFormOpen(false);
+    mutate(formData, {
+      onSuccess: () => {
+        toast.success("Brand added successfully!");
+        setIsModalFormOpen(false);
+      },
+      onError: (err) => {
+        const msg =
+          err?.response?.data?.message || err.message || "Something went wrong";
+        setServerError(msg);
+        toast.error(`❌ ${msg}`);
+      },
+    });
+  };
+
+ const handleEditBrand = async (formData) => {
+    console.log('edit is called',selectedBrand)
+  if (!editingBrand?._id) return;
+
+  editBrand(
+    {
+      id: editingBrand._id,
+      updatedData: formData,
     },
-    onError: (err) => {
-      const msg =
-        err?.response?.data?.message || err.message || "Something went wrong";
-      setServerError(msg);
-      toast.error(`❌ ${msg}`);
-    },
-  });
+    {
+      onSuccess: () => {
+        toast.success("Brand updated successfully");
+        setIsModalFormOpen(false);
+        setEditingBrand(null);
+      },
+      onError: (err) => {
+        const message = err?.response?.data?.message || "Update failed";
+        setServerError(message);
+        toast.error(message);
+
+      },
+    }
+  );
 };
 
 
-const handleDeleteBrand = () => {
-  if (!selectedBrand) return;
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
-  deleteBrand(selectedBrand._id, {
-    onSuccess: () => {
-      toast.success("Brand status updated successfully");
-      setIsModalOpen(false);
-      setSelectedBrand(null);
-    },
-    onError: (err) => {
-      const msg = err?.response?.data?.message || "Error updating brand";
-      toast.error(msg);
-    },
-  });
-};
+  const handleDeleteBrand = () => {
+    if (!selectedBrand) return;
 
-const handleRestoreBrand = () => {
-  if (!selectedBrand) return;
+    deleteBrand(selectedBrand._id, {
+      onSuccess: () => {
+        toast.success("Brand status updated successfully");
+        setIsModalOpen(false);
+        setSelectedBrand(null);
+      },
+      onError: (err) => {
+        const msg = err?.response?.data?.message || "Error updating brand";
+        toast.error(msg);
+      },
+    });
+  };
+
+  const handleRestoreBrand = () => {
+    if (!selectedBrand) return;
     // console.log('brand is restoring');
-    
-  restoreBrand(selectedBrand._id, {
-    onSuccess: () => {
-      toast.success("Brand restored successfully");
-      setIsModalOpen(false);
-      setSelectedBrand(null);
-    },
-    onError: (err) => {
-      const msg = err?.response?.data?.message || "Failed to restore brand";
-      toast.error(msg);
-    },
-  });
-};
 
+    restoreBrand(selectedBrand._id, {
+      onSuccess: () => {
+        toast.success("Brand restored successfully");
+        setIsModalOpen(false);
+        setSelectedBrand(null);
+      },
+      onError: (err) => {
+        const msg = err?.response?.data?.message || "Failed to restore brand";
+        toast.error(msg);
+      },
+    });
+  };
 
   const getBrandControles = (brand) => [
     {
@@ -105,6 +146,15 @@ const handleRestoreBrand = () => {
       ) : (
         <Ban className="text-gray-500 hover:text-red-600" size={20} />
       ),
+    },
+    ,
+    {
+      action: () => {
+        setEditingBrand(brand); // new state for edit
+        setIsModalFormOpen(true); // open form modal for editing
+      },
+      style: "",
+      icon: <Pencil className="text-gray-500 hover:text-blue-600" size={20} />,
     },
   ];
 
@@ -154,9 +204,14 @@ const handleRestoreBrand = () => {
 
       <BrandForm
         isModalFormOpen={isModalFormOpen}
-        onClose={() => setIsModalFormOpen(false)}
-        onSubmit={handleAddBrand}
+        onClose={() => {
+          setIsModalFormOpen(false);
+          setEditingBrand(null); // clear after use
+        }}
+        onSubmit={editingBrand ? handleEditBrand : handleAddBrand}
         serverError={serverError}
+        initialValues={editingBrand} // ✅ pass selected brand for editing
+        mode={editingBrand ? "edit" : "add"} // ✅ control title/button text
       />
 
       <SearchBar searchTerm={setSearchTerm} />
@@ -176,6 +231,14 @@ const handleRestoreBrand = () => {
           brands={brandList}
           getBrandControles={getBrandControles}
           icon="fa-solid fa-copyright"
+        />
+      </div>
+      {/* Pagination */}
+      <div className="flex justify-center mt-5">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
         />
       </div>
     </div>
