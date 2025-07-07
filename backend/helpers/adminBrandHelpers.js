@@ -40,7 +40,37 @@ exports.restoreBrand = async (id) => {
 };
 
 
-exports.getAllBrands = async (includeDeleted = false) => {
+exports.getAllBrands = async (includeDeleted = false,query={}) => {
+  const {
+    search = "",
+    page = 1,
+    limit = 10,
+  } = query;
+
+  const filter = {};
+  
+  if (search) {
+    filter.name = { $regex: search, $options: "i" }; // Case-insensitive search
+  }
+
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+
+  const [brands, totalCount] = await Promise.all([
+    Brand.find(filter)
+      .collation({ locale: "en", strength: 2 }) // Case-insensitive sorting
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit)),
+    Brand.countDocuments(filter),
+  ]);
+
+  return {
+    brands,
+    totalCount,
+    totalPages: Math.ceil(totalCount / limit),
+    currentPage: parseInt(page),
+  };
+
 //   const filter = includeDeleted ? {} : { isDeleted: false };
-  return await Brand.find().sort({ createdAt: -1 });
+  // return await Brand.find().sort({ createdAt: -1 });
 };

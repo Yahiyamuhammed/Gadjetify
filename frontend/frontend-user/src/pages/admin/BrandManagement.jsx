@@ -32,37 +32,11 @@ const BrandManagement = () => {
   isLoading: isBrandLoading,
   isError: isBrandError,
   error: brandError,
-} = useFetchBrands();
+} = useFetchBrands({search: searchTerm});
 
-//   const [brands, setBrands] = useState([
-//     {
-//       _id: "1",
-//       name: "Apple",
-//       website: "https://apple.com",
-//       isSoftDeleted: false,
-//     },
-//     {
-//       _id: "2",
-//       name: "Samsung",
-//       website: "https://samsung.com",
-//       isSoftDeleted: false,
-//     },
-//     {
-//       _id: "3",
-//       name: "OnePlus",
-//       website: "https://oneplus.com",
-//       isSoftDeleted: true,
-//     },
-//   ]);
 
-  const displayedBrands =
-    searchTerm.trim() === ""
-      ? brands
-      : brands.filter(
-          (brand) =>
-            brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            brand.website.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+const brandList = brands?.brands || [];
+// console.log(' this inside the brand list', brands,searchTerm)
 
   const handleAddBrand = (formData) => {
   setServerError("");
@@ -100,7 +74,7 @@ const handleDeleteBrand = () => {
 
 const handleRestoreBrand = () => {
   if (!selectedBrand) return;
-    console.log('brand is restoring');
+    // console.log('brand is restoring');
     
   restoreBrand(selectedBrand._id, {
     onSuccess: () => {
@@ -199,7 +173,7 @@ const handleRestoreBrand = () => {
 
       <div className="mt-4">
         <BrandList
-          brands={displayedBrands}
+          brands={brandList}
           getBrandControles={getBrandControles}
           icon="fa-solid fa-copyright"
         />

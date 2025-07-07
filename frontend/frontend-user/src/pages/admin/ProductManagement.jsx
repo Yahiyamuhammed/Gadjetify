@@ -35,6 +35,7 @@ const ProductManagement = () => {
     error: fetchError,
   } = useFetchProducts({ page: currentPage,limit: pageSize,search: searchTerm,brand: "",isDeleted:filter, });
 
+//   console.log('this is the raw', productsData)
   const products = productsData?.products || [];
   // const products = productsData?.products || [];
   const totalPages = productsData?.totalPages || 1;
@@ -48,44 +49,7 @@ const ProductManagement = () => {
 //   }
 }, [currentPageFromApi]);
 
-  console.log(products);
-
-  // 🔗 API PLACEHOLDER: Mock product data (replace this with fetched data later)
-  //   const [products, setProducts] = useState([
-  //     {
-  //       _id: "1",
-  //       name: "iPhone 15 Pro",
-  //       model: "A3101",
-  //       categoryDetails: { name: "Smartphones" },
-  //       price: 129999,
-  //       offerPercent: 10,
-  //       stock: 15,
-  //       isSoftDelete: false,
-  //       images: [{ secure_url: "https://via.placeholder.com/100" }],
-  //     },
-  //     {
-  //       _id: "2",
-  //       name: "Samsung Galaxy S23",
-  //       model: "SM-S911B",
-  //       categoryDetails: { name: "Smartphones" },
-  //       price: 109999,
-  //       offerPercent: 15,
-  //       stock: 7,
-  //       isSoftDelete: false,
-  //       images: [{ secure_url: "https://via.placeholder.com/100" }],
-  //     },
-  //     {
-  //       _id: "3",
-  //       name: "Redmi Note 13",
-  //       model: "RN13",
-  //       categoryDetails: { name: "Smartphones" },
-  //       price: 17999,
-  //       offerPercent: 5,
-  //       stock: 0,
-  //       isSoftDelete: true,
-  //       images: [],
-  //     },
-  //   ]);
+//   console.log(products);
 
   // 🔗 API PLACEHOLDER: Mock category data
 //   const [categories] = useState([
@@ -112,7 +76,7 @@ const ProductManagement = () => {
     setServerError("");
     mutate(formData, {
       onSuccess: (data) => {
-        console.log("✅ Product Added Successfully:", data);
+        // console.log("✅ Product Added Successfully:", data);
         toast.success("Product added successfully");
         setIsModalFormOpen(false); // ✅ only closes on success
       },

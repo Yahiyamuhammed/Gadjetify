@@ -2,11 +2,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/utils/api";
 
-export const useFetchBrands = () => {
+export const useFetchBrands = (queryParams = {}) => {
   return useQuery({
-    queryKey: ["brands"],
+    queryKey: ["brands",queryParams],
     queryFn: async () => {
-      const response = await api.get("/admin/brands");
+      const response = await api.get("/admin/brands",{ params: queryParams });
       return response.data;
     },
   });
