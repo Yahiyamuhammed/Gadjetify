@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require("path");
+
 require('dotenv').config(); // To read .env file
 
 const app = express();
@@ -18,6 +20,9 @@ const userProductRoutes=require('./routes/userProductRoutes')
 // Middleware
 app.use(cors());
 app.use(express.json()); // for parsing JSONa
+
+app.use("/products", express.static(path.join(__dirname, "public/products")));
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminAuthRoutes);

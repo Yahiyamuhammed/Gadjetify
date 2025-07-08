@@ -68,7 +68,7 @@ const ProductManagement = () => {
         setIsModalFormOpen(false);
       },
       onError: (err) => {
-        // ✅ stays open on error
+        
         const message =
           err?.response?.data?.message || err.message || "Something went wrong";
         console.error("Product Add Error:", message);

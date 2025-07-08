@@ -20,26 +20,44 @@ const ProductList = ({ products }) => {
   const navigate = useNavigate();
   const [editingProduct, setEditingProduct] = useState("");
   const [isModalFormOpen, setIsModalFormOpen] = useState(false);
-    const [serverError, setServerError] = useState("");
-  
+  const [serverError, setServerError] = useState("");
 
   const { mutate: unlistProduct } = useUnlistProduct();
   const { mutate: updateProduct } = useUpdateProduct();
   const { mutate: restoreProduct } = useRestoreProduct();
 
-//   console.log("this is inside list ", products);
+  console.log("this is inside list ", products);
 
   const productColumns = [
+    // {
+    //   key: "images",
+    //   label: "Image",
+    //   render: (img) => {
+    // console.log("Product image array:", img);
+    // return (
+    //   <img
+    //     src={img?.[0]?.secure_url || noImage}
+    //     alt="Product"
+    //     className="w-12 h-12 rounded-full object-cover"
+    //   />
+    // )
+    // },},
     {
       key: "images",
       label: "Image",
-      render: (img) => (
-        <img
-          src={img[0]?.secure_url || noImage}
-          alt="Product"
-          className="w-12 h-12 rounded-full object-cover"
-        />
-      ),
+      render: (img) => {
+        const imageUrl = img?.[0]
+          ? `http://localhost:5000/products/${img[0]}`
+          : noImage;
+
+        return (
+          <img
+            src={imageUrl}
+            alt="Product"
+            className="w-12 h-12 rounded-full object-cover"
+          />
+        );
+      },
     },
     { key: "name", label: "Name" },
     { key: "model", label: "Model" },
@@ -197,16 +215,16 @@ const ProductList = ({ products }) => {
         />
       )}
       <ProductAddForm
-  isModalFormOpen={isModalFormOpen}
-  onClose={() => {
-    setIsModalFormOpen(false);
-    setEditingProduct(null);
-  }}
-  onSubmit={handleEditProduct }
-  serverError={serverError}
-  initialValues={editingProduct}         // ✅ pass selected product
-  mode={editingProduct ? "edit" : "add"} // ✅ for dynamic title/button
-/>
+        isModalFormOpen={isModalFormOpen}
+        onClose={() => {
+          setIsModalFormOpen(false);
+          setEditingProduct(null);
+        }}
+        onSubmit={handleEditProduct}
+        serverError={serverError}
+        initialValues={editingProduct}
+        mode={editingProduct ? "edit" : "add"}
+      />
 
       <Table
         items={products || []}

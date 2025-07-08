@@ -49,22 +49,21 @@ const BrandManagement = () => {
 
   // console.log(' this inside the brand list', brands,searchTerm)
 
-  const handleAddBrand = (formData) => {
-    setServerError("");
 
-    mutate(formData, {
-      onSuccess: () => {
-        toast.success("Brand added successfully!");
-        setIsModalFormOpen(false);
-      },
-      onError: (err) => {
-        const msg =
-          err?.response?.data?.message || err.message || "Something went wrong";
-        setServerError(msg);
-        toast.error(`❌ ${msg}`);
-      },
-    });
-  };
+  const handleAddBrand = async (formData) => {
+  mutate(formData, {
+    onSuccess: () => {
+      toast.success("Brand added successfully");
+      setIsModalFormOpen(false);
+    },
+    onError: (err) => {
+      const message = err?.response?.data?.error || "Failed to add brand";
+      setServerError(message);
+      toast.error(message);
+    },
+  });
+};
+
 
  const handleEditBrand = async (formData) => {
     
@@ -84,7 +83,7 @@ const BrandManagement = () => {
       onError: (err) => {
         const message = err?.response?.data?.error || "Update failed";
         setServerError(message);
-        toast.error(message);
+        toast.error(message,error);
 
       },
     }
@@ -208,9 +207,9 @@ const BrandManagement = () => {
           setIsModalFormOpen(false);
           setEditingBrand(null); 
         }}
-        onSubmit={ handleEditBrand }
+        onSubmit={editingBrand ? handleEditBrand:handleAddBrand  }
         serverError={serverError}
-        initialValues={editingBrand} 
+        initialValues={editingBrand || {}}
         mode={editingBrand ? "edit" : "add"}
       />
 
