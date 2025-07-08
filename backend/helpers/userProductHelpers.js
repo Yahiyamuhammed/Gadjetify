@@ -1,5 +1,5 @@
 const Product = require('../models/productModel');
-const Brand = require('../models/brandModel'); // ✅ Import the Brand model
+const Brand = require('../models/brandModel');
 
 const mongoose = require('mongoose');
 
@@ -25,9 +25,11 @@ exports.fetchFilteredProducts = async (query) => {
   }
 
   if (brand) {
-    const brandDoc = await Brand.findOne({ name: { $regex: `^${brand}`, $options: 'i' } });
+    console.log(brand)
+    const brandDoc = await Brand.findById(brand);
+    console.log(brandDoc)
     if (brandDoc) {
-      filter.brand = brandDoc._id;
+      filter.brand = brandDoc
     } else {
       return {
         products: [],
@@ -61,6 +63,12 @@ switch ((sort || '').toLowerCase()) {
     break;
   case 'name_desc':
     sortOption.name = -1;
+    break;
+     case 'latest':
+    sortOption.createdAt = -1;
+    break;
+  case 'oldest':
+    sortOption.createdAt = 1;
     break;
   case 'name_asc':
   default:

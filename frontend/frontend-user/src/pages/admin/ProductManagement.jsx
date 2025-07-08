@@ -79,14 +79,7 @@ const ProductManagement = () => {
     });
   };
 
-  // 🔍 Filter logic
-  const displayedProduct =
-    searchTerm.trim() === ""
-      ? products || []
-      : products?.filter((product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase())
-        ) || [];
-
+ 
   return (
     <div className="p-4">
       {/* Breadcrumbs */}
