@@ -34,7 +34,7 @@ const Products = () => {
   const products = data?.products || [];
   const totalPages = data?.totalPages || 1;
 
-  const { data: brandData = [] } = useFetchBrands({ search: "" });
+  const { data: brandData = [] } = useFetchBrands({ search: "",limit:'' });
 
   const brands = (brandData?.brands || []).filter((b) => !b.isDeleted);
 
@@ -65,7 +65,7 @@ const Products = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 ">
+    <div className="min-h-screen bg-gray-50 pt-5">
       {/* Breadcrumb Header */}
       <nav className="bg-indigo-500 shadow-md fixed w-full z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

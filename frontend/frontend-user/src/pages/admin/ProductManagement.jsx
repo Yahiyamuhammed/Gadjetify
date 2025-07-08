@@ -10,6 +10,8 @@ import Pagination from "../../components/common/Pagination.jsx";
 
 import { toast } from "react-hot-toast";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 import { useAddProduct } from "../../hooks/mutations/useProductMutations.js";
 import { useFetchProducts } from "@/hooks/queries/useProductQueries";
 
@@ -25,6 +27,9 @@ const ProductManagement = () => {
   const pageSize = 8;
   const [categoryFilter, setCategoryFilter] = useState("");
   const [serverError, setServerError] = useState("");
+
+  const queryClient = useQueryClient();
+
 
   const { mutate, isPending, error } = useAddProduct();
 
@@ -66,6 +71,7 @@ const ProductManagement = () => {
         // console.log(" Product Added Successfully:", data);
         toast.success("Product added successfully");
         setIsModalFormOpen(false);
+         queryClient.invalidateQueries(["products"]);
       },
       onError: (err) => {
         

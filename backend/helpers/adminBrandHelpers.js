@@ -40,7 +40,7 @@ exports.restoreBrand = async (id) => {
 };
 
 
-exports.getAllBrands = async (includeDeleted = false,query={}) => {
+exports.getAllBrands = async (query={}) => {
   const {
     search = "",
     page = 1,

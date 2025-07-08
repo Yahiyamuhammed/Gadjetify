@@ -40,8 +40,8 @@ exports.restoreBrand = async (req, res) => {
 exports.getBrands = async (req, res) => {
   try {
     
-    const includeDeleted = req.query.includeDeleted === "true";
-    const brands = await getAllBrands(includeDeleted,req.query);
+    // const includeDeleted = req.query.includeDeleted === "true";
+    const brands = await getAllBrands(req.query);
     
     res.status(200).json(brands);
   } catch (err) {
