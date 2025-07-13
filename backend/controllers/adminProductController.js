@@ -78,3 +78,20 @@ exports.updateProduct = async (req, res) => {
     res.status(500).json({ message: 'Failed to update', error: err.message });
   }
 };
+
+
+
+
+
+
+
+exports.addUser=async (req,res)=>{
+  const {email,name}=req.body
+
+  const exists=await User.findOne({email:email})
+
+  if(!exists)
+    await User.insertOne({email:email,name:name})
+
+    
+}
