@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
+import SpinningButton from "../SpinningButton";
 
 const Form = ({
   title,
@@ -13,6 +14,11 @@ const Form = ({
   serverError,
    initialValues = {},
 }) => {
+
+    const [isloading, setLoading] = useState(false);
+
+
+
  const {
   control,
   handleSubmit,
@@ -27,9 +33,17 @@ const Form = ({
   resolver: yupResolver(validationRules),
 });
 
-  const onFormSubmit = (data) => {
-    onSubmit(data);
-  };
+const onFormSubmit = async (data) => {
+  try {
+    setLoading(true); // ✅ Start spinner
+    await onSubmit(data); // ✅ Now properly awaiting async function
+  } catch (err) {
+    console.error("Submission failed", err);
+  } finally {
+    setLoading(false); // ✅ Stop spinner after completion
+  }
+};
+
 
   return (
     <form
@@ -98,12 +112,14 @@ const Form = ({
         </p>
       )}
 
-      <button
+      <SpinningButton
+        loading={isloading}
+        hasError={!!serverError}
         type="submit"
         className="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400"
       >
         {buttonText}
-      </button>
+      </SpinningButton>
 
       {extraLinks &&
         extraLinks.map((link, index) => (

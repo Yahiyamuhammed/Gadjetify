@@ -7,6 +7,8 @@ import { GoogleLogin } from "@react-oauth/google";
 import {jwtDecode} from 'jwt-decode';
 import {googleAuth } from "@/hooks/mutations/useGoogleAuthMutation"
 import toast from 'react-hot-toast';
+import { Button } from "@/components/ui/button"
+import SpinningButton from "@/components/SpinningButton";
 
 
 
@@ -38,12 +40,12 @@ const Login = () => {
     try {
       setError("");
       const res = await api.post("/auth/login", formData);
-      console.log("Login Success:", res.data);
+      toast.success("Login Success:", res.data);
 
       localStorage.setItem("token", res.data.token);
       navigate("/products");
     } catch (err) {
-      console.error("Login Error:", err.response?.data || err.message);
+      toast.error("Login Error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Login failed");
     }
   };
@@ -66,6 +68,7 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-white">
+      <div className="flex flex-col items-center w-full max-w-md space-y-4">
       <Form
         title="Login"
         fields={fields}
@@ -75,13 +78,17 @@ const Login = () => {
         validationRules={loginSchema}
         serverError={error}
       />
-      <button >login with google</button>
-      <GoogleLogin
-      
-        onSuccess={handleGoogleLogin}
-        onError={(err)=> console.log('login failed')}
-          
-      />
+        <div className=" text-center">
+        
+        <GoogleLogin
+          onSuccess={handleGoogleLogin}
+          onError={() => console.log('Login failed')}
+        />
+        <Button variant="outline">Button</Button>
+        <Button variant="destructive">Destructive</Button>
+        <SpinningButton onClick={()=>toast.success('button clicked')} className="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400">testing</SpinningButton>
+      </div>
+    </div>
     </div>
   );
 };
