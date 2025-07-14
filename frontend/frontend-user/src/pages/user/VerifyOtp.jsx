@@ -38,7 +38,9 @@ const VerifyOtp = () => {
       const res = await api.post("/auth/verify-otp", { email, otp });
 
       // On success, go to homepage or login
-      navigate("/");
+          localStorage.setItem("token", res.data.token);
+
+      navigate("/products");
     } catch (err) {
       const msg =
         err?.response?.data?.message ||

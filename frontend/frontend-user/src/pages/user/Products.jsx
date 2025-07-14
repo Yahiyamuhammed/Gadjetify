@@ -29,7 +29,7 @@ const Products = () => {
     maxPrice,
   });
 
-  console.log(selectedBrand);
+  // console.log(selectedBrand);
 
   const products = data?.products || [];
   const totalPages = data?.totalPages || 1;

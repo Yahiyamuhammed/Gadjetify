@@ -3,7 +3,8 @@ const generateOTP = require('../utils/generateOTP');
 const sendMail = require('../utils/sendMail');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const jwtDecode = require('jwt-decode');
+const {jwtDecode} = require('jwt-decode');
+
 
 exports.signupUser = async ({ email, name, password, mobileNo }) => {
   const existing = await User.findOne({ email });
@@ -17,7 +18,7 @@ exports.signupUser = async ({ email, name, password, mobileNo }) => {
 
   const otp = generateOTP();
   await sendMail(email, otp);
-  const otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000); // 3 min
+  const otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new User({
