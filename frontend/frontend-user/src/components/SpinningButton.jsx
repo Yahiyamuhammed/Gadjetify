@@ -10,7 +10,7 @@ export default function SpinningButton({
   onClick,                  
   minDuration = 500,        
   disabled = false,
-  type='',
+  type='button',
   variant = "default",
   size = "default",
   className = "",

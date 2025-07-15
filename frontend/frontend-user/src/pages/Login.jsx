@@ -84,7 +84,8 @@ const Login = () => {
   ];
 
   return (
-    <div className="flex justify-center items-center h-screen bg-white">
+  <div className="flex flex-col justify-center items-center h-screen bg-white px-4">
+    <div className="w-full max-w-xl space-y-4"> {/* shared container */}
       <Form
         title="Login"
         fields={fields}
@@ -94,31 +95,22 @@ const Login = () => {
         validationRules={loginSchema}
         serverError={error}
       />
-      <div className=" text-center">
-        <GoogleLogin
-          onSuccess={handleGoogleLogin}
-          onError={() => console.log("Login failed")}
-        />
-        <Button variant="outline">Button</Button>
-        <Button variant="destructive">Destructive</Button>
-        <SpinningButton
-          onClick={() => toast.success("button clicked")}
-          className="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400"
-        >
-          testing
-        </SpinningButton>
+
+      {/* <div className="text-center"> */}
         <SpinningButton
           icon={FcGoogle}
           onClick={newGoogleLogin}
           variant="outline"
           size="lg"
+          className="max-w-lg mx-auto w-full h-14"
         >
           Sign in with Google
         </SpinningButton>
-      </div>
+      {/* </div> */}
     </div>
-    // </div>
-  );
+  </div>
+);
+
 };
 
 export default Login;
