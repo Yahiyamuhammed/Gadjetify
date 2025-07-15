@@ -104,13 +104,26 @@ exports.loginUser = async ({ email, password }) => {
   };
 };
 
-exports.googleAuthHandler = async ({ credential }) => {
-  if (!credential) {
+exports.googleAuthHandler = async ({ access_token }) => {
+  if (!access_token) {
     return { status: 400, data: { message: 'Missing Google token' } };
   }
+  const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    }
+  });
 
-  const decoded = jwtDecode(credential);
-  const { email, name, sub } = decoded;
+  if (!googleRes.ok) {
+    return { status: 401, data: { message: 'Failed to fetch user info from Google' } };
+  }
+
+  const profile = await googleRes.json();
+  const { email, name, sub } = profile;
+
+
+  // const decoded = jwtDecode(credential);
+  // const { email, name, sub } = decoded;
 
   let user = await User.findOne({ googleId: sub });
   if (user) {
