@@ -4,71 +4,89 @@ import { Loader2 } from "lucide-react"; // Spinner icon
 import { cn } from "@/lib/utils"; // for merging classes
 import toast, { Toaster } from 'react-hot-toast';
 
+// Fixed SpinningButton Component
 export default function SpinningButton({
   children,
   icon: Icon,               
   onClick,                  
   minDuration = 500,        
   disabled = false,
-  type='button',
+  type = 'button',
   variant = "default",
   size = "default",
   className = "",
   iconPosition = "left",
-  loading=false,
-  hasError,
+  loading = false,
+  hasError = false,
   ...props
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const showLoading = loading || isLoading;
+  const [loadingStartTime, setLoadingStartTime] = useState(null);
+
+  // Handle external loading (like form submissions or Google login)
   useEffect(() => {
-  if (loading) {
-    setIsLoading(true);
-  } else if (!loading && isLoading) {
+    if (loading && !isLoading) {
+      // External loading started
+      setIsLoading(true);
+      setLoadingStartTime(Date.now());
+    } else if (!loading && isLoading && loadingStartTime) {
+      // External loading stopped
+      const elapsed = Date.now() - loadingStartTime;
+      
+      if (hasError) {
+        // Stop immediately on error
+        setIsLoading(false);
+        setLoadingStartTime(null);
+      } else {
+        // Success: ensure minimum duration
+        const remainingTime = Math.max(0, minDuration - elapsed);
+        setTimeout(() => {
+          setIsLoading(false);
+          setLoadingStartTime(null);
+        }, remainingTime);
+      }
+    }
+  }, [loading, isLoading, loadingStartTime, minDuration, hasError]);
 
-    if(hasError)
-      setIsLoading(false)
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, minDuration);
-  }
-}, [loading, isLoading, minDuration,hasError]);
-  
-  
-
+  // Handle button clicks (when no external loading)
   const handleClick = async (e) => {
-    if (!onClick && !showLoading) return;
+    if (!onClick || loading) return; // Don't handle clicks during external loading
 
     setIsLoading(true);
-    
+    const startTime = Date.now();
 
     try {
-        await onClick(e) ; 
+      await onClick(e);
     } catch (err) {
       console.error("Button action failed:", err);
-    } finally {
-      setTimeout(() => {
-          setIsLoading(false);
-      }, minDuration);
+      // Stop immediately on error
+      setIsLoading(false);
+      return;
     }
+
+    // Success: ensure minimum duration
+    const elapsed = Date.now() - startTime;
+    const delay = Math.max(0, minDuration - elapsed);
+    
+    setTimeout(() => {
+      setIsLoading(false);
+    }, delay);
   };
-  
 
   return (
     <Button
       variant={variant}
       size={size}
       onClick={handleClick}
-      disabled={isLoading || disabled || loading}
+      disabled={isLoading || disabled}
       type={type}
       className={cn("flex items-center gap-2 cursor-pointer", className)}
       {...props}
     >
-       {showLoading && <Loader2 className="animate-spin w-4 h-4" />}
-      {!showLoading && Icon && iconPosition === "left" && <Icon className="w-4 h-4" />}
+      {isLoading && <Loader2 className="animate-spin w-4 h-4" />}
+      {!isLoading && Icon && iconPosition === "left" && <Icon className="w-4 h-4" />}
       <span>{children}</span>
-      {!showLoading && Icon && iconPosition === "right" && <Icon className="w-4 h-4" />}
-   </Button>
+      {!isLoading && Icon && iconPosition === "right" && <Icon className="w-4 h-4" />}
+    </Button>
   );
 }

@@ -10,12 +10,14 @@ import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import SpinningButton from "@/components/SpinningButton";
 // import { useGoogleLogin } from '@react-oauth/google';
-import { FcGoogle } from "react-icons/fc"; // Google logo
+import { FcGoogle } from "react-icons/fc"; 
 
 const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { mutate: googleLogin, error: onErr } = googleAuth();
+  const [loading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   console.log(window.location.origin);
 
@@ -53,17 +55,23 @@ const Login = () => {
   const newGoogleLogin = useGoogleLogin({
     onSuccess: async (response) => {
       console.log("Google token:", response);
-      // await handleGoogleLogin(response);
+      setLoading(true);
       googleLogin(response.access_token, {
-        onSuccess: (res) =>
+        onSuccess: (res) => {
           toast.success(res.message || "Google login successful"),
-        onError: (err) =>
+            setLoading(false);
+        },
+        onError: (err) => {
           toast.error(err?.response?.data?.message || "Google login failed"),
+            setLoading(false);
+          setHasError(true);
+        },
       });
     },
     onError: (error) => {
       console.error("Google Login Failed", error);
       toast.error("Google login failed");
+      setHasError(true);
     },
   });
   const handleGoogleLogin = (data) => {
@@ -84,33 +92,37 @@ const Login = () => {
   ];
 
   return (
-  <div className="flex flex-col justify-center items-center h-screen bg-white px-4">
-    <div className="w-full max-w-xl space-y-4"> {/* shared container */}
-      <Form
-        title="Login"
-        fields={fields}
-        onSubmit={handleLogin}
-        buttonText="Log In"
-        extraLinks={extraLinks}
-        validationRules={loginSchema}
-        serverError={error}
-      />
-
-      {/* <div className="text-center"> */}
+    <div className="flex flex-col justify-center items-center h-screen bg-white px-4">
+      <div className="w-full max-w-xl space-y-4">
+        {" "}
+        {/* shared container */}
+        <Form
+          title="Login"
+          fields={fields}
+          onSubmit={handleLogin}
+          buttonText="Log In"
+          extraLinks={extraLinks}
+          validationRules={loginSchema}
+          serverError={error}
+        />
         <SpinningButton
           icon={FcGoogle}
-          onClick={newGoogleLogin}
+          onClick={() => {
+            setHasError(false);
+            setLoading(true);
+            newGoogleLogin();
+          }}
           variant="outline"
           size="lg"
           className="max-w-lg mx-auto w-full h-14"
+          loading={loading}
+          hasError={hasError}
         >
           Sign in with Google
         </SpinningButton>
-      {/* </div> */}
+      </div>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default Login;
