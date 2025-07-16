@@ -1,3 +1,5 @@
+const User = require('../models/userModal');
+
 const authMiddleware = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) return res.status(401).json({ message: "Not logged in" });

@@ -1,3 +1,4 @@
+const User = require('../models/userModal');
 const checkBlockedUser = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) return next(); // Not logged in → proceed
