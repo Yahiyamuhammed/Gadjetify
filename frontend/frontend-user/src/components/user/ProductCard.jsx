@@ -63,7 +63,7 @@ const ProductCard = ({ product, refetch }) => {
 //         });
 //   };
 
-  console.log(product,'thisis the products')
+  // console.log(product,'thisis the products')
 
   return (
     <div className="group relative w-80 bg-white  rounded-xl shadow-md hover:shadow-xl transition-all duration-300">

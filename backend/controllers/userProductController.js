@@ -4,6 +4,7 @@ const Product = require("../models/productModel");
 
 exports.getAllProducts = async (req, res) => {
   try {
+    console.log('this is the user data in product',req.user)
     const data = await fetchFilteredProducts(req.query);
     res.status(200).json(data);
   } catch (err) {

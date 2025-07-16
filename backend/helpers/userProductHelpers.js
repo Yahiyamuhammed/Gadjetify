@@ -76,7 +76,7 @@ switch ((sort || '').toLowerCase()) {
 }
 
 
-  console.log(sortOption);
+  // console.log(sortOption);
   
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
