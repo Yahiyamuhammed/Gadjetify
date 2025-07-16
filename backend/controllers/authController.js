@@ -103,3 +103,13 @@ exports.googleLogin = async (req, res) => {
       .json({ message: "Google Login failed", error: err.message });
   }
 };
+exports.signout = async (req, res) => {
+  res
+    .clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    })
+    .status(200)
+    .json({ message: "User logged out successfully" });
+};
