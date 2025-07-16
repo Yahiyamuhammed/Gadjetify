@@ -18,7 +18,23 @@ exports.signup = async (req, res) => {
 exports.verifyOtp = async (req, res) => {
   try {
     const result = await verifyUserOtp(req.body);
-    res.status(result.status).json(result.data);
+    if (!result.data.token) {
+      return res.status(result.status).json(result.data);
+    }
+
+    res
+      .cookie("token", result.data.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+      .status(result.status)
+      .json({
+        message: result.data.message,
+        user: result.data.user,
+      });
+    // res.status(result.status).json(result.data);
   } catch (err) {
     res
       .status(500)
@@ -64,7 +80,23 @@ exports.login = async (req, res) => {
 exports.googleLogin = async (req, res) => {
   try {
     const result = await googleAuthHandler(req.body);
-    res.status(result.status).json(result.data);
+    if (!result.data.token) {
+      return res.status(result.status).json(result.data);
+    }
+
+    res
+      .cookie("token", result.data.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+      .status(result.status)
+      .json({
+        message: result.data.message,
+        user: result.data.user,
+      });
+    // res.status(result.status).json(result.data);
   } catch (err) {
     res
       .status(500)
