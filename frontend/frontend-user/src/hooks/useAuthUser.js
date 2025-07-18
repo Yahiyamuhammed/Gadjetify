@@ -1,10 +1,17 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+// hooks/useAuthUser.js
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/utils/api"; // your axios instance
 
+export const fetchAuthUser = async () => {
+  const res = await api.get("/auth/me");
+  console.log('get into the me')
+  return res.data;
+};
 export const useAuthUser = () => {
-  const queryClient = useQueryClient();
-  return queryClient.getQueryData(["auth-user"]);
-// return  { data: user } = useQuery({
-//     queryKey: ["auth-user"],
-//     enabled: false // we’re not refetching; just want the cached data
-//   });
+  return useQuery({
+    queryKey: ["auth-user"],
+    queryFn: fetchAuthUser,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+  });
 };

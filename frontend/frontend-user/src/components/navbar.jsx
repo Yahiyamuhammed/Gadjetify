@@ -5,15 +5,12 @@ import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/react.svg"; // Replace with your logo
-<<<<<<< Updated upstream
-=======
 import toast from "react-hot-toast";
 
 import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthUser } from "@/hooks/useAuthUser";
 
->>>>>>> Stashed changes
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,10 +18,8 @@ const Navbar = () => {
   const menuRef = useRef();
   const toggleRef = useRef();
 
-<<<<<<< Updated upstream
-=======
   const {mutate:logouMutate,isError,isSuccess}=useLogoutMutation()
-  const queryClient = useQueryClient();
+
 
   // const user='yahiya'
     // const user = useAuthUser();
@@ -45,22 +40,24 @@ const Navbar = () => {
   // });
 
 
-  const [user, setUser] = useState(() => queryClient.getQueryData(["auth-user"]));
+  // const [user, setUser] = useState(() => queryClient.getQueryData(["auth-user"]));
+  
 
-  useEffect(() => {
-    const unsubscribe = queryClient.getQueryCache().subscribe(() => {
-      const cachedUser = queryClient.getQueryData(["auth-user"]);
-      setUser(cachedUser);
-    });
+  // useEffect(() => {
+  //   const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+  //     const cachedUser = queryClient.getQueryData(["auth-user"]);
+  //     setUser(cachedUser);
+  //   });
 
-    return () => unsubscribe();
-  }, [queryClient]);
+  //   return () => unsubscribe();
+  // }, [queryClient]);
+
+    const { data: user } = useAuthUser();
 
 
 
-  console.log('this is the user in navbar',user)
+  console.log('this is the user in navbar',!!user)
 
->>>>>>> Stashed changes
   const navLinks = [
     { name: "HOME", path: "/" },
     { name: "PRODUCTS", path: "/products" },
@@ -72,8 +69,6 @@ const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
      const handleLogout = () => {
-<<<<<<< Updated upstream
-=======
       logouMutate(null,{
         onSuccess:(res)=>{
           toast.success('signout successfull',res.message)
@@ -85,7 +80,6 @@ const Navbar = () => {
         }
       })
 
->>>>>>> Stashed changes
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     navigate("/login");
@@ -132,7 +126,7 @@ const Navbar = () => {
 
   {/* Right Auth Buttons (Desktop Only) */}
   <div className="hidden lg:flex items-center gap-4">
-     {isLoggedIn ? (
+     {user ? (
         <button
           onClick={handleLogout}
           className="px-4 py-1 rounded-full text-red-600 hover:bg-red-50 transition"
