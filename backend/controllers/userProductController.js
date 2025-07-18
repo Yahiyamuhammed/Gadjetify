@@ -6,7 +6,7 @@ exports.getAllProducts = async (req, res) => {
   try {
     console.log('this is the user data in product',req.user)
     const data = await fetchFilteredProducts(req.query);
-    res.status(200).json(data);
+    res.status(200).json({...data,user: req.user || null});
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch products', error: err.message });
   }
