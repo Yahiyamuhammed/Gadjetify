@@ -9,7 +9,7 @@ require('dotenv').config(); // To read .env file
 
 const app = express();
 
-const {signup}=require('./controllers/authController')
+// const {signup}=require('./controllers/authController')
 const authRoutes = require('./routes/authRoutes');
 const adminAuthRoutes = require('./routes/adminAuthRoutes');
 const adminUserRoutes=require('./routes/adminUserRoute')

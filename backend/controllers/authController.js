@@ -113,3 +113,16 @@ exports.signout = async (req, res) => {
     .status(200)
     .json({ message: "User logged out successfully" });
 };
+exports.me = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(200).json(null); // guest user
+    }
+    const { _id, name, email, isVerified, authType } = req.user;
+    const user = { _id, name, email, isVerified, authType };
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error in /me:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
