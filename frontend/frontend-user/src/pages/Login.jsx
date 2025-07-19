@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import SpinningButton from "@/components/SpinningButton";
 // import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from "react-icons/fc"; 
+import { useQueryClient } from "@tanstack/react-query";
 
 const Login = () => {
   const [error, setError] = useState("");
@@ -18,6 +19,8 @@ const Login = () => {
   const { mutate: googleLogin, error: onErr } = googleAuth();
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+    const queryClient = useQueryClient();
+
 
   console.log(window.location.origin);
 
@@ -45,6 +48,7 @@ const Login = () => {
       console.log("Login Success:", res.data);
 
       localStorage.setItem("token", res.data.token);
+      queryClient.invalidateQueries(['auth-user'])
       navigate("/products");
     } catch (err) {
       console.error("Login Error:", err.response?.data || err.message);
@@ -59,11 +63,13 @@ const Login = () => {
       googleLogin(response.access_token, {
         onSuccess: (res) => {
           toast.success(res.message || "Google login successful"),
+          queryClient.invalidateQueries(['auth-user'])
             setLoading(false);
         },
         onError: (err) => {
           toast.error(err?.response?.data?.message || "Google login failed"),
             setLoading(false);
+            queryClient.invalidateQueries(['auth-user'])
           setHasError(true);
         },
       });
@@ -74,14 +80,6 @@ const Login = () => {
       setHasError(true);
     },
   });
-  const handleGoogleLogin = (data) => {
-    googleLogin(data.credential, {
-      onSuccess: (res) =>
-        toast.success(res.message || "Google login successful"),
-      onError: (err) =>
-        toast.error(err?.response?.data?.message || "Google login failed"),
-    });
-  };
 
   const extraLinks = [
     {

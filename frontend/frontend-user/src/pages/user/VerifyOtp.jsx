@@ -3,12 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import Form from "@/components/common/Form";
 import { otpValidationSchema } from "@/utils/validation/otpSchema";
 import { api } from "@/utils/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
   const { email } = useParams(); // email passed in route
   const [timeLeft, setTimeLeft] = useState(25); // 4 min 55 sec
   const [error, setError] = useState("");
+  const queryClient = useQueryClient();
 
   // Countdown timer
   useEffect(() => {
@@ -38,7 +40,8 @@ const VerifyOtp = () => {
       const res = await api.post("/auth/verify-otp", { email, otp });
 
       // On success, go to homepage or login
-          localStorage.setItem("token", res.data.token);
+          // localStorage.setItem("token", res.data.token);
+          queryClient.invalidateQueries(['auth-user'])
 
       navigate("/products");
     } catch (err) {

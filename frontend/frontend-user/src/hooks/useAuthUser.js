@@ -11,7 +11,7 @@ export const useAuthUser = () => {
   return useQuery({
     queryKey: ["auth-user"],
     queryFn: fetchAuthUser,
-    staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false,
+      refetchOnMount: "always",
   });
 };
