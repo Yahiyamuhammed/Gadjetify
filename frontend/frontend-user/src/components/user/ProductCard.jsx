@@ -96,10 +96,10 @@ const ProductCard = ({ product, refetch }) => {
           </button>
 
           {/* Offer Badge */}
-          {(product?.offerPercent || product?.categoryDetails?.offer) > 0 && (
+          {(product?.offerPercentage || product?.categoryDetails?.offer) > 0 && (
             <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
               {Math.min(
-                (product?.offerPercent || 0) +
+                (product?.offerPercentage || 0) +
                   (product?.categoryDetails?.offer || 0),
                 100
               )}

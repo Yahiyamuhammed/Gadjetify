@@ -4,7 +4,7 @@ import { useUserFetchProducts } from "@/hooks/queries/useUserProductQueries";
 
 const HomePage = () => {
 const {data:products ,isLoading,isError,error}=useUserFetchProducts({sort:'latest'})
-console.log(products)
+// console.log(products.products)
 
   return (
     <div className="min-h-screen bg-white">
