@@ -1,5 +1,6 @@
-import image1 from "@/assets/Banner1_Home.svg";
 import ProductCard from "@/components/user/ProductCard";
+import image1 from "@/assets/Banner1_Home.svg";
+import image2 from "@/assets/Banner2_Home.svg";
 import { useUserFetchProducts } from "@/hooks/queries/useUserProductQueries";
 
 const HomePage = () => {
@@ -10,7 +11,7 @@ const {data:products ,isLoading,isError,error}=useUserFetchProducts({sort:'lates
     <div className="min-h-screen bg-white">
       <img src={image1} alt="Home Banner" className="w-full h-auto mb-20" />
 
-      <div className="px-16">
+      <div className="px-16 mb-10">
         <p className="font-extrabold text-4xl mb-10">
           New <span className="text-blue-500">arrival</span> for you
         </p>
@@ -30,8 +31,10 @@ const {data:products ,isLoading,isError,error}=useUserFetchProducts({sort:'lates
                   )}
                 </section>
         
-        
+
       </div>
+        {/* offer banner */}
+                  <img src={image2} alt="Home Banner" className="w-full h-auto mb-20" />
     </div>
   );
 };
