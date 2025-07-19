@@ -39,7 +39,7 @@ const ProductDetailsCard = ({ product }) => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Breadcrumb */}
-      <div className="bg-gradient-to-r bg-indigo-500 shadow-md  w-full z-20">
+      <div className="bg-gradient-to-r bg-indigo-500 shadow-md fixed w-full z-20">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center text-sm text-white">
             <Link to="/" className="flex items-center hover:text-white/80">

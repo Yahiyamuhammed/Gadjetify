@@ -66,7 +66,7 @@ const ProductCard = ({ product, refetch }) => {
   // console.log(product,'thisis the products')
 
   return (
-    <div className="group relative w-80 bg-white  rounded-xl shadow-md hover:shadow-xl transition-all duration-300">
+    <div className="group relative max-w-80 min-w-[200px] bg-white  rounded-xl shadow-md hover:shadow-xl transition-all duration-300">
       <div onClick={handleClick} className="cursor-pointer">
         {/* Image Container */}
         <div className="relative h-72 overflow-hidden rounded-t-xl">
