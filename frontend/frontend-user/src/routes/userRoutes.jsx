@@ -11,7 +11,7 @@ import HomePage from "@/pages/user/HomePage.jsx";
 const MainLayout = ({ children }) => {
   return (
     <>
-      <div className="mb-20">
+      <div className="mb-18">
         <Navbar />
       </div>
       {children}
