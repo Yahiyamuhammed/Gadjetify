@@ -9,7 +9,13 @@ const HomePage = () => {
     isLoading,
     isError,
     error,
-  } = useUserFetchProducts({ sort: "latest" });
+  } = useUserFetchProducts({ sort: "latest",limit:8 });
+  const {
+    data: flashProduct,
+    isLoading:flashLoading,
+    isError:flashisError,
+    error:flashError,
+  } = useUserFetchProducts({ sort: "offer_desc" ,limit:8});
   // console.log(products.products)
 
   return (
@@ -42,6 +48,24 @@ const HomePage = () => {
         <p className="font-extrabold text-4xl mb-10">
           Flash Sale: Grab Your{" "}
           <span className="text-blue-500">Favorite Bestsellers!</span>
+        </p>
+        {/* Products Grid */}
+        <section className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center px-4">
+          {flashProduct?.products.length > 0 ? (
+            flashProduct.products.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))
+          ) : flashLoading ? (
+            <p>Loading products...</p>
+          ) : flashisError ? (
+            <p className="text-red-500">Error: {flashError.message}</p>
+          ) : (
+            <p>No products found.</p>
+          )}
+        </section>
+
+         <p className="font-extrabold text-4xl my-10">
+          <span className="text-blue-500">Enhancing</span> Lives Through Every Mobile
         </p>
       </div>
     </div>
