@@ -16,7 +16,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { googleAuth } from "@/hooks/mutations/useGoogleAuthMutation";
 // import { useQueryClient } from "@tanstack/react-query";
 
-
 const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -24,6 +23,7 @@ const Login = () => {
   const [hasError, setHasError] = useState(false);
   const queryClient = useQueryClient();
 
+  const { mutate: googleLogin, error: onErr } = googleAuth();
 
   console.log(window.location.origin);
 
@@ -51,7 +51,7 @@ const Login = () => {
       toast.success("Login Success:", res.data);
 
       localStorage.setItem("token", res.data.token);
-      queryClient.invalidateQueries(['auth-user'])
+      queryClient.invalidateQueries(["auth-user"]);
       navigate("/products");
     } catch (err) {
       toast.error("Login Error:", err.response?.data || err.message);
@@ -66,14 +66,16 @@ const Login = () => {
       googleLogin(response.access_token, {
         onSuccess: (res) => {
           toast.success(res.message || "Google login successful"),
-          queryClient.invalidateQueries(['auth-user'])
-            setLoading(false);
-
+            queryClient.invalidateQueries(["auth-user"]);
+          setLoading(false);
+          navigate('/')
         },
         onError: (err) => {
-          toast.error(err?.response?.data?.message || "Google login failed on mutate"),
+          toast.error(
+            err?.response?.data?.message || "Google login failed on mutate"
+          ),
             setLoading(false);
-            queryClient.invalidateQueries(['auth-user'])
+          queryClient.invalidateQueries(["auth-user"]);
           setHasError(true);
         },
       });
@@ -94,7 +96,6 @@ const Login = () => {
   ];
 
   return (
-
     <div className="flex flex-col justify-center items-center h-screen bg-white px-4">
       <div className="w-full max-w-xl space-y-4">
         {" "}
@@ -124,7 +125,6 @@ const Login = () => {
           Sign in with Google
         </SpinningButton>
       </div>
-
     </div>
   );
 };
