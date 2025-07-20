@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import SpinningButton from "@/components/SpinningButton";
 // import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from "react-icons/fc"; 
+import { useQueryClient } from "@tanstack/react-query";
 
 import { googleAuth } from "@/hooks/mutations/useGoogleAuthMutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,10 +22,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-  
-  const { mutate: googleLogin, error: onErr } = googleAuth();
-  const queryClient = useQueryClient();
-  
+    const queryClient = useQueryClient();
+
 
   console.log(window.location.origin);
 
@@ -52,6 +51,7 @@ const Login = () => {
       toast.success("Login Success:", res.data);
 
       localStorage.setItem("token", res.data.token);
+      queryClient.invalidateQueries(['auth-user'])
       navigate("/products");
     } catch (err) {
       toast.error("Login Error:", err.response?.data || err.message);
@@ -65,17 +65,15 @@ const Login = () => {
       setLoading(true);
       googleLogin(response.access_token, {
         onSuccess: (res) => {
-          toast.success(res.message || "Google login successful",res);
-          if (res?.user) {
-            console.log('user fount' ,res.user)
-          queryClient.setQueryData(["auth-user"], res.user);
-        }
+          toast.success(res.message || "Google login successful"),
+          queryClient.invalidateQueries(['auth-user'])
             setLoading(false);
 
         },
         onError: (err) => {
           toast.error(err?.response?.data?.message || "Google login failed on mutate"),
             setLoading(false);
+            queryClient.invalidateQueries(['auth-user'])
           setHasError(true);
         },
       });
@@ -86,14 +84,6 @@ const Login = () => {
       setHasError(true);
     },
   });
-  const handleGoogleLogin = (data) => {
-    googleLogin(data.credential, {
-      onSuccess: (res) =>
-        toast.success(res.message || "Google login successful"),
-      onError: (err) =>
-        toast.error(err?.response?.data?.message || "Google login failed"),
-    });
-  };
 
   const extraLinks = [
     {

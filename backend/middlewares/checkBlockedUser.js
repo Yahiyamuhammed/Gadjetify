@@ -18,7 +18,7 @@ const checkBlockedUser = async (req, res, next) => {
       return res.status(403).json({ message: "User is blocked" });
     }
     console.log('user verified');
-    req.user = decoded.userId; // optional, for UI logic
+    req.user = user; // optional, for UI logic
     next();
   } catch (err) {
     console.log('no token',err);

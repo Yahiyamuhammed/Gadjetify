@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,11 +18,13 @@ const Navbar = () => {
   const toggleRef = useRef();
 
   const {mutate:logouMutate,isError,isSuccess}=useLogoutMutation()
-  const queryClient = useQueryClient();
 
-  const user='yahiya'
 
-  console.log('this is the user in navbar',user)
+    const { data: user } = useAuthUser();
+
+
+
+  console.log('this is the user in navbar',!!user)
 
   const navLinks = [
     { name: "HOME", path: "/" },
@@ -38,8 +40,6 @@ const Navbar = () => {
       logouMutate(null,{
         onSuccess:(res)=>{
           toast.success('signout successfull',res.message)
-          // queryClient.removeQueries(["auth-user"]);
-
         },
         onError:(err)=>{
           toast.error('signout failed',err)

@@ -8,6 +8,7 @@ import { googleAuth } from "@/hooks/mutations/useGoogleAuthMutation";
 import { FcGoogle } from "react-icons/fc";
 import toast from "react-hot-toast";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const { mutate: googleLogin, error: onErr } = googleAuth();
+  const queryClient = useQueryClient();
 
   const formFields = [
     {
@@ -81,10 +83,12 @@ const SignUp = () => {
       googleLogin(response.access_token, {
         onSuccess: (res) => {
           toast.success(res.message || "Google login successful"),
+          queryClient.invalidateQueries(['auth-user'])
             setLoading(false);
         },
         onError: (err) => {
           toast.error(err?.response?.data?.message || "Google login failed"),
+          queryClient.invalidateQueries(['auth-user'])
             setLoading(false);
           setHasError(true);
         },
