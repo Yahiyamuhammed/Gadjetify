@@ -3,8 +3,8 @@ import { api } from "@/utils/api";
 
 export const googleAuth=()=>{
     return useMutation({
-        mutationFn:async (credential)=>{
-            const res=await api.post('/auth/google-login',{credential})
+        mutationFn:async (access_token)=>{
+            const res=await api.post('/auth/google-login',{access_token})
             return res.data
         }
     })
