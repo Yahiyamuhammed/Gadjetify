@@ -4,7 +4,6 @@ import { api } from "@/utils/api"; // your axios instance
 
 export const fetchAuthUser = async () => {
   const res = await api.get("/auth/me");
-  console.log('get into the me')
   return res.data;
 };
 export const useAuthUser = () => {
