@@ -34,29 +34,9 @@ const Products = () => {
   const products = data?.products || [];
   const totalPages = data?.totalPages || 1;
 
-  const { data: brandData = [] } = useFetchBrands({ search: "",limit:'' });
+  const { data: brandData = [] } = useFetchBrands({ search: "", limit: "" });
 
   const brands = (brandData?.brands || []).filter((b) => !b.isDeleted);
-
-  //   const filteredProducts = sortProducts(
-  //     allProducts.filter((product) => {
-  //       const matchesCategory =
-  //         categoryFilter === "" || product.categoryId === categoryFilter;
-  //       const matchesSearch = product.name
-  //         .toLowerCase()
-  //         .includes(searchTerm.toLowerCase());
-  //       return matchesCategory && matchesSearch;
-  //     })
-  //   );
-
-  //   useEffect(() => {
-  //     setTotalPages(Math.ceil(filteredProducts.length / pageSize));
-  //   }, [filteredProducts]);
-
-  //   const paginatedProducts = filteredProducts.slice(
-  //     (currentPage - 1) * pageSize,
-  //     currentPage * pageSize
-  //   );
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {

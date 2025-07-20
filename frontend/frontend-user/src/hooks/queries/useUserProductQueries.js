@@ -1,10 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/utils/api";
 
-/**
- * Fetch products with filters, sort, and pagination.
- * @param {Object} queryParams - search, brand, sort, price range, page, limit.
- */
 export const useUserFetchProducts = (queryParams = {}) => {
 
     const queryClient = useQueryClient();
