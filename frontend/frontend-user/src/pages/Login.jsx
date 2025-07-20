@@ -3,6 +3,7 @@ import Form from "@/components/common/Form";
 import { loginSchema } from "@/utils/validation/loginSchema";
 import { api } from "@/utils/api";
 import { useNavigate } from "react-router-dom";
+
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { googleAuth } from "@/hooks/mutations/useGoogleAuthMutation";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import SpinningButton from "@/components/SpinningButton";
 // import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from "react-icons/fc"; 
+
 
 const Login = () => {
   const [error, setError] = useState("");
@@ -42,12 +44,12 @@ const Login = () => {
     try {
       setError("");
       const res = await api.post("/auth/login", formData);
-      console.log("Login Success:", res.data);
+      toast.success("Login Success:", res.data);
 
       localStorage.setItem("token", res.data.token);
       navigate("/products");
     } catch (err) {
-      console.error("Login Error:", err.response?.data || err.message);
+      toast.error("Login Error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Login failed");
     }
   };
@@ -92,6 +94,7 @@ const Login = () => {
   ];
 
   return (
+
     <div className="flex flex-col justify-center items-center h-screen bg-white px-4">
       <div className="w-full max-w-xl space-y-4">
         {" "}
@@ -121,6 +124,7 @@ const Login = () => {
           Sign in with Google
         </SpinningButton>
       </div>
+
     </div>
   );
 };

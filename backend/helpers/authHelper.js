@@ -11,7 +11,7 @@ exports.signupUser = async ({ email, name, password, mobileNo }) => {
 
   if (existing) {
     if (existing.authType === 'google') {
-      return { status: 400, data: { message: 'Email already registered with Google. Use Google login.' } };
+      return { status: 409, data: { message: 'Email already registered with Google. Use Google login.' } };
     }
     return { status: 400, data: { message: 'User already exists' } };
   }
@@ -79,7 +79,7 @@ exports.loginUser = async ({ email, password }) => {
   if (!user) return { status: 400, data: { message: 'User not found' } };
 
   if (user.authType === 'google') {
-    return { status: 400, data: { message: 'This email is registered with Google. Use Google login.' } };
+    return { status: 409, data: { message: 'This email is registered with Google. Use Google login.' } };
   }
 
   if (!user.isVerified) return { status: 401, data: { message: 'User not verified' } };
