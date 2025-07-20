@@ -83,13 +83,14 @@ const SignUp = () => {
       googleLogin(response.access_token, {
         onSuccess: (res) => {
           toast.success(res.message || "Google login successful"),
-          queryClient.invalidateQueries(['auth-user'])
-            setLoading(false);
+            queryClient.invalidateQueries(["auth-user"]);
+          setLoading(false);
+          navigate("/");
         },
         onError: (err) => {
           toast.error(err?.response?.data?.message || "Google login failed"),
-          queryClient.invalidateQueries(['auth-user'])
-            setLoading(false);
+            queryClient.invalidateQueries(["auth-user"]);
+          setLoading(false);
           setHasError(true);
         },
       });
