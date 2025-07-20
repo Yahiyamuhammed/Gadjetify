@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import SpinningButton from "@/components/SpinningButton";
 // import { useGoogleLogin } from '@react-oauth/google';
-import { FcGoogle } from "react-icons/fc"; 
+import { FcGoogle } from "react-icons/fc";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { googleAuth } from "@/hooks/mutations/useGoogleAuthMutation";
@@ -22,7 +22,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
 
   console.log(window.location.origin);
