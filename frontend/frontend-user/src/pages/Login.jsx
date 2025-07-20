@@ -68,7 +68,7 @@ const Login = () => {
           toast.success(res.message || "Google login successful"),
             queryClient.invalidateQueries(["auth-user"]);
           setLoading(false);
-          navigate('/')
+          navigate("/");
         },
         onError: (err) => {
           toast.error(
