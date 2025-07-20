@@ -167,6 +167,9 @@ exports.googleAuthHandler = async ({ access_token }) => {
 
   let user = await User.findOne({ googleId: sub });
   if (user) {
+    if (user.isBlocked)
+    return { status: 401, data: { message: "Your account is blocked" } };
+
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,

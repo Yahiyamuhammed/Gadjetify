@@ -5,12 +5,13 @@ import Signup from "../pages/user/SignUp.jsx";
 import Products from "../pages/user/products.jsx";
 import ProductDetails from "../pages/user/ProductDetails.jsx";
 import VerifyOtp from "../pages/user/VerifyOtp.jsx";
+import HomePage from "@/pages/user/HomePage.jsx";
 // import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
   return (
     <>
-      <div className="mb-20">
+      <div className="mb-18">
         <Navbar />
       </div>
       {children}
@@ -39,7 +40,7 @@ const UserRoutes=()=>(
         } />
     <Route path="/" element={
         <MainLayout>
-            <Login />
+            <HomePage />
         </MainLayout>
         } />
     <Route path="/products" element={
