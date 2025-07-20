@@ -4,7 +4,6 @@ import { Loader2 } from "lucide-react"; // Spinner icon
 import { cn } from "@/lib/utils"; // for merging classes
 import toast, { Toaster } from 'react-hot-toast';
 
-// Fixed SpinningButton Component
 export default function SpinningButton({
   children,
   icon: Icon,               
@@ -72,6 +71,7 @@ export default function SpinningButton({
       setIsLoading(false);
     }, delay);
   };
+
 
   return (
     <Button

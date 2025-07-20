@@ -11,7 +11,6 @@ import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthUser } from "@/hooks/useAuthUser";
 
-
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
@@ -20,37 +19,6 @@ const Navbar = () => {
 
   const {mutate:logouMutate,isError,isSuccess}=useLogoutMutation()
 
-
-  // const user='yahiya'
-    // const user = useAuthUser();
-      // const { data: user } = useQuery(["auth-user"]);
-
-        // const user = queryClient.getQueryData(["auth-user"]);
-
-
-      // const user = queryClient.getQueryData(["auth-user"]);
-  //     const { data: user } = useQuery({
-  //   queryKey: ["auth-user"],
-  //     queryFn: () => Promise.resolve(null), // dummy function
-  // staleTime: Infinity,
-  // refetchOnWindowFocus: false
-
-
-  //   // enabled: false // we’re not refetching; just want the cached data
-  // });
-
-
-  // const [user, setUser] = useState(() => queryClient.getQueryData(["auth-user"]));
-  
-
-  // useEffect(() => {
-  //   const unsubscribe = queryClient.getQueryCache().subscribe(() => {
-  //     const cachedUser = queryClient.getQueryData(["auth-user"]);
-  //     setUser(cachedUser);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [queryClient]);
 
     const { data: user } = useAuthUser();
 
@@ -72,8 +40,6 @@ const Navbar = () => {
       logouMutate(null,{
         onSuccess:(res)=>{
           toast.success('signout successfull',res.message)
-          // queryClient.removeQueries(["auth-user"]);m
-
         },
         onError:(err)=>{
           toast.error('signout failed',err)
