@@ -48,9 +48,9 @@ const mockedProducts = [
 const ProductDetails = () => {
   
 
-    const { id } = useParams(); 
+    const { id ,brand } = useParams(); 
 
-    // console.log('this is the id',id)
+    console.log('this is the id',id,brand)
 
       const { data: product, isLoading, isError, error } = useSingleProduct(id);
       if (isLoading) return <p>Loading product...</p>;

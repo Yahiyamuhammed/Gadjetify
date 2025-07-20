@@ -48,7 +48,7 @@ const UserRoutes=()=>(
             <Products />
         </MainLayout>
         } />
-    <Route path="/products/:id" element={
+    <Route path="/products/:id/:brand" element={
         <MainLayout>
             <ProductDetails />
         </MainLayout>

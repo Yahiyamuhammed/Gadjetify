@@ -9,16 +9,13 @@ import { toast } from "react-hot-toast";
 
 const ProductCard = ({ product, refetch }) => {
   const navigate = useNavigate();
-//   const [toggleWishlist] = useToggleWishListMutation();
+  //   const [toggleWishlist] = useToggleWishListMutation();
 
-
-
-//   const { userInfo } = useSelector((state) => state.userAuth);
-
+  //   const { userInfo } = useSelector((state) => state.userAuth);
 
   const handleClick = (e) => {
     if (!e.target.closest(".wishlist-btn") && !e.target.closest(".cart-btn")) {
-      navigate(`/products/${product._id,brand.name}`);
+      navigate(`/products/${product._id}/${product.brand.name}`);
       window.scrollTo(0, 0);
     }
   };
@@ -26,42 +23,35 @@ const ProductCard = ({ product, refetch }) => {
   const handleFavClick = async (e) => {
     e.stopPropagation();
 
-    
-
-
     try {
-
-    //   if (!userInfo) {
-    //     toast.success("Login to your account");
-    //     return navigate("/login");
-        
-    //   }
-
-
-    //   await toggleWishlist({ productId: product._id });
-    //   refetch();
+      //   if (!userInfo) {
+      //     toast.success("Login to your account");
+      //     return navigate("/login");
+      //   }
+      //   await toggleWishlist({ productId: product._id });
+      //   refetch();
     } catch (error) {
       console.error("Error toggling wishlist:", error);
     }
   };
 
-//   const finalPrice = () => {
-//     let effectiveOfferPercent =
-//       (product?.offerPercent || 0) + (product?.categoryDetails?.offer || 0);
-//     effectiveOfferPercent = Math.min(effectiveOfferPercent, 100);
-//     return effectiveOfferPercent > 0
-//       ? (
-//           product.price -
-//           (product.price * effectiveOfferPercent) / 100
-//         ).toLocaleString("en-IN", {
-//           minimumFractionDigits: 2,
-//           maximumFractionDigits: 2,
-//         })
-//       : product.price.toLocaleString("en-IN", {
-//           minimumFractionDigits: 2,
-//           maximumFractionDigits: 2,
-//         });
-//   };
+  //   const finalPrice = () => {
+  //     let effectiveOfferPercent =
+  //       (product?.offerPercent || 0) + (product?.categoryDetails?.offer || 0);
+  //     effectiveOfferPercent = Math.min(effectiveOfferPercent, 100);
+  //     return effectiveOfferPercent > 0
+  //       ? (
+  //           product.price -
+  //           (product.price * effectiveOfferPercent) / 100
+  //         ).toLocaleString("en-IN", {
+  //           minimumFractionDigits: 2,
+  //           maximumFractionDigits: 2,
+  //         })
+  //       : product.price.toLocaleString("en-IN", {
+  //           minimumFractionDigits: 2,
+  //           maximumFractionDigits: 2,
+  //         });
+  //   };
 
   // console.log(product,'thisis the products')
 
@@ -71,13 +61,13 @@ const ProductCard = ({ product, refetch }) => {
         {/* Image Container */}
         <div className="relative h-72 overflow-hidden rounded-t-xl">
           <img
-  src={
-    product?.images?.[0]
-      ? `http://localhost:5000/products/${product.images[0]}`
-      : "/api/placeholder/320/288"
-  }
-  alt={product?.name || "Product"}
-//   className="w-full h-full object-cover"
+            src={
+              product?.images?.[0]
+                ? `http://localhost:5000/products/${product.images[0]}`
+                : "/api/placeholder/320/288"
+            }
+            alt={product?.name || "Product"}
+            //   className="w-full h-full object-cover"
 
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
           />
@@ -96,7 +86,8 @@ const ProductCard = ({ product, refetch }) => {
           </button>
 
           {/* Offer Badge */}
-          {(product?.offerPercentage || product?.categoryDetails?.offer) > 0 && (
+          {(product?.offerPercentage || product?.categoryDetails?.offer) >
+            0 && (
             <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
               {Math.min(
                 (product?.offerPercentage || 0) +
@@ -179,8 +170,7 @@ const ProductCard = ({ product, refetch }) => {
 
           {/* Add to Cart Button */}
           <div className="cart-btn">
-           <AddCartButton onClick={() => console.log("Clicked Add to Cart")} />
-
+            <AddCartButton onClick={() => console.log("Clicked Add to Cart")} />
           </div>
         </div>
       </div>
