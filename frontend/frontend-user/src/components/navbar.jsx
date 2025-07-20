@@ -19,6 +19,14 @@ const Navbar = () => {
     { name: "ABOUT US", path: "" },
   ];
 
+
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+     const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -61,6 +69,15 @@ const Navbar = () => {
 
   {/* Right Auth Buttons (Desktop Only) */}
   <div className="hidden lg:flex items-center gap-4">
+     {isLoggedIn ? (
+        <button
+          onClick={handleLogout}
+          className="px-4 py-1 rounded-full text-red-600 hover:bg-red-50 transition"
+        >
+          SIGN OUT
+        </button>
+      ) : (
+        <>
     <Link to="/login">
       <button
         className={`px-4 py-1 rounded-full transition-colors duration-300 ${
@@ -83,6 +100,8 @@ const Navbar = () => {
         SIGN UP
       </button>
     </Link>
+    </>
+      )}
   </div>
 
   {/* Mobile Menu Toggle */}

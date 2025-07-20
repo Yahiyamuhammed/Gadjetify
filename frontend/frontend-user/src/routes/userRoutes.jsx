@@ -4,11 +4,13 @@ import Navbar from "../components/navbar.jsx";
 import Signup from "../pages/user/SignUp.jsx";
 import Products from "../pages/user/products.jsx";
 import ProductDetails from "../pages/user/ProductDetails.jsx";
+import VerifyOtp from "../pages/user/VerifyOtp.jsx";
+// import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
   return (
     <>
-      <div className="">
+      <div className="mb-20">
         <Navbar />
       </div>
       {children}
@@ -30,9 +32,14 @@ const UserRoutes=()=>(
             <Signup />
         </MainLayout>
         } />
+    <Route path="/verify-otp/:email" element={
+        <MainLayout>
+            <VerifyOtp />
+        </MainLayout>
+        } />
     <Route path="/" element={
         <MainLayout>
-            <Signup />
+            <Login />
         </MainLayout>
         } />
     <Route path="/products" element={

@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import { useSingleProduct } from "../../hooks/queries/useSignleProductQueries.js";
 
 
-// ⚠️ TODO: Replace mock data with API integration later
+
 const mockedProducts = [
   {
     _id: "1",
@@ -48,15 +48,15 @@ const mockedProducts = [
 const ProductDetails = () => {
   
 
-    const { id } = useParams(); // ⬅️ Gets the ":id" value from the URL
+    const { id } = useParams(); 
 
-    console.log('this is the id',id)
+    // console.log('this is the id',id)
 
       const { data: product, isLoading, isError, error } = useSingleProduct(id);
       if (isLoading) return <p>Loading product...</p>;
   if (isError) return <p>Error: {error?.response?.data?.message || error.message}</p>;
 
-  console.log('this is the product',product)
+  // console.log('this is the product',product)
   
 
 

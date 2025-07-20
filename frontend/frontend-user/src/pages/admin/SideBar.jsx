@@ -107,11 +107,11 @@ const theme ='light'
       label: "Order Management",
       path: "/admin/manage-orders",
     },
-    {
-      icon: Layers,
-      label: "Category Management",
-      path: "/admin/manage-category",
-    },
+    // {
+    //   icon: Layers,
+    //   label: "Category Management",
+    //   path: "/admin/manage-category",
+    // },
     {
       icon: Copyright,
       label: "Brand Management",

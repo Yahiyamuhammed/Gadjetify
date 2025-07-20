@@ -35,7 +35,7 @@ const AdminLogin = () => {
       onSuccess: (data) => {
         console.log("Admin Login Success:", data);
         localStorage.setItem("adminToken", data.token);
-        navigate("/admin/dashboard");
+        navigate("/admin/manage-products");
       }
     })
     //   console.log(" Admin Login Success:", res.data);
