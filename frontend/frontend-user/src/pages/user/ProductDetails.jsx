@@ -7,50 +7,15 @@ import { Link } from "react-router";
 import { Box, ChevronRight, Home } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useSingleProduct } from "../../hooks/queries/useSignleProductQueries.js";
-
-
-
-const mockedProducts = [
-  {
-    _id: "1",
-    name: "Wireless Headphones",
-    price: 1999,
-    brand: "AudioPro",
-    images: [{ secure_url: "/images/product1.jpg" }],
-    rating: 4.3,
-  },
-  {
-    _id: "2",
-    name: "Gaming Mouse",
-    price: 899,
-    brand: "HyperClick",
-    images: [{ secure_url: "/images/product2.jpg" }],
-    rating: 4.7,
-  },
-  {
-    _id: "3",
-    name: "Smartphone Stand",
-    price: 499,
-    brand: "HoldIt",
-    images: [{ secure_url: "/images/product3.jpg" }],
-    rating: 4.2,
-  },
-  {
-    _id: "4",
-    name: "Portable Speaker",
-    price: 1499,
-    brand: "BoomSound",
-    images: [{ secure_url: "/images/product4.jpg" }],
-    rating: 4.5,
-  },
-];
-
+import { useUserFetchProducts } from "@/hooks/queries/useUserProductQueries.js";
 const ProductDetails = () => {
   
+  const { id ,brand } = useParams(); 
 
-    const { id ,brand } = useParams(); 
+  const {data:relatedProducts,isLoading:relatedIsLoading,isError:relatedIsError}=useUserFetchProducts({brand:brand,})
 
-    console.log('this is the id',id,brand)
+
+    // console.log('this is the id',id,brand,relatedProducts)
 
       const { data: product, isLoading, isError, error } = useSingleProduct(id);
       if (isLoading) return <p>Loading product...</p>;
@@ -61,7 +26,6 @@ const ProductDetails = () => {
 
 
 
-  const products = mockedProducts;
 
   return (
     <div>
@@ -74,7 +38,7 @@ const ProductDetails = () => {
           Related Products
         </p>
         <div className="grid xl:grid-cols-4 gap-7 lg:grid-cols-3 md:grid-cols-2 mx-auto">
-          {mockedProducts.map((product) => (
+          {relatedProducts?.products.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>

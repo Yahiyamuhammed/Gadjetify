@@ -13,6 +13,7 @@ exports.fetchFilteredProducts = async (query) => {
     page = 1,
     limit = 10,
   } = query;
+  console.log(brand)
 
   const filter = {
     isDeleted: false,
