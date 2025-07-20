@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require("cookie-parser");
+
 const path = require("path");
 
 require('dotenv').config(); // To read .env file
@@ -18,8 +20,14 @@ const userProductRoutes=require('./routes/userProductRoutes')
 
 
 // Middleware
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", // your React app origin
+  credentials: true               // allow cookies
+}));
 app.use(express.json()); // for parsing JSONa
+app.use(cookieParser());
+
 
 app.use("/products", express.static(path.join(__dirname, "public/products")));
 

@@ -5,12 +5,24 @@ import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/react.svg"; // Replace with your logo
+import toast from "react-hot-toast";
+
+import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const menuRef = useRef();
   const toggleRef = useRef();
+
+  const {mutate:logouMutate,isError,isSuccess}=useLogoutMutation()
+  const queryClient = useQueryClient();
+
+  const user='yahiya'
+
+  console.log('this is the user in navbar',user)
 
   const navLinks = [
     { name: "HOME", path: "/" },
@@ -23,6 +35,17 @@ const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
      const handleLogout = () => {
+      logouMutate(null,{
+        onSuccess:(res)=>{
+          toast.success('signout successfull',res.message)
+          // queryClient.removeQueries(["auth-user"]);
+
+        },
+        onError:(err)=>{
+          toast.error('signout failed',err)
+        }
+      })
+
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     navigate("/login");
@@ -69,7 +92,7 @@ const Navbar = () => {
 
   {/* Right Auth Buttons (Desktop Only) */}
   <div className="hidden lg:flex items-center gap-4">
-     {isLoggedIn ? (
+     {user ? (
         <button
           onClick={handleLogout}
           className="px-4 py-1 rounded-full text-red-600 hover:bg-red-50 transition"

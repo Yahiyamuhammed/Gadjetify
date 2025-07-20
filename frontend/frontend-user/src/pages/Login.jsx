@@ -6,20 +6,25 @@ import { useNavigate } from "react-router-dom";
 
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { googleAuth } from "@/hooks/mutations/useGoogleAuthMutation";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import SpinningButton from "@/components/SpinningButton";
 // import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from "react-icons/fc"; 
 
+import { googleAuth } from "@/hooks/mutations/useGoogleAuthMutation";
+import { useQueryClient } from "@tanstack/react-query";
+
 
 const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { mutate: googleLogin, error: onErr } = googleAuth();
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  
+  const { mutate: googleLogin, error: onErr } = googleAuth();
+  const queryClient = useQueryClient();
+  
 
   console.log(window.location.origin);
 
@@ -60,11 +65,16 @@ const Login = () => {
       setLoading(true);
       googleLogin(response.access_token, {
         onSuccess: (res) => {
-          toast.success(res.message || "Google login successful"),
+          toast.success(res.message || "Google login successful",res);
+          if (res?.user) {
+            console.log('user fount' ,res.user)
+          queryClient.setQueryData(["auth-user"], res.user);
+        }
             setLoading(false);
+
         },
         onError: (err) => {
-          toast.error(err?.response?.data?.message || "Google login failed"),
+          toast.error(err?.response?.data?.message || "Google login failed on mutate"),
             setLoading(false);
           setHasError(true);
         },
