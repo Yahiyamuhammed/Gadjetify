@@ -17,6 +17,8 @@ import {
   Tag,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { useAdminLogoutMutation } from "@/hooks/mutations/useAdminLogoutMutations";
+import toast from "react-hot-toast";
 // import { useSelector, useDispatch } from "react-redux";
 // import { toggleTheme } from "../../redux/slices/themeSlice";
 // import { useAdminLogoutMutation } from "../../redux/slices/adminApiSlices";
@@ -58,28 +60,39 @@ const SidebarLink = ({ icon: Icon, label, path }) => {
 };
 
 const Sidebar = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const theme = useSelector((state) => state.theme.theme);
+  //   const dispatch = useDispatch();
+  //   const navigate = useNavigate();
+  //   const theme = useSelector((state) => state.theme.theme);
 
-const theme ='light'
+  const { mutate: logout, isSuccess, isError } = useAdminLogoutMutation();
+  const theme = "light";
 
-//   const [logoutApiCall] = useAdminLogoutMutation();
+  //   const [logoutApiCall] = useAdminLogoutMutation();
 
   const handleLogout = async () => {
-    try {
-      await logoutApiCall().unwrap();
-    //   dispatch(adminLogout());
-    //   successToast("Logout successful");
-      navigate("/admin/login");
-    } catch (err) {
-      console.error(err);
-    }
+    logout(null, {
+      onSuccess: () => {
+        toast.success("admin logged out");
+      },
+      onError: (err) => {
+        toast.error("logout failed", err?.message);
+      },
+    });
+
+    // try {
+    //   // await logoutApiCall().unwrap();
+    //   //   dispatch(adminLogout());
+    //   //   successToast("Logout successful");
+
+    //   navigate("/admin/login");
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 
-//   const toggleThemeHandler = () => {
-//     dispatch(toggleTheme());
-//   };
+  //   const toggleThemeHandler = () => {
+  //     dispatch(toggleTheme());
+  //   };
 
   const sidebarLinks = [
     {
@@ -122,7 +135,6 @@ const theme ='light'
       label: "Coupon Management",
       path: "/admin/manage-coupon",
     },
-    
 
     {
       icon: User,
@@ -199,7 +211,7 @@ const theme ='light'
             p-2 
             rounded-lg
           `}
-        //   onClick={toggleThemeHandler}
+          //   onClick={toggleThemeHandler}
         >
           <div className="flex items-center">
             <Settings
