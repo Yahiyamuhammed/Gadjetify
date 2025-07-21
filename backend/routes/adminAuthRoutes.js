@@ -8,6 +8,6 @@ router.post('/login', adminLogin);
 router.get('/dashboard', adminAuth, (req, res) => {
   res.json({ message: "Welcome Admin" });
 });
-router.post('logout',adminLogout)
+router.post('/logout',adminLogout)
 
 module.exports = router;
