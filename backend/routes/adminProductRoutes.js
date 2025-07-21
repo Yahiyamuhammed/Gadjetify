@@ -9,7 +9,7 @@ const { upload, resizeAndSaveImages } = require('../middlewares/uploadProductIma
 router.get('/product',adminAuth,  getProduct);
 // router.post('/product',  addProduct);
 router.post('/product',upload.array('images', 5),resizeAndSaveImages,addProduct);
-router.put('/product/:id/update',updateProduct)
+router.put('/product/:id/update',upload.array("images", 5),resizeAndSaveImages,updateProduct)
 router.patch('/product/:id/delete',unListProduct)
 router.patch("/product/:id/restore", restoreProductController);
 

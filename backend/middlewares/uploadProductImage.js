@@ -14,10 +14,12 @@ const upload = multer({
   },
 });
 const resizeAndSaveImages = async (req, res, next) => {
-  console.log("this is inside upload");
+  console.log("this is inside upload", req.files.length );
+ const isEdit = req.method === "PUT";
 
   try {
-    if (!req.files || req.files.length < 3) {
+    
+   if (!isEdit && (!req.files || req.files.length < 3)) {
       return res.status(400).json({ message: "Minimum 3 images required" });
     }
 
@@ -31,7 +33,7 @@ const resizeAndSaveImages = async (req, res, next) => {
       const filename = `product-${Date.now()}-${i}.jpeg`;
       const filepath = path.join(productDir, filename);
 
-      await fs.promises.writeFile(filepath, req.files[i].buffer); // ✅ save without sharp
+      await fs.promises.writeFile(filepath, req.files[i].buffer);
 
       imageNames.push(filename);
     }

@@ -134,8 +134,8 @@ const ProductDetailsCard = ({ product }) => {
                 {/* Features */}
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { icon: PackageOpen, label: "RAM", value: `${product.ram} GB` },
-                    { icon: Box, label: "Storage", value: `${product.storage} GB` },
+                    { icon: PackageOpen, label: "RAM", value: `${product.ram || 6} GB` },
+                    { icon: Box, label: "Storage", value: `${product.storage || 128} GB` },
                     { icon: Check, label: "Warranty", value: product.warranty },
                     { icon: CreditCard, label: "COD", value: product.codAvailable ? "Available" : "Not Available" },
                   ].map((feature, i) => (

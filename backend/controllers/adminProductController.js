@@ -1,5 +1,7 @@
 const Product = require('../models/productModel');
 const Brand = require('../models/brandModel');
+const fs = require("fs");
+const path = require("path");
 
 const {unListProduct,editProduct,fetchFilteredProducts,restoreProduct}=require('../helpers/adminProductHelpers')
 const mongoose = require('mongoose');
@@ -20,9 +22,7 @@ exports.addProduct = async (req, res) => {
   
 //   console.log(req.body,'this is images');
     try {
-    // console.log(req.body.images,'this is images');
     const { brand } = req.body;
-    console.log(brand);
     
 
     // Validate brand
@@ -67,11 +67,63 @@ exports.restoreProductController = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    // const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    const updated = await editProduct(req.params.id, req.body);
-    if (!updated) return res.status(404).json({ message: 'Product not found' });
 
-    res.status(200).json({ message: 'Product updated', updated });
+     const productId = req.params.id;
+     const { imagesToDelete } = req.body;
+
+
+
+     
+     const existingProduct = await Product.findById(productId);
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+
+       let deletedImages = [];
+    if (imagesToDelete) {
+      deletedImages = JSON.parse(imagesToDelete);
+    }
+
+   deletedImages.forEach((img) => {
+  if (typeof img === "string" && img.trim() !== "") {
+    const imgPath = path.join(__dirname, "../public/products", img);
+    if (fs.existsSync(imgPath)) {
+      fs.unlinkSync(imgPath);
+    }
+  }
+});
+
+
+
+     const remainingImages = existingProduct.images.filter(
+      (img) => !deletedImages.includes(img)
+    );
+
+    // New uploaded images (via sharp middleware)
+    // const newImageFiles = req.files?.map((file) => file.filename) || [];
+
+
+      // Final image array to update
+    // const finalImages = [...remainingImages, ...newImageFiles];
+
+    const newImageFiles = req.body.images || []; // from resizeAndSaveImages
+const finalImages = [...remainingImages, ...newImageFiles];
+
+
+    const updatedData = {
+      ...req.body,
+      images: finalImages,
+    };
+
+    // const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    // const updated = await editProduct(req.params.id, req.body);
+
+        const updatedProduct = await editProduct(productId, updatedData);
+
+    if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
+
+    res.status(200).json({ message: 'Product updated', updatedProduct });
   } catch (err) {
     console.log(err);
     
