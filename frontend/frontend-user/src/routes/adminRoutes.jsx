@@ -4,6 +4,7 @@ import Sidebar from "../pages/admin/sideBar";
 import ProductManagement from "../pages/admin/ProductManagement";
 import BrandManagement from "../pages/admin/BrandManagement";
 import UserManagement from "../pages/admin/UserManagement";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
 // import { Sidebar } from "lucide-react";
 
 const AdminLayout = ({ children }) => {
@@ -20,7 +21,7 @@ const AdminRoutes=()=>(
     <Routes>
         <Route path="/" element={
             <AdminLayout>
-                <AdminLogin />
+                <AdminDashboard />
 
             </AdminLayout>
             }/>

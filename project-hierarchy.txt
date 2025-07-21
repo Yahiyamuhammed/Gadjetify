@@ -13,10 +13,13 @@ Shoping_Cart_Using_React
 │  │  ├─ adminBrandHelpers.js
 │  │  ├─ adminProductHelpers.js
 │  │  ├─ adminUserHelpers.js
+│  │  ├─ authHelper.js
 │  │  └─ userProductHelpers.js
 │  ├─ index.js
 │  ├─ middlewares
 │  │  ├─ adminAuth.js
+│  │  ├─ authMiddleware.js
+│  │  ├─ checkBlockedUser.js
 │  │  └─ uploadProductImage.js
 │  ├─ models
 │  │  ├─ adminModal.js
@@ -25,6 +28,20 @@ Shoping_Cart_Using_React
 │  │  └─ userModal.js
 │  ├─ package-lock.json
 │  ├─ package.json
+│  ├─ public
+│  │  └─ products
+│  │     ├─ product-1751949971602-0.jpeg
+│  │     ├─ product-1751949971910-1.jpeg
+│  │     ├─ product-1751949971961-2.jpeg
+│  │     ├─ product-1751965948739-0.jpeg
+│  │     ├─ product-1751965948765-1.jpeg
+│  │     ├─ product-1751965948778-2.jpeg
+│  │     ├─ product-1751966293809-0.jpeg
+│  │     ├─ product-1751966293810-1.jpeg
+│  │     ├─ product-1751966293812-2.jpeg
+│  │     ├─ product-1751971401401-0.jpeg
+│  │     ├─ product-1751971401407-1.jpeg
+│  │     └─ product-1751971401411-2.jpeg
 │  ├─ routes
 │  │  ├─ adminAuthRoutes.js
 │  │  ├─ adminBrandRoutes.js
@@ -36,11 +53,12 @@ Shoping_Cart_Using_React
 │     ├─ generateOTP.js
 │     └─ sendMail.js
 ├─ frontend
-│  ├─ frontend
 │  └─ frontend-user
 │     ├─ .gitignore
+│     ├─ components.json
 │     ├─ eslint.config.js
 │     ├─ index.html
+│     ├─ jsconfig.json
 │     ├─ package-lock.json
 │     ├─ package.json
 │     ├─ postcss.config.js
@@ -51,21 +69,70 @@ Shoping_Cart_Using_React
 │     │  ├─ App.css
 │     │  ├─ App.jsx
 │     │  ├─ assets
+│     │  │  ├─ Banner1_Home.svg
+│     │  │  ├─ Banner2_Home.svg
+│     │  │  ├─ noImage.png
 │     │  │  └─ react.svg
 │     │  ├─ components
+│     │  │  ├─ admin
+│     │  │  │  ├─ brand
+│     │  │  │  │  ├─ BrandAddForm.jsx
+│     │  │  │  │  └─ BrandList.jsx
+│     │  │  │  ├─ ListItem.jsx
+│     │  │  │  ├─ Modal.jsx
+│     │  │  │  └─ product
+│     │  │  │     ├─ cropUtils.js
+│     │  │  │     ├─ ImageCropperModal.jsx
+│     │  │  │     ├─ ProductAddForm.jsx
+│     │  │  │     ├─ productFields.js
+│     │  │  │     └─ ProductList.jsx
 │     │  │  ├─ common
-│     │  │  │  └─ Form.jsx
-│     │  │  ├─ forms
+│     │  │  │  ├─ Form.jsx
+│     │  │  │  └─ Pagination.jsx
 │     │  │  ├─ navbar.jsx
-│     │  │  └─ toast.js
+│     │  │  ├─ SearchBar.jsx
+│     │  │  ├─ SpinningButton.jsx
+│     │  │  ├─ toast.js
+│     │  │  ├─ ui
+│     │  │  │  └─ Button.jsx
+│     │  │  └─ user
+│     │  │     ├─ AddCartButton.jsx
+│     │  │     ├─ ImageZooming.jsx
+│     │  │     ├─ ProductCard.jsx
+│     │  │     ├─ ProductDetailCard.jsx
+│     │  │     └─ Review.jsx
+│     │  ├─ hooks
+│     │  │  ├─ mutations
+│     │  │  │  ├─ useAdminMutations.js
+│     │  │  │  ├─ useBrandMutations.js
+│     │  │  │  ├─ useGoogleAuthMutation.js
+│     │  │  │  ├─ useLogoutMutation.js
+│     │  │  │  ├─ useProductMutations.js
+│     │  │  │  └─ useUserMutations.js
+│     │  │  ├─ queries
+│     │  │  │  ├─ useBrandQueries.js
+│     │  │  │  ├─ useProductQueries.js
+│     │  │  │  ├─ useSignleProductQueries.js
+│     │  │  │  ├─ useUserProductQueries.js
+│     │  │  │  └─ useUserQueries.js
+│     │  │  └─ useAuthUser.js
 │     │  ├─ index.css
+│     │  ├─ lib
+│     │  │  ├─ exportQueryClient.js
+│     │  │  └─ utils.js
 │     │  ├─ main.jsx
 │     │  ├─ pages
 │     │  │  ├─ admin
-│     │  │  │  └─ AdminLogin.jsx
+│     │  │  │  ├─ AdminLogin.jsx
+│     │  │  │  ├─ BrandManagement.jsx
+│     │  │  │  ├─ ProductManagement.jsx
+│     │  │  │  ├─ SideBar.jsx
+│     │  │  │  └─ UserManagement.jsx
 │     │  │  ├─ Login.jsx
-│     │  │  ├─ Signup.jsx
 │     │  │  └─ user
+│     │  │     ├─ HomePage.jsx
+│     │  │     ├─ ProductDetails.jsx
+│     │  │     ├─ Products.jsx
 │     │  │     ├─ SignUp.jsx
 │     │  │     └─ VerifyOtp.jsx
 │     │  ├─ routes
@@ -75,10 +142,13 @@ Shoping_Cart_Using_React
 │     │  │  └─ api.js
 │     │  └─ utils
 │     │     ├─ api.js
+│     │     ├─ cropImage.js
 │     │     └─ validation
 │     │        ├─ adminLoginSchema.js
+│     │        ├─ brandSchema.js
 │     │        ├─ loginSchema.js
 │     │        ├─ otpSchema.js
+│     │        ├─ productSchema.js
 │     │        └─ signupSchema.js
 │     ├─ tailwind.config.js
 │     └─ vite.config.js
