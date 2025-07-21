@@ -16,7 +16,7 @@ import {
   Copyright,
   Tag,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, Navigate, useLocation, useNavigate } from "react-router";
 import { useAdminLogoutMutation } from "@/hooks/mutations/useAdminLogoutMutations";
 import toast from "react-hot-toast";
 // import { useSelector, useDispatch } from "react-redux";
@@ -28,6 +28,8 @@ import toast from "react-hot-toast";
 const SidebarLink = ({ icon: Icon, label, path }) => {
   const location = useLocation();
   const isActive = location.pathname === path;
+
+
 
   return (
     <div
@@ -67,6 +69,8 @@ const Sidebar = () => {
   const { mutate: logout, isSuccess, isError } = useAdminLogoutMutation();
   const theme = "light";
 
+      const navigate = useNavigate();
+
   //   const [logoutApiCall] = useAdminLogoutMutation();
 
   const handleLogout = async () => {
@@ -77,7 +81,9 @@ const Sidebar = () => {
       onError: (err) => {
         toast.error("logout failed", err?.message);
       },
+      
     });
+    navigate('/admin/login')
 
     // try {
     //   // await logoutApiCall().unwrap();
