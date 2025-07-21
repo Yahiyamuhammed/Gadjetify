@@ -19,6 +19,12 @@ const AdminLayout = ({ children }) => {
 
 const AdminRoutes=()=>(
     <Routes>
+        <Route path="/login" element={
+            <AdminLayout>
+                <AdminLogin />
+            </AdminLayout>
+        }
+        />
         <Route path="/" element={
             <AdminLayout>
                 <AdminDashboard />

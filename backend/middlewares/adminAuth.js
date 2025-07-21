@@ -11,6 +11,8 @@ adminAuth = (req, res, next) => {
     if (!decoded.isAdmin) return res.status(403).json({ message: "Forbidden" });
 
     req.admin = decoded;
+
+    console.log('admin is logged in')
     next();
   } catch (err) {
     res.status(400).json({ message: "Invalid token",error:err.message });
