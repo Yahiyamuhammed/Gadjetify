@@ -1,0 +1,28 @@
+.image-zoom-wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.main-image-container {
+  position: relative;
+  cursor: crosshair;
+}
+
+.main-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.zoom-container {
+  border: 1px solid #ddd;
+  overflow: hidden;
+  position: relative;
+}
+
+.zoomed-image {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+}
