@@ -58,7 +58,7 @@ exports.getAllBrands = async (query={}) => {
   const [brands, totalCount] = await Promise.all([
     Brand.find(filter)
       .collation({ locale: "en", strength: 2 }) // Case-insensitive sorting
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(parseInt(limit)),
     Brand.countDocuments(filter),
