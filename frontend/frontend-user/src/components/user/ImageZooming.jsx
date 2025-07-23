@@ -19,7 +19,7 @@ const ImageZoom = ({ mainImage, product, onFavClick }) => {
   return (
     <div
       ref={containerRef}
-      className="relative h-[500px] dark:bg-gray-900 rounded-lg overflow-hidden cursor-z"
+      className="relative h-[500px]  rounded-lg overflow-hidden cursor-z"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsZoomed(true)}
       onMouseLeave={() => setIsZoomed(false)}
@@ -34,7 +34,7 @@ const ImageZoom = ({ mainImage, product, onFavClick }) => {
         <img
           src={mainImage}
           alt="Main Product"
-          className="max-h-full max-w-full object-contain transition-transform duration-200"
+          className="w-full h-full object-cover transition-transform  duration-200"
           style={{
             transform: isZoomed ? "scale(2)" : "scale(1)",
             transformOrigin: `${position.x * 100}% ${position.y * 100}%`,
@@ -42,16 +42,21 @@ const ImageZoom = ({ mainImage, product, onFavClick }) => {
         />
       </div>
 
-      <button
-        onClick={onFavClick}
-        className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-red-500 transition"
-        aria-label="Add to Wishlist"
-      >
-        <Heart
-          className={product.isInWishList ? "text-red-600 fill-current" : ""}
-          size={24}
-        />
-      </button>
+     <button
+  onClick={onFavClick}
+  className="absolute top-4 right-4 p-1.5 rounded-full bg-white/70 backdrop-blur-md shadow hover:bg-white/90 transition"
+  aria-label="Add to Wishlist"
+>
+  <Heart
+    className={
+      product.isInWishList
+        ? "text-red-600 fill-current"
+        : "text-gray-700 dark:text-gray-300 "
+    }
+    size={20}
+  />
+</button>
+
     </div>
   );
 };

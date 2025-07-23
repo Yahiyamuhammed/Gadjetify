@@ -66,8 +66,8 @@ const ProductDetailsCard = ({ product }) => {
               {/* Images */}
                <div className="p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700">
                 <div className="dark:bg-gray-900 rounded-xl p-6">
-                  {/* <ImageZoom mainImage={mainImage} product={product} onFavClick={() => {}} /> */}
-                  <ProductImageZoom src={mainImage} />
+                  <ImageZoom mainImage={mainImage} product={product} onFavClick={() => {}} />
+                  {/* <ProductImageZoom src={mainImage} /> */}
                 </div>
                 <div className="grid grid-cols-5 gap-3 mt-4">
                   {product.images.map((filename, index) => (
