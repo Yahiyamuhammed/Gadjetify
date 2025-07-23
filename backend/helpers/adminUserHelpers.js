@@ -15,7 +15,7 @@ exports.fetchAllUsers=async (search,page,limit)=>{
     const totalPages = Math.ceil(totalUsers / limit);
 
 
-    const users=await User.find(query).sort({createdAt:-1}).skip(skip).limit(limit)
+    const users=await User.find(query).sort({updatedAt:-1}).skip(skip).limit(limit)
 
     return {totalUsers,users,currentPage: page,totalPages }
 }
