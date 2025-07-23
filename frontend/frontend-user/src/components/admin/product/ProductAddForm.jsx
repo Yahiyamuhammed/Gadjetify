@@ -5,6 +5,9 @@ import { productValidation } from "@/utils/validation/productSchema";
 import { useFetchBrands } from "@/hooks/queries/useBrandQueries";
 import ImageCropperModal from "./ImageCropperModal";
 import toast from "react-hot-toast";
+import { FiX, FiPlus, FiTrash2 } from "react-icons/fi";
+
+const MIN_IMAGES = 3;
 
 const ProductAddForm = ({
   isModalFormOpen,
@@ -19,9 +22,10 @@ const ProductAddForm = ({
   const [currentImage, setCurrentImage] = useState(null);
   const [existingImages, setExistingImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
   const backendUrl = "http://localhost:5000";
 
-  // Reset all image states when modal closes or mode changes
+  
   useEffect(() => {
     if (!isModalFormOpen) {
       setCroppedImages([]);
@@ -30,6 +34,7 @@ const ProductAddForm = ({
     }
   }, [isModalFormOpen]);
 
+  
   useEffect(() => {
     if (mode === "edit" && initialValues?.images) {
       setExistingImages(initialValues.images);
@@ -43,16 +48,16 @@ const ProductAddForm = ({
 
   const { data: brandData = [] } = useFetchBrands({ search: "", limit: "" });
   const brands = (brandData?.brands || []).filter((b) => !b.isDeleted);
-  const categoryOptions = brands.map((brands) => ({
-    label: brands.name,
-    value: brands._id,
+  const categoryOptions = brands.map((brand) => ({
+    label: brand.name,
+    value: brand._id,
   }));
 
   if (!isModalFormOpen) return null;
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = () => setCurrentImage(reader.result);
       reader.readAsDataURL(file);
@@ -66,33 +71,49 @@ const ProductAddForm = ({
 
   const handleDeleteExistingImage = (index) => {
     const imageToDelete = existingImages[index];
-    // setExistingImages(existingImages.filter((_, i) => i !== index));
     setImagesToDelete([...imagesToDelete, imageToDelete]);
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const reader = new FileReader();
+      reader.onload = () => setCurrentImage(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleFinalSubmit = async (formData) => {
-    // Calculate remaining existing images (not marked for deletion)
     const remainingExistingImages = existingImages.filter(
       (img) => !imagesToDelete.includes(img)
     );
 
     const totalImages = remainingExistingImages.length + croppedImages.length;
 
-    if (isBelowMinimum) {
-      return toast.error("Minimum 3 images required");
+    if (totalImages < MIN_IMAGES) {
+      return toast.error(`Minimum ${MIN_IMAGES} images required`);
     }
 
     const submission = new FormData();
 
-    // Append regular form data
     for (let key in formData) {
       submission.append(key, formData[key]);
     }
 
-    // Append new cropped images
     croppedImages.forEach((img) => submission.append("images", img));
 
-    // Append images to delete (for edit mode)
     if (mode === "edit" && imagesToDelete.length > 0) {
       submission.append("imagesToDelete", JSON.stringify(imagesToDelete));
     }
@@ -108,9 +129,10 @@ const ProductAddForm = ({
 
   const productFields = getProductFields(categoryOptions);
 
-  const totalImages =
+  const totalImages = 
     existingImages.length - imagesToDelete.length + croppedImages.length;
-  const isBelowMinimum = totalImages < 3;
+  
+  const isBelowMinimum = totalImages < MIN_IMAGES;
 
   return (
     <>
@@ -123,41 +145,59 @@ const ProductAddForm = ({
       )}
 
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-white/20 backdrop-blur-sm backdrop-saturate-150"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-gray-500/30 backdrop-blur-sm"
         onClick={handleOverlayClick}
       >
         <div
-          className="p-6 w-full max-w-lg rounded-lg shadow-lg h-full overflow-auto"
+          className="p-6 w-full max-w-2xl rounded-xl shadow-2xl max-h-[90vh] overflow-auto bg-white"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Image upload and display section */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Product Images
-            </label>
+          {/* Modal Header */}
+          <div className="flex justify-between items-center mb-6 pb-3 border-b border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-800">
+              {mode === "edit" ? "Edit Product" : "Add New Product"}
+            </h2>
+            <button 
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-100"
+              aria-label="Close modal"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
 
-            {/* Existing images display (edit mode) */}
+          {/* Image Section */}
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-lg font-semibold text-gray-800">
+                Product Images
+              </label>
+              <span className={`text-sm font-medium ${isBelowMinimum ? 'text-red-500' : 'text-green-600'}`}>
+                {totalImages}/{MIN_IMAGES} images
+              </span>
+            </div>
+
+            {/* Existing Images */}
             {mode === "edit" && existingImages.length > 0 && (
-              <div className="mb-4">
-                <h4 className="text-sm font-medium mb-2">Current Images</h4>
-                <div className="flex flex-wrap gap-2">
+              <div className="mb-6">
+                <h4 className="text-md font-medium mb-3 text-gray-700">Current Images</h4>
+                <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
                   {existingImages.map((img, index) => {
-                    // Skip if this image is marked for deletion
                     if (imagesToDelete.includes(img)) return null;
-
                     return (
-                      <div key={index} className="relative">
+                      <div key={index} className="relative group">
                         <img
                           src={`${backendUrl}/products/${img}`}
                           alt={`Product ${index + 1}`}
-                          className="w-20 h-20 object-cover rounded"
+                          className="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
                         />
                         <button
                           type="button"
                           onClick={() => handleDeleteExistingImage(index)}
-                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-red-600"
+                          aria-label="Delete image"
                         >
-                          ×
+                          <FiTrash2 size={14} />
                         </button>
                       </div>
                     );
@@ -165,55 +205,84 @@ const ProductAddForm = ({
                 </div>
               </div>
             )}
-            {/* New image upload */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {mode === "edit"
-                  ? "Add More Images"
-                  : "Upload Product Images (Min 3)"}
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                multiple={mode === "add"}
-              />
+
+            {/* Image Upload Area */}
+            <div 
+              className={`border-2 border-dashed rounded-xl p-6 text-center mb-4 transition-all ${
+                isDragging 
+                  ? 'border-blue-500 bg-blue-50' 
+                  : 'border-gray-300 hover:border-blue-400 bg-gray-50'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <div className="flex flex-col items-center justify-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                  <FiPlus className="text-gray-400 text-2xl" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">
+                    Drag & drop images here
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    or click to browse files
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  id="image-upload"
+                  multiple={mode === "add"}
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="mt-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors shadow-sm"
+                >
+                  Select Images
+                </label>
+                <p className="text-xs text-gray-500 mt-2">
+                  Minimum {MIN_IMAGES} images required • JPG, PNG up to 5MB
+                </p>
+              </div>
             </div>
 
-            {/* Cropped images preview */}
+            {/* New Images Preview */}
             {croppedImages.length > 0 && (
-              <div className="mt-2">
-                <h4 className="text-sm font-medium mb-1">New Images to Add</h4>
-                <div className="flex flex-wrap gap-2">
+              <div className="mt-4">
+                <h4 className="text-md font-medium mb-3 text-gray-700">
+                  Images to be Added
+                </h4>
+                <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
                   {croppedImages.map((img, index) => (
-                    <img
-                      key={index}
-                      src={URL.createObjectURL(img)}
-                      alt={`New ${index + 1}`}
-                      className="w-20 h-20 object-cover rounded"
-                    />
+                    <div key={index} className="relative">
+                      <img
+                        src={URL.createObjectURL(img)}
+                        alt={`New ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
             )}
-
-            <p className="text-xs text-gray-500 mt-1">
-              Total images after changes: {totalImages}
-              {mode === "add" && " (Minimum 3 required)"}
-              {/* {totalImages < 3 && toast.error("Minimum 3 images required")} */}
-            </p>
           </div>
 
-          <Form
-            fields={productFields}
-            title={mode === "edit" ? "Edit Product" : "Add Product"}
-            buttonText={mode === "edit" ? "Update Product" : "Add Product"}
-            onSubmit={mode === "edit" ? handleFinalSubmit : handleFinalSubmit}
-            validationRules={productValidation}
-            serverError={serverError}
-            initialValues={transformedInitialValues}
-          />
+          {/* Product Form */}
+          <div className="border-t border-gray-200 pt-6">
+            <Form
+              fields={productFields}
+              title=""
+              buttonText={mode === "edit" ? "Update Product" : "Create Product"}
+              onSubmit={handleFinalSubmit}
+              validationRules={productValidation}
+              serverError={serverError}
+              initialValues={transformedInitialValues}
+              buttonClass="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-md"
+            />
+          </div>
         </div>
       </div>
     </>
