@@ -29,7 +29,7 @@ export const getProductFields = (brandOptions = [], product = {}) => [
     label: "Model",
     type: "text",
     placeholder: "Enter model name",
-    required: false,
+    required: true,
     defaultValue: product.model || "",
   },
   {
