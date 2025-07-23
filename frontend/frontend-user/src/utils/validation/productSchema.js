@@ -1,39 +1,38 @@
-// src/utils/validation/productValidation.js
 import * as yup from "yup";
 
+const noRepeatingChars = /^(?!.*(.)\1{3,}).*$/;
+
 export const productValidation = yup.object().shape({
-  name: yup
-    .string()
-    .required("Product name is required")
-    .min(2, "Product name must be at least 2 characters"),
+  name: yup.string().required("Product name is required"),
 
   description: yup
     .string()
-    .nullable(),
+    .required("Brand description is required")
+    .min(20, "Description must be at least 20 characters")
+    .max(300, "Description cannot exceed 300 characters")
+    .matches(
+      noRepeatingChars,
+      "Description contains too many repeated characters"
+    ),
 
-  brand: yup
-    .string()
-    .required("Brand is required"),
+  brand: yup.string().required("Brand is required"),
+  model: yup.string().required("Model is required"),
 
-  model: yup
-    .string()
-    .nullable(),
-
-  returnPolicy: yup
-    .string()
-    .nullable(),
+  returnPolicy: yup.string().optional(),
 
   codAvailable: yup
-    .boolean()
+    .mixed()
+    .oneOf([true, false], "Please select if COD is available")
     .required("COD availability is required"),
 
-  warranty: yup
-    .string()
-    .nullable(),
+  warranty: yup.string().optional(),
 
   offerPercentage: yup
     .number()
-    .nullable()
-    .min(0, "Offer percentage cannot be negative")
-    .max(100, "Offer percentage cannot exceed 100"),
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .min(0, "Offer cannot be negative")
+    .max(100, "Offer cannot exceed 100")
+    .optional(),
 });
