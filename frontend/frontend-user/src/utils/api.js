@@ -2,6 +2,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const BASE_URL = "http://localhost:5000/api";
 
+// const BASE_URL ="https://d6052791c50d.ngrok-free.app/api"
+  // import.meta.env.MODE === 'development'
+  //   ? 'http://localhost:3000/api'
+  //   : ' https://78b516853766.ngrok-free.app';
+
+
 export const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,

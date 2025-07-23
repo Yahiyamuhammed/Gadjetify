@@ -17,12 +17,23 @@ const adminProductRoutes=require('./routes/adminProductRoutes')
 const adminBrandRoutes=require('./routes/adminBrandRoutes')
 
 const userProductRoutes=require('./routes/userProductRoutes')
-
+const allowedOrigins = [
+  "http://localhost:5173",              // for local dev
+  "https://456fd9d6dd75.ngrok-free.app" // your frontend via ngrok
+];
 
 // Middleware
 // app.use(cors());
 app.use(cors({
-  origin: "http://localhost:5173", // your React app origin
+  // origin: "http://localhost:5173", // your React app origin
+   origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true               // allow cookies
 }));
 app.use(express.json()); // for parsing JSONa

@@ -13,7 +13,7 @@ const Modal = ({title , description , controles}) => {
             <div className="p-4 md:p-5 text-center flex flex-col gap-8">
               <div className=" flex flex-col gap-5">
                 <FontAwesomeIcon
-                  icon="fa-solid fa-circle-exclamation"
+                  // icon="fa-solid fa-circle-exclamation"
                   className="text-black dark:text-white"
                   size="2xl"
                 />

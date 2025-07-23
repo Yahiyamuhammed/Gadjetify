@@ -26,7 +26,7 @@ const ProductList = ({ products }) => {
   const { mutate: updateProduct } = useUpdateProduct();
   const { mutate: restoreProduct } = useRestoreProduct();
 
-  console.log("this is inside list ", products);
+  // console.log("this is inside list ", products);
 
   const productColumns = [
     // {

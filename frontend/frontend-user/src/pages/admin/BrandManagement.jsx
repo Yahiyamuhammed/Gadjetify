@@ -220,7 +220,7 @@ const BrandManagement = () => {
           onClick={() => setIsModalFormOpen(true)}
           className="px-4 py-2 rounded-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:shadow-lg flex items-center gap-2 transition duration-200"
         >
-          <FontAwesomeIcon icon="fa-solid fa-plus" />
+          {/* <FontAwesomeIcon icon="fa-solid fa-plus" /> */}
           Add Brand
         </button>
       </div>
