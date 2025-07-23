@@ -22,7 +22,7 @@ export const productValidation = yup.object().shape({
 
   codAvailable: yup
     .mixed()
-    .oneOf([true, false], "Please select if COD is available")
+    // . "Please select if COD is available")
     .required("COD availability is required"),
 
   warranty: yup.string().optional(),

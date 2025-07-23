@@ -30,7 +30,7 @@ const resizeAndSaveImages = async (req, res, next) => {
     const imageNames = [];
 
     for (let i = 0; i < req.files.length; i++) {
-      const filename = `product-${Date.now()}-${i}.jpeg`;
+      const filename = `product-${Date.now()}-${i}.png`;
       const filepath = path.join(productDir, filename);
 
       await fs.promises.writeFile(filepath, req.files[i].buffer);

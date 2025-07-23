@@ -1,4 +1,3 @@
-// frontend/components/product/ImageCropperModal.jsx
 import React, { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "@/utils/cropImage";
@@ -19,24 +18,45 @@ const ImageCropperModal = ({ image, onComplete, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[999]  flex items-center justify-center">
-      <div className="bg-white p-4 rounded w-[90vw] max-w-[500px] h-[500px] flex flex-col">
-        <div className="relative flex-1">
+    <div className="fixed inset-0 z-[999] bg-black/60 flex items-center justify-center backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-xl w-[90vw] max-w-[500px] h-[500px] flex flex-col p-4">
+        <div className="relative flex-1 rounded overflow-hidden bg-gray-100">
           <Cropper
             image={image}
             crop={crop}
             zoom={zoom}
-            aspect={1}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={onCropComplete}
+            cropShape="rect"
+            aspect={4/5} 
+            showGrid={true}
           />
         </div>
+
         <div className="mt-4">
-          <Slider value={zoom} min={1} max={3} step={0.1} onChange={(_, val) => setZoom(val)} />
-          <div className="flex justify-between mt-2">
-            <button onClick={handleCrop}>Crop</button>
-            <button onClick={onClose}>Cancel</button>
+          <label className="text-sm font-medium">Zoom</label>
+          <Slider
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            onChange={(_, val) => setZoom(val)}
+          />
+
+          <div className="flex justify-end gap-4 mt-4">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCrop}
+              className="px-4 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Crop
+            </button>
           </div>
         </div>
       </div>

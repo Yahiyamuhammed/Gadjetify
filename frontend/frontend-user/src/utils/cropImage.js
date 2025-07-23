@@ -25,7 +25,7 @@ export default function getCroppedImg(imageSrc, pixelCrop) {
 
       canvas.toBlob((blob) => {
         resolve(blob);
-      }, "image/jpeg");
+      }, "image/png");
     };
 
     image.onerror = (err) => reject(err);
