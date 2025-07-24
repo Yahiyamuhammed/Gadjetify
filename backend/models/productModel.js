@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
   returnPolicy: String,
   codAvailable: { type: Boolean, default: true },
   warranty: String,
-  offerPercentage: { type: Number, default: null },
+  offerPercentage: { type: Number, default: 0 },
   images: [String], // filenames or URLs
   isListed: { type: Boolean, default: true },
   isDeleted: { type: Boolean, default: false }
