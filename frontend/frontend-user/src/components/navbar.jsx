@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthUser } from "@/hooks/useAuthUser";
+import ProfileDropdown from "./user/ProfileDropdown";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,6 +18,11 @@ const Navbar = () => {
   const menuRef = useRef();
   const toggleRef = useRef();
   const navigate = useNavigate();
+
+   const handleSignOut = () => {
+    alert('Signing out...');
+    // Implement your sign out logic here (e.g., clear tokens, redirect)
+  };
 
   const { mutate: logouMutate, isError, isSuccess } = useLogoutMutation();
 
@@ -123,6 +129,13 @@ const Navbar = () => {
           </>
         )}
       </div>
+
+       <ProfileDropdown
+        userName="Jane Doe"
+        userRole="Editor"
+        avatarSrc="https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png" // Example with a different avatar
+        onSignOut={handleSignOut}
+      />
 
       {/* Mobile Menu Toggle */}
       <div ref={toggleRef} className="lg:hidden text-gray-700">
