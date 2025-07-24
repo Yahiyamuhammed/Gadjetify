@@ -1,14 +1,14 @@
 // components/ProfileDropdown.jsx
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 import {
   TbUser,
   TbSettings,
   TbReceiptRupee,
   TbHelpTriangle,
   TbLogout,
-} from 'react-icons/tb';
+} from "react-icons/tb";
 
-export default function ProfileDropdown() {
+export default function ProfileDropdown({ onSignOut }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef();
 
@@ -56,37 +56,50 @@ export default function ProfileDropdown() {
           </li>
           <hr className="my-1" />
           <li>
-            <a href="#" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <a
+              href="#"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+            >
               <TbUser className="text-lg" />
               My Profile
             </a>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <a
+              href="#"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+            >
               <TbSettings className="text-lg" />
               Settings
             </a>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <a
+              href="#"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+            >
               <TbReceiptRupee className="text-lg" />
               Billing
             </a>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <a
+              href="#"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+            >
               <TbHelpTriangle className="text-lg" />
               FAQs
             </a>
           </li>
-          <li className="px-4 pt-2">
-            <a
-              href="#"
-              className="flex items-center justify-center gap-2 text-red-600 border border-red-200 hover:bg-red-50 w-full py-2 rounded-md"
+          <hr className="my-1" />
+          <li className="px-4 pt-1">
+            <button
+              onClick={onSignOut}
+              className="flex items-center justify-center gap-2 bg-red-100 text-red-600 w-full py-2  font-medium"
             >
-              <TbLogout className="text-lg" />
+              <TbLogout className="text-red-600 text-lg" />
               Sign out
-            </a>
+            </button>
           </li>
         </ul>
       )}

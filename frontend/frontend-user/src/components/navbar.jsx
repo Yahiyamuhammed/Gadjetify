@@ -19,10 +19,7 @@ const Navbar = () => {
   const toggleRef = useRef();
   const navigate = useNavigate();
 
-   const handleSignOut = () => {
-    alert('Signing out...');
-    // Implement your sign out logic here (e.g., clear tokens, redirect)
-  };
+ 
 
   const { mutate: logouMutate, isError, isSuccess } = useLogoutMutation();
 
@@ -96,12 +93,18 @@ const Navbar = () => {
       {/* Right Auth Buttons (Desktop Only) */}
       <div className="hidden lg:flex items-center gap-4">
         {user ? (
-          <button
-            onClick={handleLogout}
-            className="px-4 py-1 rounded-full text-red-600 hover:bg-red-50 transition"
-          >
-            SIGN OUT
-          </button>
+          // <button
+          //   onClick={handleLogout}
+          //   className="px-4 py-1 rounded-full text-red-600 hover:bg-red-50 transition"
+          // >
+          //   SIGN OUT
+          // </button>
+          <ProfileDropdown
+        userName="Jane Doe"
+        userRole="Editor"
+        avatarSrc="https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png" 
+        onSignOut={handleLogout}
+      />
         ) : (
           <>
             <Link to="/login">
@@ -130,12 +133,7 @@ const Navbar = () => {
         )}
       </div>
 
-       <ProfileDropdown
-        userName="Jane Doe"
-        userRole="Editor"
-        avatarSrc="https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png" // Example with a different avatar
-        onSignOut={handleSignOut}
-      />
+       
 
       {/* Mobile Menu Toggle */}
       <div ref={toggleRef} className="lg:hidden text-gray-700">
