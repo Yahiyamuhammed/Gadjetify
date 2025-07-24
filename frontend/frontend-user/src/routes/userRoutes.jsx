@@ -6,6 +6,7 @@ import Products from "../pages/user/products.jsx";
 import ProductDetails from "../pages/user/ProductDetails.jsx";
 import VerifyOtp from "../pages/user/VerifyOtp.jsx";
 import HomePage from "@/pages/user/HomePage.jsx";
+import UserProfile from "@/pages/user/UserProfile,.jsx";
 // import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
@@ -51,6 +52,11 @@ const UserRoutes=()=>(
     <Route path="/products/:id/:brand" element={
         <MainLayout>
             <ProductDetails />
+        </MainLayout>
+        } />
+    <Route path="/profile" element={
+        <MainLayout>
+            <UserProfile />
         </MainLayout>
         } />
 </Routes>

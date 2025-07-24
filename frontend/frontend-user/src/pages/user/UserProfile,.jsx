@@ -1,3 +1,5 @@
+import ProfileCard from "@/components/user/ProfileCard";
+import SidebarLayout from "@/components/user/ProfileDetails";
 
 const UserProfile=()=>{
     const user = {
@@ -10,6 +12,7 @@ const UserProfile=()=>{
     return (
         <div className="p-4">
           <ProfileCard user={user} />
+          <SidebarLayout />
         </div>
       );
 
