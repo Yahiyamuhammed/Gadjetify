@@ -45,9 +45,9 @@ const Products = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-">
+    <div className="min-h-screen bg-gray-50 pt-5">
       {/* Breadcrumb Header */}
-      <nav className="bg-indigo-500 shadow-md fixed w-full z-20">
+      <nav className="bg-indigo-500 shadow-md w-full z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center text-sm text-white">
             <Link
@@ -64,7 +64,7 @@ const Products = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-0 py-8 pt-5">
         {/* Filters */}
         <section className="bg-white  rounded-xl shadow-sm p-4 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
@@ -119,7 +119,7 @@ const Products = () => {
         </section>
 
         {/* Products Grid */}
-        <section className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 5xl:grid-cols-5 justify-center px-4">
+<section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
           {products.length > 0 ? (
             products.map((product) => (
               <ProductCard key={product._id} product={product} />

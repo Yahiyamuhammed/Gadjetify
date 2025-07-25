@@ -3,7 +3,7 @@ const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
 
-const storage = multer.memoryStorage(); // in-memory for sharp processing
+const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: { files: 5 },
