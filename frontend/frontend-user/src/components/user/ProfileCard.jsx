@@ -1,11 +1,14 @@
-import React from 'react';
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const ProfileCard = ({ user }) => {
   return (
-    <div className="bg-white dark:bg-neutral-800 border dark:border-neutral-700 rounded-xl shadow-md p-6">
-      {/* SVG Background */}
+    <Card className="p-6">
       <figure>
-        <svg
+        {/* Your existing SVG background */}
+        {/* <svg className="w-full h-40" ...>...</svg> */}
+         <svg
           className="w-full h-40"
           preserveAspectRatio="none"
           viewBox="0 0 1113 161"
@@ -40,9 +43,10 @@ const ProfileCard = ({ user }) => {
             src={user.avatarUrl}
             alt={user.name}
           />
-          <button
-            type="button"
-            className="absolute bottom-0 right-0 bg-white dark:bg-neutral-800 border rounded-full p-1 shadow"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute bottom-0 right-0 p-1 rounded-full border bg-white dark:bg-neutral-800"
             title="Set status"
           >
             <svg
@@ -51,14 +55,13 @@ const ProfileCard = ({ user }) => {
               stroke="currentColor"
               strokeWidth="2"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <circle cx="12" cy="12" r="10" />
               <path d="M8 14s1.5 2 4 2 4-2 4-2" />
               <line x1="9" x2="9.01" y1="9" y2="9" />
               <line x1="15" x2="15.01" y1="9" y2="9" />
             </svg>
-          </button>
+          </Button>
         </div>
 
         {/* User Info */}
@@ -68,26 +71,23 @@ const ProfileCard = ({ user }) => {
         </div>
       </div>
 
-      {/* Navigation Buttons */}
-      <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between">
-        <a
-          href="#edit-profile"
-          className="inline-flex items-center justify-center bg-gray-100 dark:bg-neutral-700 px-4 py-2 rounded-md text-sm font-medium dark:text-neutral-300 hover:bg-gray-200 dark:hover:bg-neutral-600"
-        >
+      {/* Action Buttons and Tabs */}
+      <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <Button variant="secondary" size="sm">
           Edit
-        </a>
-        <nav className="mt-4 md:mt-0 flex space-x-4 overflow-x-auto">
-          <a href="#my-profile" className="text-sm text-gray-600 dark:text-neutral-400 hover:text-black dark:hover:text-white">My Profile</a>
-          <a href="#teams" className="text-sm text-gray-600 dark:text-neutral-400 hover:text-black dark:hover:text-white">Teams</a>
-          <a href="#files" className="text-sm text-gray-600 dark:text-neutral-400 hover:text-black dark:hover:text-white">Files</a>
-          <a href="#connections" className="text-sm text-gray-600 dark:text-neutral-400 hover:text-black dark:hover:text-white">Connections</a>
-        </nav>
+        </Button>
+
+        <Tabs defaultValue="profile">
+          <TabsList className="flex space-x-4 overflow-x-auto">
+            <TabsTrigger value="profile">My Profile</TabsTrigger>
+            <TabsTrigger value="teams">Teams</TabsTrigger>
+            <TabsTrigger value="files">Files</TabsTrigger>
+            <TabsTrigger value="connections">Connections</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
-    </div>
-  );
-};
+    </Card>
+  )
+}
 
-export default ProfileCard;
-
-// Example usage
-// <ProfileCard user={{ name: 'Amanda Harvey', username: 'iam_amanda', avatarUrl: 'https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...' }} />
+export default ProfileCard

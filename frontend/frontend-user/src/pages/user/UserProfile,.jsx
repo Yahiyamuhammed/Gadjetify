@@ -1,3 +1,4 @@
+import AddressTab from "@/components/user/AddressTab";
 import ProfileCard from "@/components/user/ProfileCard";
 import SidebarLayout from "@/components/user/ProfileDetails";
 
@@ -12,7 +13,8 @@ const UserProfile=()=>{
     return (
         <div className="p-4">
           <ProfileCard user={user} />
-          <SidebarLayout />
+          {/* <SidebarLayout /> */}
+          <AddressTab />
         </div>
       );
 
