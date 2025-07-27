@@ -4,7 +4,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Card,
   CardHeader,
@@ -39,7 +39,9 @@ import {
   XCircle,
   AlertTriangle,
   CheckCircle,
+  MoreVertical,
 } from "lucide-react";
+import EditAddressDialog from "./address/EditAddressDialog";
 
 // Main App Component
 function App() {
@@ -389,135 +391,52 @@ function App() {
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter className="flex flex-col gap-3 mt-6 px-0">
-                    {!address.isPrimary && (
-                      <Button
-                        variant="outline"
-                        // className="w-full text-indigo-600 border-indigo-200 bg-indigo-50 hover:bg-indigo-100"
-                        onClick={() => handleSetPrimary(address.id)}
-                      >
-                        {/* <Star className="w-4 h-4 mr-2" /> */}
-                        Set as Primary
-                      </Button>
-                    )}
+                  <CardFooter className="mt-auto flex justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-slate-500 hover:text-slate-800"
+                        >
+                          <MoreVertical className="h-5 w-5" />
+                          <span className="sr-only">Open options</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {!address.isPrimary && (
+                          <DropdownMenuItem
+                            onClick={() => handleSetPrimary(address.id)}
+                            className="cursor-pointer"
+                          >
+                            <Star className="w-4 h-4 mr-2 text-indigo-600" />
+                            Set as Primary
+                          </DropdownMenuItem>
+                        )}
+                        {/* Edit option with dialog */}
+                        <EditAddressDialog
+                          address={address}
+                          onSubmit={() => 0}
+                          trigger={
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onSelect={(e) => e.preventDefault()}
+                            >
+                              <Edit className="w-4 h-4 mr-2 text-amber-600" />
+                              Edit
+                            </DropdownMenuItem>
+                          }
+                        />
 
-                    <div className="flex w-full gap-3">
-                      {/* <Button
-                        variant="outline"
-                        className="w-1/2 text-amber-600 border-amber-200 bg-amber-50 hover:bg-amber-100"
-                        onClick={() => openEditModal(address)}
-                      >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Edit
-                      </Button> */}
-
-                      <Dialog>
-                        <form>
-                          <DialogTrigger asChild>
-                            <Button variant="secondary">Edit</Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Edit profile</DialogTitle>
-                              <DialogDescription>
-                                Make changes to your profile here. Click save
-                                when you&apos;re done.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4">
-                              <div className="grid gap-3">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                  id="name"
-                                  name="name"
-                                  defaultValue={address?.name}
-                                />
-                              </div>
-
-                              <div className="grid gap-3">
-                                <Label htmlFor="fullName">Full Name</Label>
-                                <Input
-                                  id="fullName"
-                                  name="fullName"
-                                  defaultValue={address?.fullName}
-                                />
-                              </div>
-
-                              <div className="grid gap-3">
-                                <Label htmlFor="streetAddress">
-                                  Street Address
-                                </Label>
-                                <Input
-                                  id="streetAddress"
-                                  name="streetAddress"
-                                  defaultValue={address?.streetAddress}
-                                />
-                              </div>
-
-                              <div className="grid gap-3">
-                                <Label htmlFor="city">City</Label>
-                                <Input
-                                  id="city"
-                                  name="city"
-                                  defaultValue={address?.city}
-                                />
-                              </div>
-
-                              <div className="grid gap-3">
-                                <Label htmlFor="state">State</Label>
-                                <Input
-                                  id="state"
-                                  name="state"
-                                  defaultValue={address?.state}
-                                />
-                              </div>
-
-                              <div className="grid gap-3">
-                                <Label htmlFor="zipCode">Zip Code</Label>
-                                <Input
-                                  id="zipCode"
-                                  name="zipCode"
-                                  defaultValue={address?.zipCode}
-                                />
-                              </div>
-
-                              <div className="grid gap-3">
-                                <Label htmlFor="country">Country</Label>
-                                <Input
-                                  id="country"
-                                  name="country"
-                                  defaultValue={address?.country}
-                                />
-                              </div>
-
-                              <div className="grid gap-3">
-                                <Label htmlFor="phone">Phone</Label>
-                                <Input
-                                  id="phone"
-                                  name="phone"
-                                  defaultValue={address?.phone}
-                                />
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
-                              </DialogClose>
-                              <Button type="submit">Save changes</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </form>
-                      </Dialog>
-
-                      <Button
-                        variant="destructive"
-                        // className="w-1/2 text-red-600 border-red-200 bg-red-50 hover:bg-red-100"
-                        onClick={() => openDeleteModal(address.id)}
-                      >
-                        {/* <Trash2 className="w-4 h-4 mr-2" /> */}
-                        Delete
-                      </Button>
-                    </div>
+                        <DropdownMenuItem
+                          onClick={() => openDeleteModal(address.id)}
+                          className="cursor-pointer text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </CardFooter>
                 </Card>
               ))

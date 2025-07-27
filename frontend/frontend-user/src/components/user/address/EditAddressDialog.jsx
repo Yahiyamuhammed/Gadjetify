@@ -12,7 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import addressFields from "@/constants/addressFields";
+import addressFields from "./addressFields";
+
 
 const EditAddressDialog = ({ address = {}, onSubmit, trigger }) => {
   const handleSubmit = (e) => {
