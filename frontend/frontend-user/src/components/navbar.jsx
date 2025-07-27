@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthUser } from "@/hooks/useAuthUser";
+import ProfileDropdown from "./user/ProfileDropdown";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,6 +18,8 @@ const Navbar = () => {
   const menuRef = useRef();
   const toggleRef = useRef();
   const navigate = useNavigate();
+
+ 
 
   const { mutate: logouMutate, isError, isSuccess } = useLogoutMutation();
 
@@ -90,12 +93,18 @@ const Navbar = () => {
       {/* Right Auth Buttons (Desktop Only) */}
       <div className="hidden lg:flex items-center gap-4">
         {user ? (
-          <button
-            onClick={handleLogout}
-            className="px-4 py-1 rounded-full text-red-600 hover:bg-red-50 transition"
-          >
-            SIGN OUT
-          </button>
+          // <button
+          //   onClick={handleLogout}
+          //   className="px-4 py-1 rounded-full text-red-600 hover:bg-red-50 transition"
+          // >
+          //   SIGN OUT
+          // </button>
+          <ProfileDropdown
+        userName="Jane Doe"
+        userRole="Editor"
+        avatarSrc="https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png" 
+        onSignOut={handleLogout}
+      />
         ) : (
           <>
             <Link to="/login">
@@ -123,6 +132,8 @@ const Navbar = () => {
           </>
         )}
       </div>
+
+       
 
       {/* Mobile Menu Toggle */}
       <div ref={toggleRef} className="lg:hidden text-gray-700">
