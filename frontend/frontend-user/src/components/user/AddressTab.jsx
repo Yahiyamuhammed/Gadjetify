@@ -303,14 +303,29 @@ function App() {
               Your Saved Addresses
             </h2>
 
-            <Button
+            {/* <Button
               onClick={openEditModal}
               className="relative group flex items-center gap-3 px-7 py-4 bg-gradient-to-r from-indigo-600 to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-400 ease-in-out"
             >
               <PlusCircle className="w-5 h-5" />
               Add New Address
               <span className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-800 opacity-0 group-hover:opacity-100 transition-opacity duration-400 ease-in-out -z-10 rounded-xl" />
-            </Button>
+            </Button> */}
+
+            <EditAddressDialog
+                          address={''}
+                          onSubmit={() => 0}
+                          trigger={
+                           
+                              // <Edit className="w-4 h-4 mr-2 text-amber-600" />
+                              <Button >
+                                <PlusCircle className="w-5 h-5" />
+                                Add New Address
+
+                              </Button>
+                            
+                          }
+                        />
           </div>
         </CardHeader>
 
@@ -341,7 +356,7 @@ function App() {
               // Render address cards dynamically
               addresses.map((address, index) => (
                 <Card
-                  className={`relative overflow-hidden flex flex-col h-full p-8 border transition-all duration-300 hover:border-indigo-300 hover:-translate-y-1 hover:shadow-lg animate-[cardEnter_0.6s_ease-out_forwards]`}
+                  className={`relative overflow-hidden flex flex-col h-full p-8 pr-2 border transition-all duration-300 hover:border-indigo-300 hover:-translate-y-1 hover:shadow-lg animate-[cardEnter_0.6s_ease-out_forwards]`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {address.isPrimary && (
@@ -351,7 +366,7 @@ function App() {
                     </>
                   )}
 
-                  <CardContent className="flex-grow mb-6 px-0">
+                  <CardContent className="flex-grow mb-6 px-8">
                     <h3 className="text-2xl font-extrabold mb-5 flex items-center gap-3">
                       {address.name.toLowerCase().includes("home") && (
                         <Home className="text-indigo-600 w-6 h-6" />
@@ -391,16 +406,13 @@ function App() {
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter className="mt-auto flex justify-end">
+                  <CardFooter className=" flex justify-end p-0">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-slate-500 hover:text-slate-800"
+                          variant="outline"
                         >
-                          <MoreVertical className="h-5 w-5" />
-                          <span className="sr-only">Open options</span>
+                          More options
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
