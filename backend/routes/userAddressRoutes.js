@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const addressController = require('../controllers/addressController')
-const userAuth = require('../middlewares/userAuth')
+const userAuth = require('../middlewares/authMiddleware')
 
 
 router.post('/add-address', userAuth, addressController.addAddress)

@@ -1,42 +1,51 @@
-const User = require('../models/userModel') 
+const Address = require('../models/addressModal')
+const Brand = require('../models/brandModel');
 
-exports.addAddress = async (userId, addressData) => {
-  const user = await User.findById(userId)
-  if (!user) throw new Error('User not found')
 
-  const isFirst = user.addresses.length === 0
-  const newAddress = { ...addressData, isPrimary: isFirst }
-  user.addresses.push(newAddress)
-  await user.save()
-  return newAddress
+exports.addAddress = async (userId, data) => {
+
+    console.log('this is the user',userId)
+  const isFirst = await Address.countDocuments({ userId }) === 0
+  const newAddress = new Address({ ...data, userId, isPrimary: isFirst })
+  console.log('this is the object address',newAddress)
+  return await newAddress.save()
 }
 
 exports.editAddress = async (addressId, data, userId) => {
-  const user = await User.findById(userId)
-  const address = user.addresses.id(addressId)
-  if (!address) throw new Error('Address not found')
-
-  Object.assign(address, data)
-  await user.save()
+  const address = await Address.findOneAndUpdate(
+    { _id: addressId, userId },
+    data,
+    { new: true }
+  )
+  if (!address) throw new Error('Address not found or unauthorized')
   return address
 }
 
 exports.deleteAddress = async (addressId, userId) => {
-  const user = await User.findById(userId)
-  user.addresses = user.addresses.filter(addr => addr._id.toString() !== addressId)
-  await user.save()
+  const deleted = await Address.findOneAndDelete({ _id: addressId, userId })
+  if (!deleted) throw new Error('Address not found or unauthorized')
+
+  // If deleted address was primary, set another one as primary
+  if (deleted.isPrimary) {
+    const another = await Address.findOne({ userId })
+    if (another) {
+      another.isPrimary = true
+      await another.save()
+    }
+  }
 }
 
 exports.setPrimaryAddress = async (userId, addressId) => {
-  const user = await User.findById(userId)
-  user.addresses.forEach(addr => {
-    addr.isPrimary = addr._id.toString() === addressId
-  })
-  await user.save()
-  return user.addresses.id(addressId)
+  const addressToSet = await Address.findOne({ _id: addressId, userId })
+  if (!addressToSet) throw new Error('Address not found or unauthorized')
+
+  await Address.updateMany({ userId }, { $set: { isPrimary: false } })
+  addressToSet.isPrimary = true
+  await addressToSet.save()
+
+  return addressToSet
 }
 
 exports.getUserAddresses = async (userId) => {
-  const user = await User.findById(userId)
-  return user.addresses
+  return await Address.find({ userId }).sort({ isPrimary: -1, _id: -1 })
 }

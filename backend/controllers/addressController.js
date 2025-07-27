@@ -1,4 +1,3 @@
-// controllers/addressController.js
 const addressHelper = require('../helpers/addressHelper')
 
 exports.addAddress = async (req, res) => {
@@ -32,7 +31,7 @@ exports.deleteAddress = async (req, res) => {
 exports.setPrimaryAddress = async (req, res) => {
   try {
     const address = await addressHelper.setPrimaryAddress(req.user._id, req.params.addressId)
-    res.json({ success: true, address })
+    res.json({ success: true, message: 'Primary address set', address: address })
   } catch (error) {
     res.status(500).json({ success: false, message: error.message })
   }
