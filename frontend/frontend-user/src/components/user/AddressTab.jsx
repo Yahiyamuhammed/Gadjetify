@@ -42,10 +42,13 @@ import {
   MoreVertical,
 } from "lucide-react";
 import EditAddressDialog from "./address/EditAddressDialog";
+import { useAddressMutations } from "@/hooks/mutations/useAddressMutations";
 
 // Main App Component
 function App() {
   // Initial dummy data for addresses
+
+  const {addAddress}=useAddressMutations()
   const [addresses, setAddresses] = useState([
     {
       id: "1",
@@ -202,6 +205,15 @@ function App() {
    * Handles saving an address (either adding new or updating existing).
    */
   const handleSaveAddress = () => {
+
+    addAddress.mutate({
+        name: 'Yahiya',
+      phone: '9999999999',
+      address: 'Nadapuram',
+      pincode: '673506',
+      state: 'Kerala',
+      district: 'Kozhikode'
+    })
     // Basic validation
     if (
       !formState.name ||

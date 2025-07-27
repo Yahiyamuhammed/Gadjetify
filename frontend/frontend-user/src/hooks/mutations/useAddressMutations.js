@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axiosInstance from '@/utils/api'
+import {api} from '@/utils/api'
 
 export const useAddressMutations = () => {
   const queryClient = useQueryClient()
 
   const addAddress = useMutation({
     mutationFn: async (addressData) => {
-      const res = await axiosInstance.post('/add-address', addressData)
+      const res = await api.post('/add-address', addressData)
       return res.data
     },
     onSuccess: () => {
@@ -16,7 +16,7 @@ export const useAddressMutations = () => {
 
   const editAddress = useMutation({
     mutationFn: async ({ addressId, updateData }) => {
-      const res = await axiosInstance.put(`/edit-address/${addressId}`, updateData)
+      const res = await api.put(`/edit-address/${addressId}`, updateData)
       return res.data
     },
     onSuccess: () => {
@@ -26,7 +26,7 @@ export const useAddressMutations = () => {
 
   const deleteAddress = useMutation({
     mutationFn: async (addressId) => {
-      const res = await axiosInstance.delete(`/delete-address/${addressId}`)
+      const res = await api.delete(`/delete-address/${addressId}`)
       return res.data
     },
     onSuccess: () => {
@@ -36,7 +36,7 @@ export const useAddressMutations = () => {
 
   const setPrimaryAddress = useMutation({
     mutationFn: async (addressId) => {
-      const res = await axiosInstance.patch(`/set-primary-address/${addressId}`)
+      const res = await api.patch(`/set-primary-address/${addressId}`)
       return res.data
     },
     onSuccess: () => {
