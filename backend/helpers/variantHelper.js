@@ -44,6 +44,12 @@ exports.deleteVariant = async (variantId) => {
   return true;
 };
 
-exports.getVariantsByProduct = async (productId) => {
-  return await Variant.find({ productId }).sort({ createdAt: 1 });
+exports.getVariants = async (productId = null) => {
+  let filter = {};
+  if (productId) {
+    filter.product = productId;
+  }
+
+  const variants = await Variant.find(filter).populate("productId").sort({ createdAt: 1 });
+  return variants;
 };

@@ -5,7 +5,7 @@ const {
   createVariant,
   updateVariant,
   deleteVariant,
-  getVariantsByProduct,
+  getVariants,
 }= require ("../controllers/variantController.js")
 
 const adminAuth =require( "../middlewares/adminAuth.js")
@@ -13,7 +13,7 @@ const adminAuth =require( "../middlewares/adminAuth.js")
 
 router.post("/variants",adminAuth, createVariant);
 
-router.get("/variants/:productId",adminAuth, getVariantsByProduct);
+router.get("/variants", adminAuth, getVariants);
 
 router.put("/variants/:id",adminAuth, updateVariant);
 

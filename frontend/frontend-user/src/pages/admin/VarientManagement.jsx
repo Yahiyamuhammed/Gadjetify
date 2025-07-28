@@ -19,7 +19,7 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
 
   const fetchVariants = async () => {
     try {
-      const res = await api.get(`/admin/variants/${productId}`);
+      const res = await api.get(`/admin/variants`);
       setVariants(res.data);
     } catch (err) {
       console.error(err);

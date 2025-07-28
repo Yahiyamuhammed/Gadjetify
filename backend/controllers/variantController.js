@@ -1,5 +1,5 @@
 // import * as variantHelper from '../helpers/variantHelper.js';
-const { createVariant,updateVariant,deleteVariant,getVariantsByProduct}=require('../helpers/variantHelper')
+const { createVariant,updateVariant,deleteVariant, getVariants}=require('../helpers/variantHelper')
 
 exports.createVariant = async (req, res) => {
   try {
@@ -28,12 +28,13 @@ exports.deleteVariant = async (req, res) => {
   }
 };
 
-exports.getVariantsByProduct = async (req, res) => {
+exports.getVariants = async (req, res) => {
   try {
-    console.log('this iss indie get varients')
-    const variants = await getVariantsByProduct(req.params.productId);
-    res.json(variants);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+    const { productId } = req.query;
+    const variants = await getVariants(productId);
+    res.status(200).json(variants);
+  } catch (err) {
+    console.error("Error fetching variants:", err);
+    res.status(500).json({ error: "Failed to fetch variants" });
   }
 };
