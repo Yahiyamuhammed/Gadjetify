@@ -1,11 +1,24 @@
-import { DataTable } from "../ui/data-table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table"; // your reusable DataTable
 
-const DataTableWrapper = ({ columns, data, title }) => {
-  console.log("this is inside the table", columns, data, title);
+const DataTableWrapper = ({ title, data, columns, onAdd, filterFn }) => {
   return (
     <div className="p-4">
-      {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
-      <DataTable key={title} columns={columns} data={data} />
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        <h2 className="text-xl font-semibold">{title}</h2>
+
+        <div className="flex gap-2 items-center">
+          <Input
+            placeholder="Search..."
+            onChange={(e) => filterFn(e.target.value)}
+            className="max-w-xs"
+          />
+          <Button onClick={onAdd}>Add Variant</Button>
+        </div>
+      </div>
+
+      <DataTable columns={columns} data={data} />
     </div>
   );
 };

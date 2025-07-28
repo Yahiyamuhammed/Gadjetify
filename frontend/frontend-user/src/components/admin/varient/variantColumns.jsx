@@ -39,7 +39,7 @@ export const getVariantColumns = ({ onEdit, onDelete }) => [
           <Button variant="outline" size="sm" onClick={() => onEdit(variant)}>
             Edit
           </Button>
-          <Button variant="destructive" size="sm" onClick={() => onDelete(variant._id)}>
+          <Button variant="outline" size="sm" onClick={() => onDelete(variant._id)}>
             Delete
           </Button>
         </div>
