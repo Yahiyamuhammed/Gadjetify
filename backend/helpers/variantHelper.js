@@ -1,6 +1,7 @@
-import Variant from '../models/variantModel.js';
+// import Variant from '../models/variantModel.js';
+const Variant =require ('../models/variantModel')
 
-export const createVariant = async (data) => {
+exports.createVariant = async (data) => {
   const existingVariants = await Variant.find({ productId: data.productId });
 
   const variant = new Variant({
@@ -12,11 +13,11 @@ export const createVariant = async (data) => {
   return variant;
 };
 
-export const updateVariant = async (variantId, updates) => {
+exports.updateVariant = async (variantId, updates) => {
   return await Variant.findByIdAndUpdate(variantId, updates, { new: true });
 };
 
-export const deleteVariant = async (variantId) => {
+exports.deleteVariant = async (variantId) => {
   const variant = await Variant.findById(variantId);
   if (!variant) throw new Error('Variant not found');
 
@@ -36,6 +37,6 @@ export const deleteVariant = async (variantId) => {
   return true;
 };
 
-export const getVariantsByProduct = async (productId) => {
+exports.getVariantsByProduct = async (productId) => {
   return await Variant.find({ productId }).sort({ createdAt: 1 });
 };

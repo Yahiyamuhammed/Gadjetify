@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require( 'mongoose')
 
 const variantSchema = new mongoose.Schema({
   productId: {
@@ -28,4 +28,4 @@ const variantSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-export default mongoose.model('Variant', variantSchema);
+module.exports= mongoose.model('Variant', variantSchema);

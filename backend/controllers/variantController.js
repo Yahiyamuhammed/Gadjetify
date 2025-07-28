@@ -1,7 +1,7 @@
 // import * as variantHelper from '../helpers/variantHelper.js';
 const { createVariant,updateVariant,deleteVariant,getVariantsByProduct}=require('../helpers/variantHelper')
 
-export const createVariant = async (req, res) => {
+exports.createVariant = async (req, res) => {
   try {
     const variant = await createVariant(req.body);
     res.status(201).json(variant);
@@ -10,7 +10,7 @@ export const createVariant = async (req, res) => {
   }
 };
 
-export const updateVariant = async (req, res) => {
+exports.updateVariant = async (req, res) => {
   try {
     const updated = await updateVariant(req.params.id, req.body);
     res.json(updated);
@@ -19,7 +19,7 @@ export const updateVariant = async (req, res) => {
   }
 };
 
-export const deleteVariant = async (req, res) => {
+exports.deleteVariant = async (req, res) => {
   try {
     await deleteVariant(req.params.id);
     res.json({ message: 'Variant deleted' });
@@ -28,7 +28,7 @@ export const deleteVariant = async (req, res) => {
   }
 };
 
-export const getVariantsByProduct = async (req, res) => {
+exports.getVariantsByProduct = async (req, res) => {
   try {
     const variants = await getVariantsByProduct(req.params.productId);
     res.json(variants);

@@ -1,14 +1,15 @@
-import express from "express";
-import {
+const express = require('express');
+const router=express.Router()
+
+const {
   createVariant,
   updateVariant,
   deleteVariant,
   getVariantsByProduct,
-} from "../controllers/variantController.js";
+}= require ("../controllers/variantController.js")
 
-import adminAuth from "../middlewares/adminAuth.js";
+const adminAuth =require( "../middlewares/adminAuth.js")
 
-const router = express.Router();
 
 router.post("/variants",adminAuth, createVariant);
 
@@ -18,4 +19,4 @@ router.put("/variants/:id",adminAuth, updateVariant);
 
 router.patch("/variants/:id/delete",adminAuth, deleteVariant);
 
-export default router;
+module.exports=  router;
