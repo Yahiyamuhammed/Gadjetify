@@ -16,6 +16,7 @@ const adminUserRoutes=require('./routes/adminUserRoute')
 const adminProductRoutes=require('./routes/adminProductRoutes')
 const adminBrandRoutes=require('./routes/adminBrandRoutes')
 const userAddressRoutes=require('./routes/userAddressRoutes')
+const adminVarientRoutes=require('./routes/adminVarientRoutes')
 
 const userProductRoutes=require('./routes/userProductRoutes')
 const allowedOrigins = [
@@ -49,6 +50,7 @@ app.use('/api/admin', adminAuthRoutes);
 app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', adminProductRoutes);
 app.use('/api/admin', adminBrandRoutes);
+app.use('/api/admin', adminVarientRoutes);
 
 app.use('/api',userProductRoutes)
 app.use('/api',userAddressRoutes)
