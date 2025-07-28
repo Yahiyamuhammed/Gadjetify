@@ -11,7 +11,7 @@ const addressFields = [
     name: "addressType",
     label: "Address Type",
     type: "select",
-    options: ["home", "office"], // must match enum
+    options: ["home", "office"],
   },
   {
     name: "isPrimary",

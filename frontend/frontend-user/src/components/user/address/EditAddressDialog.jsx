@@ -13,9 +13,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import addressFields from "./addressFields";
+import { Checkbox } from "@/components/ui/checkbox";
 
-
-const EditAddressDialog = ({ address = {}, onSubmit, trigger }) => {
+const EditAddressDialog = ({
+  address = {},
+  onSubmit,
+  trigger,
+  open,
+  setOpen,
+}) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -27,7 +33,7 @@ const EditAddressDialog = ({ address = {}, onSubmit, trigger }) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
@@ -62,12 +68,30 @@ const EditAddressDialog = ({ address = {}, onSubmit, trigger }) => {
                       </option>
                     ))}
                   </select>
+                ) : field.type === "checkbox" ? (
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id={field.name}
+                      name={field.name}
+                      defaultChecked={address?.[field.name] || false}
+                    />
+                    <Label htmlFor={field.name} className="text-sm font-normal">
+                      {field.label}
+                    </Label>
+                  </div>
+                ) : field.type === "textarea" ? (
+                  <textarea
+                    id={field.name}
+                    name={field.name}
+                    defaultValue={address?.[field.name] || ""}
+                    className="border border-gray-300 rounded-md p-2"
+                    rows={3}
+                  />
                 ) : (
                   <Input
                     id={field.name}
                     name={field.name}
                     defaultValue={address?.[field.name] || ""}
-                    required
                   />
                 )}
               </div>
