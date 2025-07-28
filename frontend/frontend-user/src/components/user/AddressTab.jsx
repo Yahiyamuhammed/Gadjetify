@@ -42,13 +42,19 @@ import {
   MoreVertical,
 } from "lucide-react";
 import EditAddressDialog from "./address/EditAddressDialog";
-import { useAddressMutations } from "@/hooks/mutations/useAddressMutations";
+import {
+  useAddAddress,
+  useEditAddress,
+} from "@/hooks/mutations/useAddressMutations";
+import { addressSchema } from "@/utils/validation/addressSchema";
+// import { useAddressMutations } from "@/hooks/mutations/useAddressMutations";
 
 // Main App Component
 function App() {
   // Initial dummy data for addresses
 
-  const {addAddress}=useAddressMutations()
+  const { mutate: addAddress, data: adddress } = useAddAddress();
+  const { mutate: editAddress, data: address } = useEditAddress();
   const [addresses, setAddresses] = useState([
     {
       id: "1",
@@ -90,6 +96,7 @@ function App() {
 
   // State for modal visibility
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // State to hold the address being edited (null for new address)
@@ -161,6 +168,10 @@ function App() {
     }, 3000);
   };
 
+  useEffect(() => {
+    console.log(isEditDialogOpen);
+  }, [isEditDialogOpen]);
+
   /**
    * Opens the edit/add address modal.
    * @param {object | null} address - The address object to edit, or null for a new address.
@@ -204,70 +215,25 @@ function App() {
   /**
    * Handles saving an address (either adding new or updating existing).
    */
-  const handleSaveAddress = () => {
-
-    addAddress.mutate({
-        name: 'Yahiya',
-      phone: '9999999999',
-      address: 'Nadapuram',
-      pincode: '673506',
-      state: 'Kerala',
-      district: 'Kozhikode',
-      onerr
-    })
-    // Basic validation
-    if (
-      !formState.name ||
-      !formState.fullName ||
-      !formState.streetAddress ||
-      !formState.city ||
-      !formState.state ||
-      !formState.zipCode ||
-      !formState.country ||
-      !formState.phone
-    ) {
-      showToast("Please fill in all required fields.", "error");
-      return;
-    }
-
-    let updatedAddresses;
-    if (editingAddress) {
-      // Update existing address
-      updatedAddresses = addresses.map((addr) =>
-        addr.id === editingAddress.id
-          ? { ...formState, id: editingAddress.id }
-          : addr
-      );
-    } else {
-      // Add new address with a unique ID
-      const newId = (
-        addresses.length > 0
-          ? Math.max(...addresses.map((a) => parseInt(a.id))) + 1
-          : 1
-      ).toString();
-      updatedAddresses = [...addresses, { ...formState, id: newId }];
-    }
-
-    // Logic to ensure only one address is primary
-    if (formState.isPrimary) {
-      updatedAddresses = updatedAddresses.map((addr) => ({
-        ...addr,
-        isPrimary:
-          addr.id ===
-          (editingAddress
-            ? editingAddress.id
-            : updatedAddresses[updatedAddresses.length - 1].id),
-      }));
-    }
-
-    setAddresses(updatedAddresses);
-    closeAllModals();
-    showToast(
-      editingAddress
-        ? "Address updated successfully!"
-        : "Address added successfully!"
+  const handleNewAddress = (formData) => {
+    addAddress(formData,
+      {
+        onSuccess: () => {
+          console.log("address added");
+          setIsEditDialogOpen(false);
+        },
+        onError: (err) => console.log("error occured", err),
+      }
     );
   };
+
+  const handleEditAddress=()=>{
+    editAddress(
+      {
+
+      }
+    )
+  }
 
   /**
    * Handles deleting an address.
@@ -326,19 +292,18 @@ function App() {
             </Button> */}
 
             <EditAddressDialog
-                          address={''}
-                          onSubmit={() => 0}
-                          trigger={
-                           
-                              // <Edit className="w-4 h-4 mr-2 text-amber-600" />
-                              <Button >
-                                <PlusCircle className="w-5 h-5" />
-                                Add New Address
-
-                              </Button>
-                            
-                          }
-                        />
+              address={""}
+              onSubmit={handleNewAddress}
+              open={isEditDialogOpen}
+              setOpen={setIsEditDialogOpen}
+                validationSchema={addressSchema}
+              trigger={
+                <Button onClick={() => setIsEditDialogOpen(true)}>
+                  <PlusCircle className="w-5 h-5" />
+                  Add New Address
+                </Button>
+              }
+            />
           </div>
         </CardHeader>
 
@@ -422,11 +387,7 @@ function App() {
                   <CardFooter className=" flex justify-end p-0">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                        >
-                          More options
-                        </Button>
+                        <Button variant="outline">More options</Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         {!address.isPrimary && (
@@ -441,7 +402,7 @@ function App() {
                         {/* Edit option with dialog */}
                         <EditAddressDialog
                           address={address}
-                          onSubmit={() => 0}
+                          onSubmit={handleEditAddress}
                           trigger={
                             <DropdownMenuItem
                               className="cursor-pointer"

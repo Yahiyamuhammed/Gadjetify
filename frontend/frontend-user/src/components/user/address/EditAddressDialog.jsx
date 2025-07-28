@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import addressFields from "./addressFields";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const EditAddressDialog = ({
   address = {},
@@ -21,22 +23,33 @@ const EditAddressDialog = ({
   trigger,
   open,
   setOpen,
+  validationSchema={},
+  
 }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const updatedAddress = {};
-    addressFields.forEach((field) => {
-      updatedAddress[field.name] = formData.get(field.name);
-    });
-    onSubmit(updatedAddress);
+  const {
+    register,
+    control ,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    // defaultValues: address,
+     defaultValues: {
+    ...address,
+    addressType: address?.addressType  || 'home', 
+  },
+  });
+    // onSubmit(updatedAddress);
+    
+  const onFormSubmit = (data) => {
+    onSubmit(data);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onFormSubmit)}>
           <DialogHeader>
             <DialogTitle>
               {address?.id ? "Edit Address" : "Add Address"}
@@ -53,47 +66,48 @@ const EditAddressDialog = ({
               <div key={field.name} className="grid gap-3">
                 <Label htmlFor={field.name}>{field.label}</Label>
 
-                {field.type === "select" ? (
-                  <select
-                    id={field.name}
-                    name={field.name}
-                    defaultValue={address?.[field.name] || ""}
-                    className="border border-gray-300 rounded-md p-2"
-                    required
-                  >
-                    <option value="">Select {field.label}</option>
-                    {field.options.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                ) : field.type === "checkbox" ? (
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id={field.name}
-                      name={field.name}
-                      defaultChecked={address?.[field.name] || false}
-                    />
-                    <Label htmlFor={field.name} className="text-sm font-normal">
-                      {field.label}
-                    </Label>
-                  </div>
-                ) : field.type === "textarea" ? (
-                  <textarea
-                    id={field.name}
-                    name={field.name}
-                    defaultValue={address?.[field.name] || ""}
-                    className="border border-gray-300 rounded-md p-2"
-                    rows={3}
-                  />
-                ) : (
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    defaultValue={address?.[field.name] || ""}
-                  />
-                )}
+                <Controller
+        name={field.name}
+        control={control}
+        render={({ field: controlledField }) =>
+          field.type === "select" ? (
+            <select
+              {...controlledField}
+              id={field.name}
+              className="w-full px-4 py-2 border rounded-md"
+            >
+              <option value="">{`Select ${field.label}`}</option>
+              {field.options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : field.type === "checkbox" ? (
+            <input
+              type="checkbox"
+              id={field.name}
+              {...controlledField}
+              checked={controlledField.value}
+              className="h-4 w-4"
+            />
+          ) : (
+            <input
+              type={field.type}
+              id={field.name}
+              placeholder={field.placeholder}
+              {...controlledField}
+              className="w-full px-4 py-2 border rounded-md"
+            />
+          )
+        }
+      />
+
+      {errors[field.name] && (
+        <p className="text-red-500 text-sm">
+          {errors[field.name].message}
+        </p>
+      )}
               </div>
             ))}
           </div>
