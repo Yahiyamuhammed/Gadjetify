@@ -44,10 +44,13 @@ import {
 import EditAddressDialog from "./address/EditAddressDialog";
 import {
   useAddAddress,
+  useDeleteAddress,
   useEditAddress,
 } from "@/hooks/mutations/useAddressMutations";
 import { addressSchema } from "@/utils/validation/addressSchema";
 import { getAddresses } from "@/hooks/queries/useAddressQueries";
+import { useQueryClient } from "@tanstack/react-query";
+
 // import { useAddressMutations } from "@/hooks/mutations/useAddressMutations";
 
 // Main App Component
@@ -56,53 +59,14 @@ function App() {
 
   const { mutate: addAddress, data: adddress } = useAddAddress();
   const { mutate: editAddress, data: address } = useEditAddress();
+  const {mutate:deleteAddress}=useDeleteAddress()
 
   const {
     data: addresses = [],
     isError: adError,
     isLoading: adLoading,
   } = getAddresses();
-
-  console.log("this is the address", addresses);
-
-  // const [addresses, setAddresses] = useState([
-  //   {
-  //     id: "1",
-  //     name: "Home Address",
-  //     fullName: "Alex Johnson",
-  //     streetAddress: "123 Main Street, Apt 4B",
-  //     city: "San Francisco",
-  //     state: "CA",
-  //     zipCode: "94105",
-  //     country: "United States",
-  //     phone: "(415) 555-0123",
-  //     isPrimary: true,
-  //   },
-  //   {
-  //     id: "2",
-  //     name: "Work Address",
-  //     fullName: "Alex Johnson",
-  //     streetAddress: "456 Tech Boulevard, Suite 1200",
-  //     city: "San Francisco",
-  //     state: "CA",
-  //     zipCode: "94103",
-  //     country: "United States",
-  //     phone: "(415) 555-9876",
-  //     isPrimary: false,
-  //   },
-  //   {
-  //     id: "3",
-  //     name: "Vacation Home",
-  //     fullName: "Alex & Taylor Johnson",
-  //     streetAddress: "789 Ocean Drive",
-  //     city: "Miami Beach",
-  //     state: "FL",
-  //     zipCode: "33139",
-  //     country: "United States",
-  //     phone: "(305) 555-4567",
-  //     isPrimary: false,
-  //   },
-  // ]);
+  const queryClient = useQueryClient();
 
   // State for modal visibility
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -226,23 +190,45 @@ function App() {
    * Handles saving an address (either adding new or updating existing).
    */
   const handleNewAddress = (formData) => {
+    console.log("this ist the api ", formData);
     addAddress(formData, {
       onSuccess: () => {
         console.log("address added");
         setIsEditDialogOpen(false);
+        queryClient.invalidateQueries(["address"]);
       },
       onError: (err) => console.log("error occured", err),
     });
   };
 
-  const handleEditAddress = () => {
-    editAddress({});
+  const handleEditAddress = (formData) => {
+    editAddress(
+      { updateData: formData, addressId: formData._id },
+      {
+        onSuccess: () => {
+          console.log("address changed");
+          setIsEditDialogOpen(false);
+          queryClient.invalidateQueries(["addresses"]);
+        },
+        onError: (err) => {
+          console.log("error occured", err);
+        },
+      }
+    );
   };
 
   /**
    * Handles deleting an address.
    */
-  const handleDeleteAddress = () => {
+  const handleDeleteAddress = (addresssId) => {
+
+
+    deleteAddress(addresssId,{
+      onSuccess:()=>{
+        console.log('address deleted')
+        queryClient.invalidateQueries(['addresses'])
+      }
+    })
     // Filter out the address to be deleted
     const newAddresses = addresses.filter(
       (addr) => addr.id !== addressToDeleteId
@@ -441,6 +427,9 @@ function App() {
                               Edit
                             </DropdownMenuItem>
                           }
+                          open={isEditDialogOpen}
+                          setOpen={setIsEditDialogOpen}
+                          validationSchema={addressSchema}
                         />
 
                         <DropdownMenuItem

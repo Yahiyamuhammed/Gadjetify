@@ -23,25 +23,25 @@ const EditAddressDialog = ({
   trigger,
   open,
   setOpen,
-  validationSchema={},
-  
+  validationSchema = {},
 }) => {
   const {
     register,
-    control ,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
     // defaultValues: address,
-     defaultValues: {
-    ...address,
-    addressType: address?.addressType  || 'home', 
-  },
+    defaultValues: {
+      ...address,
+      addressType: address?.addressType || "home",
+    },
   });
-    // onSubmit(updatedAddress);
-    
+  // onSubmit(updatedAddress);
+
   const onFormSubmit = (data) => {
+    console.log("this is sthe data form ", data);
     onSubmit(data);
   };
 
@@ -67,47 +67,50 @@ const EditAddressDialog = ({
                 <Label htmlFor={field.name}>{field.label}</Label>
 
                 <Controller
-        name={field.name}
-        control={control}
-        render={({ field: controlledField }) =>
-          field.type === "select" ? (
-            <select
-              {...controlledField}
-              id={field.name}
-              className="w-full px-4 py-2 border rounded-md"
-            >
-              <option value="">{`Select ${field.label}`}</option>
-              {field.options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          ) : field.type === "checkbox" ? (
-            <input
-              type="checkbox"
-              id={field.name}
-              {...controlledField}
-              checked={controlledField.value}
-              className="h-4 w-4"
-            />
-          ) : (
-            <input
-              type={field.type}
-              id={field.name}
-              placeholder={field.placeholder}
-              {...controlledField}
-              className="w-full px-4 py-2 border rounded-md"
-            />
-          )
-        }
-      />
+                  name={field.name}
+                  control={control}
+                  render={({ field: controlledField }) =>
+                    field.type === "select" ? (
+                      <select
+                        {...controlledField}
+                        id={field.name}
+                        className="w-full px-4 py-2 border rounded-md"
+                      >
+                        <option value="">{`Select ${field.label}`}</option>
+                        {field.options.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : field.type === "checkbox" ? (
+                      <input
+                        type="checkbox"
+                        id={field.name}
+                        {...controlledField}
+                        checked={controlledField.value ?? false}
+                        onChange={(e) =>
+                          controlledField.onChange(e.target.checked)
+                        }
+                        className="h-4 w-4"
+                      />
+                    ) : (
+                      <input
+                        type={field.type}
+                        id={field.name}
+                        placeholder={field.placeholder}
+                        {...controlledField}
+                        className="w-full px-4 py-2 border rounded-md"
+                      />
+                    )
+                  }
+                />
 
-      {errors[field.name] && (
-        <p className="text-red-500 text-sm">
-          {errors[field.name].message}
-        </p>
-      )}
+                {errors[field.name] && (
+                  <p className="text-red-500 text-sm">
+                    {errors[field.name].message}
+                  </p>
+                )}
               </div>
             ))}
           </div>
