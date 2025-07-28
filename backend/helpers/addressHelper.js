@@ -7,7 +7,6 @@ exports.addAddress = async (userId, data) => {
     console.log('this is the user',userId)
   const isFirst = await Address.countDocuments({ userId }) === 0
   const newAddress = new Address({ ...data, userId, isPrimary: isFirst })
-  console.log('this is the object address',newAddress)
   return await newAddress.save()
 }
 

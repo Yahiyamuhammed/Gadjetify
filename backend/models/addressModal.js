@@ -11,7 +11,7 @@ const addressSchema = new mongoose.Schema({
   state: { type: String, required: true },
   landmark: String,
   alternatePhone: String,
-  isPrimary: { type: Boolean, default: false },
+  isPrimary: { type: Boolean, default: false, },
   addressType: {type: String,required: true,enum: ["home", "office"],default: "home"},
 });
 
