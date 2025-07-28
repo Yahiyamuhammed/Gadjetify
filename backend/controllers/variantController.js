@@ -30,6 +30,7 @@ exports.deleteVariant = async (req, res) => {
 
 exports.getVariantsByProduct = async (req, res) => {
   try {
+    console.log('this iss indie get varients')
     const variants = await getVariantsByProduct(req.params.productId);
     res.json(variants);
   } catch (error) {

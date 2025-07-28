@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import DataTableWrapper from "@/components/shared/DataTableWrapper";
 import { getVariantColumns } from "@/components/admin/varient/variantColumns";
 import { api } from "@/utils/api";
+import DataTableWrapper from "@/components/admin/DataTableWrapper";
 
-const VariantList = ({ productId='6887c86b42b36c7ee8a3c229' }) => {
+const VariantList = ({ productId='68820fe735353dc3039fb04b' }) => {
   const [variants, setVariants] = useState([]);
 
   const fetchVariants = async () => {
     try {
       const res = await api.get(`/admin/variants/${productId}`);
       setVariants(res.data);
+      
     } catch (err) {
-      console.error(err);
+        console.error(err);
     }
-  };
+};
+// console.log(variants)
 
   const handleEdit = (variant) => {
     console.log("Edit:", variant);
@@ -32,6 +34,8 @@ const VariantList = ({ productId='6887c86b42b36c7ee8a3c229' }) => {
   useEffect(() => {
     fetchVariants();
   }, [productId]);
+
+
 
   return (
     <DataTableWrapper
