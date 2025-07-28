@@ -21,11 +21,12 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     try {
       const res = await api.get(`/admin/variants`);
       setVariants(res.data);
+
     } catch (err) {
       console.error(err);
     }
   };
-  // console.log(variants)
+  console.log(variants)
 
   const handleEdit = (variant) => {
     console.log("Edit:", variant);
