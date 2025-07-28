@@ -172,7 +172,7 @@ function App() {
           <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {addresses.length === 0 ? (
               // Empty state message
-              <Card className="col-span-full text-center py-20 px-6">
+              <Card className="col-span-full text-center py-20 px-6" key={1} >
                 <MapPin className="w-24 h-24 mx-auto mb-8 text-slate-300 opacity-50" />
                 <h3 className="text-4xl font-extrabold mb-4 text-slate-900">
                   No Addresses Found
@@ -193,6 +193,7 @@ function App() {
                 <Card
                   className={`relative overflow-hidden flex flex-col h-full p-8 pr-2 border transition-all duration-300 hover:border-indigo-300 hover:-translate-y-1 hover:shadow-lg animate-[cardEnter_0.6s_ease-out_forwards]`}
                   style={{ animationDelay: `${index * 0.1}s` }}
+                  key={address._id}
                 >
                   {address.isPrimary && (
                     <>
