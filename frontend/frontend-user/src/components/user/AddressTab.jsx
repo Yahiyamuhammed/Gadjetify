@@ -47,6 +47,7 @@ import {
   useEditAddress,
 } from "@/hooks/mutations/useAddressMutations";
 import { addressSchema } from "@/utils/validation/addressSchema";
+import { getAddresses } from "@/hooks/queries/useAddressQueries";
 // import { useAddressMutations } from "@/hooks/mutations/useAddressMutations";
 
 // Main App Component
@@ -55,44 +56,53 @@ function App() {
 
   const { mutate: addAddress, data: adddress } = useAddAddress();
   const { mutate: editAddress, data: address } = useEditAddress();
-  const [addresses, setAddresses] = useState([
-    {
-      id: "1",
-      name: "Home Address",
-      fullName: "Alex Johnson",
-      streetAddress: "123 Main Street, Apt 4B",
-      city: "San Francisco",
-      state: "CA",
-      zipCode: "94105",
-      country: "United States",
-      phone: "(415) 555-0123",
-      isPrimary: true,
-    },
-    {
-      id: "2",
-      name: "Work Address",
-      fullName: "Alex Johnson",
-      streetAddress: "456 Tech Boulevard, Suite 1200",
-      city: "San Francisco",
-      state: "CA",
-      zipCode: "94103",
-      country: "United States",
-      phone: "(415) 555-9876",
-      isPrimary: false,
-    },
-    {
-      id: "3",
-      name: "Vacation Home",
-      fullName: "Alex & Taylor Johnson",
-      streetAddress: "789 Ocean Drive",
-      city: "Miami Beach",
-      state: "FL",
-      zipCode: "33139",
-      country: "United States",
-      phone: "(305) 555-4567",
-      isPrimary: false,
-    },
-  ]);
+
+  const {
+    data: addresses = [],
+    isError: adError,
+    isLoading: adLoading,
+  } = getAddresses();
+
+  console.log("this is the address", addresses);
+
+  // const [addresses, setAddresses] = useState([
+  //   {
+  //     id: "1",
+  //     name: "Home Address",
+  //     fullName: "Alex Johnson",
+  //     streetAddress: "123 Main Street, Apt 4B",
+  //     city: "San Francisco",
+  //     state: "CA",
+  //     zipCode: "94105",
+  //     country: "United States",
+  //     phone: "(415) 555-0123",
+  //     isPrimary: true,
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "Work Address",
+  //     fullName: "Alex Johnson",
+  //     streetAddress: "456 Tech Boulevard, Suite 1200",
+  //     city: "San Francisco",
+  //     state: "CA",
+  //     zipCode: "94103",
+  //     country: "United States",
+  //     phone: "(415) 555-9876",
+  //     isPrimary: false,
+  //   },
+  //   {
+  //     id: "3",
+  //     name: "Vacation Home",
+  //     fullName: "Alex & Taylor Johnson",
+  //     streetAddress: "789 Ocean Drive",
+  //     city: "Miami Beach",
+  //     state: "FL",
+  //     zipCode: "33139",
+  //     country: "United States",
+  //     phone: "(305) 555-4567",
+  //     isPrimary: false,
+  //   },
+  // ]);
 
   // State for modal visibility
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -216,26 +226,18 @@ function App() {
    * Handles saving an address (either adding new or updating existing).
    */
   const handleNewAddress = (formData) => {
-    addAddress(formData,
-      {
-        onSuccess: () => {
-          console.log("address added");
-          setIsEditDialogOpen(false);
-        },
-        onError: (err) => console.log("error occured", err),
-      }
-    );
+    addAddress(formData, {
+      onSuccess: () => {
+        console.log("address added");
+        setIsEditDialogOpen(false);
+      },
+      onError: (err) => console.log("error occured", err),
+    });
   };
 
-  
-
-  const handleEditAddress=()=>{
-    editAddress(
-      {
-
-      }
-    )
-  }
+  const handleEditAddress = () => {
+    editAddress({});
+  };
 
   /**
    * Handles deleting an address.
@@ -298,7 +300,7 @@ function App() {
               onSubmit={handleNewAddress}
               open={isEditDialogOpen}
               setOpen={setIsEditDialogOpen}
-                validationSchema={addressSchema}
+              validationSchema={addressSchema}
               trigger={
                 <Button onClick={() => setIsEditDialogOpen(true)}>
                   <PlusCircle className="w-5 h-5" />
@@ -348,42 +350,67 @@ function App() {
 
                   <CardContent className="flex-grow mb-6 px-8">
                     <h3 className="text-2xl font-extrabold mb-5 flex items-center gap-3">
-                      {address.name.toLowerCase().includes("home") && (
+                      {address.addressType.toLowerCase().includes("home") && (
                         <Home className="text-indigo-600 w-6 h-6" />
                       )}
-                      {address.name.toLowerCase().includes("work") && (
+                      {address.addressType.toLowerCase().includes("work") && (
                         <Building2 className="text-indigo-600 w-6 h-6" />
                       )}
-                      {address.name.toLowerCase().includes("vacation") && (
+                      {address.addressType
+                        .toLowerCase()
+                        .includes("vacation") && (
                         <Star className="text-indigo-600 w-6 h-6" />
                       )}
                       {!["home", "work", "vacation"].some((type) =>
-                        address.name.toLowerCase().includes(type)
+                        address.addressType.toLowerCase().includes(type)
                       ) && <MapPin className="text-indigo-600 w-6 h-6" />}
-                      {address.name}
+                      {address.addressType}
                     </h3>
 
                     <div className="space-y-3 text-slate-600">
                       <div className="flex items-start gap-3">
                         <User className="mt-1 text-indigo-600 w-5 h-5" />
-                        {address.fullName}
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <MapPin className="mt-1 text-indigo-600 w-5 h-5" />
-                        {address.streetAddress}
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Building2 className="mt-1 text-indigo-600 w-5 h-5" />
-                        {address.city}, {address.state} {address.zipCode}
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Flag className="mt-1 text-indigo-600 w-5 h-5" />
-                        {address.country}
+                        {address.name}
                       </div>
                       <div className="flex items-start gap-3">
                         <Phone className="mt-1 text-indigo-600 w-5 h-5" />
                         {address.phone}
                       </div>
+                      {address.alternatePhone && (
+                        <div className="flex items-start gap-3">
+                          <Phone className="mt-1 text-indigo-600 w-5 h-5" />
+                          {address.alternatePhone}
+                        </div>
+                      )}
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 flex-shrink-0">
+                          <MapPin className="text-indigo-600 w-5 h-5" />
+                        </div>
+                        <div className="space-y-1">
+                          <div>{address.locality}</div>
+                          <div>{address.address}</div>
+                          {address.landmark && <div>{address.landmark}</div>}
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <Building2 className="mt-1 text-indigo-600 w-5 h-5" />
+                        {address.district}, {address.state} - {address.pincode}
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Flag className="mt-1 text-indigo-600 w-5 h-5" />
+                        India
+                      </div>
+                      {/* <div className="flex items-start gap-3">
+        <Tags className="mt-1 text-indigo-600 w-5 h-5" />
+        {address.addressType === "home" ? "Home" : "Office"}
+      </div> */}
+                      {address.isPrimary && (
+                        <div className="flex items-start gap-3">
+                          <Star className="mt-1 text-yellow-600 w-5 h-5" />
+                          Primary Address
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                   <CardFooter className=" flex justify-end p-0">

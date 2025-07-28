@@ -6,7 +6,8 @@ export const getAddresses = ()=>{
         queryKey:['address'],
         queryFn:async ()=>{
             const res=await api.get('/get-all-addresses')
-            return res.data
+            console.log('this is sthe respomce from api',res)
+            return res.data.addresses
         }
     })
 }
