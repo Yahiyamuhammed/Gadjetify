@@ -2,6 +2,7 @@
 const Variant =require ('../models/variantModel')
 
 exports.createVariant = async (data) => {
+
   const existingVariants = await Variant.find({ productId: data.productId });
 
   const variant = new Variant({
@@ -24,10 +25,16 @@ exports.deleteVariant = async (variantId) => {
   const productId = variant.productId;
   const isDefault = variant.isDefault;
 
-  await Variant.findByIdAndDelete(variantId);
+  variant.isDeleted = true;
+  variant.isDefault = false;
+  await variant.save();
 
   if (isDefault) {
-    const remaining = await Variant.find({ productId }).sort({ createdAt: 1 });
+    const remaining = await Variant.find({
+      productId,
+      isDeleted: false
+    }).sort({ createdAt: 1 });
+
     if (remaining.length > 0) {
       remaining[0].isDefault = true;
       await remaining[0].save();

@@ -26,7 +26,11 @@ const ProductDetailsCard = ({ product }) => {
     if (product?.images?.[0]) {
       setMainImage(`${backendUrl}/products/${product.images[0]}`);
     }
+
+
   }, [product]);
+
+  console.log(product)
 
   const finalPrice = () => {
     const totalDiscount = (product?.offerPercent || 0) + (product?.category?.offer || 0);
