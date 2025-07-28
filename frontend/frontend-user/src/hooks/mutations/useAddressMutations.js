@@ -1,53 +1,58 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {api} from '@/utils/api'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/utils/api';
 
-export const useAddressMutations = () => {
-  const queryClient = useQueryClient()
-
-  const addAddress = useMutation({
+// Add Address
+export const useAddAddress = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: async (addressData) => {
-      const res = await api.post('/add-address', addressData)
-      return res.data
+      const res = await api.post('/add-address', addressData);
+      return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['addresses'])
-    }
-  })
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    },
+  });
+};
 
-  const editAddress = useMutation({
+// Edit Address
+export const useEditAddress = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: async ({ addressId, updateData }) => {
-      const res = await api.put(`/edit-address/${addressId}`, updateData)
-      return res.data
+      const res = await api.put(`/edit-address/${addressId}`, updateData);
+      return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['addresses'])
-    }
-  })
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    },
+  });
+};
 
-  const deleteAddress = useMutation({
+// Delete Address
+export const useDeleteAddress = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: async (addressId) => {
-      const res = await api.delete(`/delete-address/${addressId}`)
-      return res.data
+      const res = await api.delete(`/delete-address/${addressId}`);
+      return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['addresses'])
-    }
-  })
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    },
+  });
+};
 
-  const setPrimaryAddress = useMutation({
+// Set Primary Address
+export const useSetPrimaryAddress = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: async (addressId) => {
-      const res = await api.patch(`/set-primary-address/${addressId}`)
-      return res.data
+      const res = await api.patch(`/set-primary-address/${addressId}`);
+      return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['addresses'])
-    }
-  })
-
-  return {
-    addAddress,
-    editAddress,
-    deleteAddress,
-    setPrimaryAddress
-  }
-}
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    },
+  });
+};
