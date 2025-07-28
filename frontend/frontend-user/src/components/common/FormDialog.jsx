@@ -1,12 +1,12 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-const FormDialog = ({ title, triggerLabel, onSubmit, children }) => {
+const FormDialog = ({ title,open, setOpen,  triggerLabel, onSubmit, children }) => {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {/* <DialogTrigger asChild>
         <Button className="ml-auto">{triggerLabel}</Button>
-      </DialogTrigger>
+      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -15,6 +15,8 @@ const FormDialog = ({ title, triggerLabel, onSubmit, children }) => {
         <div className="mt-4">{children}</div>
 
         <div className="mt-6 flex justify-end">
+                      <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+
           <Button onClick={onSubmit}>Submit</Button>
         </div>
       </DialogContent>
