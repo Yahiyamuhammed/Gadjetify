@@ -220,31 +220,16 @@ function App() {
   /**
    * Handles deleting an address.
    */
-  const handleDeleteAddress = (addresssId) => {
+  const handleDeleteAddress = (addressId) => {
 
+    console.log('this is the address id',addressId)
 
-    deleteAddress(addresssId,{
+    deleteAddress(addressId,{
       onSuccess:()=>{
         console.log('address deleted')
         queryClient.invalidateQueries(['addresses'])
       }
     })
-    // Filter out the address to be deleted
-    const newAddresses = addresses.filter(
-      (addr) => addr.id !== addressToDeleteId
-    );
-
-    // If the deleted address was primary, and there are other addresses, set the first one as primary
-    if (
-      addresses.find((addr) => addr.id === addressToDeleteId)?.isPrimary &&
-      newAddresses.length > 0
-    ) {
-      newAddresses[0].isPrimary = true;
-    }
-
-    setAddresses(newAddresses);
-    closeAllModals();
-    showToast("Address deleted successfully!");
   };
 
   /**
@@ -407,7 +392,7 @@ function App() {
                       <DropdownMenuContent align="end">
                         {!address.isPrimary && (
                           <DropdownMenuItem
-                            onClick={() => handleSetPrimary(address.id)}
+                            onClick={() => handleSetPrimary(address._id)}
                             className="cursor-pointer"
                           >
                             <Star className="w-4 h-4 mr-2 text-indigo-600" />
@@ -433,7 +418,7 @@ function App() {
                         />
 
                         <DropdownMenuItem
-                          onClick={() => openDeleteModal(address.id)}
+                          onClick={() =>handleDeleteAddress(address._id)}
                           className="cursor-pointer text-red-600"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
