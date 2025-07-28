@@ -1,49 +1,54 @@
-import React from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
-const ConfirmDialog = ({
-  open,
-  setOpen,
-  title = "Are you sure?",
+const ConfirmAlertDialog = ({
+  trigger,
+  title = "Are you absolutely sure?",
   description = "This action cannot be undone.",
   confirmText = "Yes",
   cancelText = "Cancel",
   onConfirm,
   loading = false,
 }) => {
-  const handleConfirm = async () => {
-    await onConfirm();
-    setOpen(false);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[400px]">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        {trigger}
+      </AlertDialogTrigger>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">{cancelText}</Button>
-          </DialogClose>
-          <Button variant="destructive" onClick={handleConfirm} disabled={loading}>
-            {loading ? "Processing..." : confirmText}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={loading}>{cancelText}</AlertDialogCancel>
+          <AlertDialogAction
+            asChild
+          >
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+              disabled={loading}
+            >
+              {loading ? "Processing..." : confirmText}
+            </Button>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
-export default ConfirmDialog;
+export default ConfirmAlertDialog;
