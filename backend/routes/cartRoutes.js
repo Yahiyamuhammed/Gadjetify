@@ -1,10 +1,10 @@
-import express from "express";
-import {
+const express =require( "express")
+const {
   addToCart,
   getCart,
   updateCartQuantity,
   removeFromCart,
-} from "../controllers/cartController.js";
+} =require( "../controllers/cartController.js");
 
 const userAuth =require ("../middlewares/authMiddleware");
 
@@ -15,4 +15,4 @@ router.post("/cart", userAuth, addToCart);
 router.patch("/cart/:variantId", userAuth, updateCartQuantity);
 router.delete("/cart/:variantId", userAuth, removeFromCart);
 
-export default router;
+module.exports= router;

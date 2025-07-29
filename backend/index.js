@@ -17,7 +17,8 @@ const adminProductRoutes=require('./routes/adminProductRoutes')
 const adminBrandRoutes=require('./routes/adminBrandRoutes')
 const userAddressRoutes=require('./routes/userAddressRoutes')
 const adminVarientRoutes=require('./routes/adminVarientRoutes')
-const wishlistRoute=require('./routes/wishlistRoute')
+const wishlistRoutes=require('./routes/wishlistRoute')
+const cartRoutes=require('./routes/cartRoutes')
 
 const userProductRoutes=require('./routes/userProductRoutes')
 const allowedOrigins = [
@@ -55,7 +56,8 @@ app.use('/api/admin', adminVarientRoutes);
 
 app.use('/api',userAddressRoutes)
 app.use('/api',userProductRoutes)
-app.use('/api',wishlistRoute)
+app.use('/api',wishlistRoutes)
+app.use('/api',cartRoutes)
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

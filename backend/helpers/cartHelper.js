@@ -1,7 +1,7 @@
-import Cart from "../models/cartModel.js";
-import Product from "../models/productModel.js";
-import Variant from "../models/variantModel.js";
-import Wishlist from "../models/wishListModel.js";
+const Cart = require("../models/cartModel");
+const Product = require("../models/productModel");
+const Variant = require("../models/variantModel");
+const Wishlist = require("../models/wishListModel");
 
 exports.addToCart = async (userId, { productId, variantId }) => {
   const product = await Product.findById(productId);
