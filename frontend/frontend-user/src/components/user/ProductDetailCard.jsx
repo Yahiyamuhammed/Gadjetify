@@ -14,6 +14,12 @@ import {
 } from "lucide-react";
 import noImage from "@/assets/noImage.png";
 import ProductImageZoom from "../ProductImageZoom";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 
 // Replace with your backend URL
 const backendUrl = "http://localhost:5000";
@@ -26,15 +32,20 @@ const ProductDetailsCard = ({ product }) => {
     if (product?.images?.[0]) {
       setMainImage(`${backendUrl}/products/${product.images[0]}`);
     }
-
-
   }, [product]);
 
-  console.log(product)
+  const [selectedVariant, setSelectedVariant] = useState(
+    product?.variants?.find((v) => v.isDefault) || product?.variants?.[0]
+  );
+
+  console.log(product);
 
   const finalPrice = () => {
-    const totalDiscount = (product?.offerPercent || 0) + (product?.category?.offer || 0);
-    const discountedPrice = (product?.price || 1000) - ((product?.price||1000) * totalDiscount) / 100 ;
+    const totalDiscount =
+      (product?.offerPercentage || 0) + (product?.category?.offer || 0);
+    const discountedPrice =
+      (selectedVariant?.price || 1000) -
+      ((selectedVariant?.price || 1000) * totalDiscount) / 100;
     return discountedPrice.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -52,7 +63,10 @@ const ProductDetailsCard = ({ product }) => {
               Home
             </Link>
             <ChevronRight className="w-4 h-4 mx-2 text-white/60" />
-            <Link to="/products" className="flex items-center hover:text-white/80">
+            <Link
+              to="/products"
+              className="flex items-center hover:text-white/80"
+            >
               <Box className="w-4 h-4 mr-1" />
               Products
             </Link>
@@ -68,16 +82,22 @@ const ProductDetailsCard = ({ product }) => {
           <div className="dark:bg-gray-800">
             <div className="grid lg:grid-cols-2 gap-0">
               {/* Images */}
-               <div className="p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700">
+              <div className="p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700">
                 <div className="dark:bg-gray-900 rounded-xl p-6">
-                  <ImageZoom mainImage={mainImage} product={product} onFavClick={() => {}} />
+                  <ImageZoom
+                    mainImage={mainImage}
+                    product={product}
+                    onFavClick={() => {}}
+                  />
                   {/* <ProductImageZoom src={mainImage} /> */}
                 </div>
                 <div className="grid grid-cols-5 gap-3 mt-4">
                   {product.images.map((filename, index) => (
                     <button
                       key={index}
-                      onClick={() => setMainImage(`${backendUrl}/products/${filename}`)}
+                      onClick={() =>
+                        setMainImage(`${backendUrl}/products/${filename}`)
+                      }
                       className={`relative aspect-square rounded-lg overflow-hidden
                         ${
                           mainImage === `${backendUrl}/products/${filename}`
@@ -93,12 +113,14 @@ const ProductDetailsCard = ({ product }) => {
                     </button>
                   ))}
                 </div>
-              </div>  
+              </div>
 
               {/* Details */}
 
               <div className="p-6 lg:p-8 space-y-6">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{product.name}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {product.name}
+                </h1>
                 <p className="text-gray-600 dark:text-gray-400">
                   Model: <span className="font-medium">{product.model}</span>
                 </p>
@@ -129,10 +151,12 @@ const ProductDetailsCard = ({ product }) => {
                       ₹{finalPrice()}
                     </span>
                     <span className="text-lg text-gray-500 line-through">
-                      ₹{(product?.price || 1000).toLocaleString("en-IN")}
+                      ₹{(selectedVariant?.price || 1000).toLocaleString("en-IN")}
                     </span>
                     <span className="text-green-600 font-medium">
-                      {((product?.offerPercent || 5)+ (product.category?.offer || 0))}% OFF
+                      {(product?.offerPercent || 5) +
+                        (product.category?.offer || 0)}
+                      % OFF
                     </span>
                   </div>
                 </div>
@@ -140,16 +164,37 @@ const ProductDetailsCard = ({ product }) => {
                 {/* Features */}
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { icon: PackageOpen, label: "RAM", value: `${product.ram || 6} GB` },
-                    { icon: Box, label: "Storage", value: `${product.storage || 128} GB` },
+                    {
+                      icon: PackageOpen,
+                      label: "RAM",
+                      value: `${selectedVariant.ram || 6} GB`,
+                    },
+                    {
+                      icon: Box,
+                      label: "Storage",
+                      value: `${selectedVariant.storage || 128} GB`,
+                    },
                     { icon: Check, label: "Warranty", value: product.warranty },
-                    { icon: CreditCard, label: "COD", value: product.codAvailable ? "Available" : "Not Available" },
+                    {
+                      icon: CreditCard,
+                      label: "COD",
+                      value: product.codAvailable
+                        ? "Available"
+                        : "Not Available",
+                    },
                   ].map((feature, i) => (
-                    <div key={i} className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg flex items-center gap-3">
+                    <div
+                      key={i}
+                      className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg flex items-center gap-3"
+                    >
                       <feature.icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{feature.label}</p>
-                        <p className="font-medium text-gray-900 dark:text-white">{feature.value}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {feature.label}
+                        </p>
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {feature.value}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -169,7 +214,7 @@ const ProductDetailsCard = ({ product }) => {
                     ? "Out of Stock"
                     : (product?.stock || 5) > 20
                     ? "In Stock"
-                    : `Only ${(product?.stock || 5)} left`}
+                    : `Only ${product?.stock || 5} left`}
                 </p>
 
                 {/* Add to Cart */}
@@ -184,8 +229,32 @@ const ProductDetailsCard = ({ product }) => {
                     Add to Cart
                   </AddCartButton>
                 </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+                  {product.variants.map((variant) => (
+                    <Card
+                      key={variant._id}
+                      onClick={() => setSelectedVariant(variant)}
+                      className={`cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-indigo-500 ${
+                        selectedVariant?._id === variant._id
+                          ? "ring-2 ring-indigo-500"
+                          : "ring-1 ring-gray-200"
+                      }`}
+                    >
+                      <CardContent className="p-4 text-center space-y-1">
+                        <p className="text-sm font-medium">
+                          RAM: {variant.ram}
+                        </p>
+                        <p className="text-sm font-medium">
+                          Storage: {variant.storage}
+                        </p>
+                        <p className="text-lg font-bold text-indigo-600">
+                          ₹{variant.price.toLocaleString("en-IN")}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
-              
             </div>
 
             {/* Description */}
