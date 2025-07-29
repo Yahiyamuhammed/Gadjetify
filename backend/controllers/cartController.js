@@ -29,7 +29,7 @@ exports.updateCartQuantity = async (req, res) => {
 
 exports.removeFromCart = async (req, res) => {
   try {
-    const response = await removeFromCart(req.user._id, req.body);
+    const response = await removeFromCart(req.user._id, req.params);
     res.json(response);
   } catch (err) {
     res.status(400).json({ error: err.message });
