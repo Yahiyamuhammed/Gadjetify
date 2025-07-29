@@ -1,4 +1,4 @@
-const { getWishlist, toggleWishlistItem, removeFromWishlist, removeFromWishlist } = require("../helpers/wishlistHelper");
+const { getWishlist, toggleWishlistItem, removeFromWishlist,  clearWishlist} = require("../helpers/wishlistHelper");
 
 exports.getWishlist = async (req, res) => {
   try {
