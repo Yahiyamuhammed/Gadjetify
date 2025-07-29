@@ -50,7 +50,7 @@ exports.getCart = async (userId) => {
   const cart = await Cart.findOne({ userId })
     .populate({
       path: "items.productId",
-      select: "name brand model images"
+      select: "name brand model images offerPercentage"
     })
     .populate("items.variantId");
 
