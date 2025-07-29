@@ -10,7 +10,7 @@ exports.getWishlist = async (userId) => {
 
   const structuredRes = wishlist.items.map(({ product, variant }) => ({
     ...product.toObject(),   // include all product fields
-    defaultVariant: [              // wrap variant in an array for consistency
+    defaultVariant: 
       {
         _id: variant._id,
         price: variant.price,
@@ -22,7 +22,7 @@ exports.getWishlist = async (userId) => {
         createdAt: variant.createdAt,
         updatedAt: variant.updatedAt,
       },
-    ],
+    
   }));
 
   return structuredRes;

@@ -29,10 +29,9 @@ const Products = () => {
     maxPrice,
   });
 
-  
   const products = data?.products || [];
   const totalPages = data?.totalPages || 1;
-  
+
   // console.log(products);
   const { data: brandData = [] } = useFetchBrands({ search: "", limit: "" });
 
@@ -119,7 +118,7 @@ const Products = () => {
         </section>
 
         {/* Products Grid */}
-<section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
           {products.length > 0 ? (
             products.map((product) => (
               <ProductCard key={product._id} product={product} />

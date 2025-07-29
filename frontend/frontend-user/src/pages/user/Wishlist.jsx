@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Trash2, X } from 'lucide-react';
 import { useFetchWishlist } from '@/hooks/queries/useWishlistQueries';
+import ProductCard from '@/components/user/ProductCard';
 
 const WishlistScreen = () => {
 
-    const {data:wishlistItems}=useFetchWishlist()
+    const {data:products,isLoading,isError}=useFetchWishlist()
 
-    console.log(wishlistItems)
+    console.log(products)
 
-//   const [wishlistItemsd, setWishlistItems] = useState([
+  const [wishlistItems, setWishlistItems] = useState([])
 //     // {
 //     //   id: 1,
 //     //   name: 'Premium Headphones',
@@ -54,7 +55,22 @@ const WishlistScreen = () => {
         )}
       </div>
 
-      {wishlistItems.length === 0 ? (
+        {/* Products Grid */}
+              <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
+                {products?.length > 0 ? (
+                  products.map((product) => (
+                    <ProductCard key={product._id} product={product} />
+                  ))
+                ) : isLoading ? (
+                  <p>Loading products...</p>
+                ) : isError ? (
+                  <p className="text-red-500">Error: {error.message}</p>
+                ) : (
+                  <p>No products found.</p>
+                )}
+              </section>
+
+      {/* {wishlistItems.length === 0 ? (
         <div className="text-center py-20">
           <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold text-gray-700 mb-2">Your wishlist is empty</h2>
@@ -94,7 +110,7 @@ const WishlistScreen = () => {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

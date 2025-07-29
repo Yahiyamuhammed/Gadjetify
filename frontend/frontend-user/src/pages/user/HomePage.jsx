@@ -16,7 +16,6 @@ const HomePage = () => {
     isError:flashisError,
     error:flashError,
   } = useUserFetchProducts({ sort: "offer_desc" ,limit:8});
-  console.log(products.products)
 
   return (
     <div className="min-h-screen bg-white">

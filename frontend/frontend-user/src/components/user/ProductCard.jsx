@@ -35,6 +35,8 @@ const ProductCard = ({ product, refetch }) => {
     }
   };
 
+  console.log(product,'this is the products from the card')
+
   const finalPrice = () => {
     // console.log(product.offerPercentage, "this is the offer percent");
 
