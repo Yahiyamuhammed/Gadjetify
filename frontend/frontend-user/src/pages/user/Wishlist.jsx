@@ -1,42 +1,48 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Trash2, X } from 'lucide-react';
+import { useFetchWishlist } from '@/hooks/queries/useWishlistQueries';
 
 const WishlistScreen = () => {
-  const [wishlistItems, setWishlistItems] = useState([
-    {
-      id: 1,
-      name: 'Premium Headphones',
-      price: 199.99,
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80',
-    },
-    {
-      id: 2,
-      name: 'Designer Watch',
-      price: 349.99,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80',
-    },
-    {
-      id: 3,
-      name: 'Wireless Speaker',
-      price: 129.99,
-      image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80',
-    },
-  ]);
+
+    const {data:wishlistItems}=useFetchWishlist()
+
+    console.log(wishlistItems)
+
+//   const [wishlistItemsd, setWishlistItems] = useState([
+//     // {
+//     //   id: 1,
+//     //   name: 'Premium Headphones',
+//     //   price: 199.99,
+//     //   image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80',
+//     // },
+//     // {
+//     //   id: 2,
+//     //   name: 'Designer Watch',
+//     //   price: 349.99,
+//     //   image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80',
+//     // },
+//     // {
+//     //   id: 3,
+//     //   name: 'Wireless Speaker',
+//     //   price: 129.99,
+//     //   image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80',
+//     // },
+//   ]);
 
   const removeItem = (id) => {
-    setWishlistItems(wishlistItems.filter(item => item.id !== id));
+    // setWishlistItems(wishlistItems.filter(item => item.id !== id));
   };
 
   const emptyWishlist = () => {
-    setWishlistItems([]);
+    // setWishlistItems([]);
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Your Wishlist</h1>
-        {wishlistItems.length > 0 && (
+        {wishlistItems?.length > 0 && (
           <Button 
             variant="destructive" 
             onClick={emptyWishlist}
@@ -77,7 +83,7 @@ const WishlistScreen = () => {
               
               <div className="p-4">
                 <h3 className="font-medium text-gray-900 truncate">{item.name}</h3>
-                <p className="text-lg font-semibold text-primary mt-1">${item.price.toFixed(2)}</p>
+                <p className="text-lg font-semibold text-primary mt-1">${item?.price?.toFixed(2)}</p>
                 
                 <div className="mt-4 flex gap-2">
                   <Button variant="outline" className="flex-1">

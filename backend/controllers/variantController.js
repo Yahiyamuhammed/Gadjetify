@@ -32,8 +32,6 @@ exports.deleteVariant = async (req, res) => {
 
 exports.getVariants = async (req, res) => {
   try {
-
-    console.log('reached inside varient')
     const { productId } = req.query;
     const variants = await getVariants(productId);
     res.status(200).json(variants);

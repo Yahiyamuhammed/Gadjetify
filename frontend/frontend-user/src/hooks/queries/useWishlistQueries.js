@@ -1,7 +1,7 @@
 import { api } from "@/utils/api"
 import { useQuery } from "@tanstack/react-query"
 
-export const useWishlist = () => {
+export const useFetchWishlist = () => {
   return useQuery({
     queryKey: ['wishlist'],
     queryFn: async () => {
