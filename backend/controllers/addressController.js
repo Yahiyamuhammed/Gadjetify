@@ -1,4 +1,4 @@
-const { addAddress, editAddress, deleteAddress, getUserAddresses } = require("../helpers/addressHelper")
+const { addAddress, editAddress, deleteAddress, getUserAddresses, setPrimaryAddress } = require("../helpers/addressHelper")
 
 exports.addAddress = async (req, res) => {
   try {
@@ -30,7 +30,7 @@ exports.deleteAddress = async (req, res) => {
 
 exports.setPrimaryAddress = async (req, res) => {
   try {
-    const address = await addressHelper.setPrimaryAddress(req.user._id, req.params.addressId)
+    const address = await setPrimaryAddress(req.user._id, req.params.addressId)
     res.json({ success: true, message: 'Primary address set', address: address })
   } catch (error) {
     res.status(500).json({ success: false, message: error.message })
