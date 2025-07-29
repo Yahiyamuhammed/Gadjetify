@@ -6,8 +6,8 @@ const userAuth = require('../middlewares/authMiddleware')
 router.use(userAuth);
 
 router.get('/wishlist', getWishlist);
-router.post('/wishlist-toggle', toggleWishlistItem);
-router.delete('/wishlist-remove', removeFromWishlist);
-router.delete('/wishlist-clear', clearWishlist);
+router.post('/wishlist/toggle', toggleWishlistItem);
+router.delete('/wishlist/remove', removeFromWishlist);
+router.delete('/wishlist/clear', clearWishlist);
 
 module.exports = router;
