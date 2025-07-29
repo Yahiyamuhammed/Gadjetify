@@ -1,7 +1,7 @@
 import { api } from "@/utils/api"
 import { useQuery } from "@tanstack/react-query"
 
-export const useCart = () => {
+export const useFetchCart = () => {
   return useQuery({
     queryKey: ["cart"],
     queryFn: async () => {
