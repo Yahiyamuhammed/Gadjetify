@@ -3,7 +3,7 @@ import Product from "../models/productModel.js";
 import Variant from "../models/variantModel.js";
 import Wishlist from "../models/wishListModel.js";
 
-export const addToCart = async (userId, { productId, variantId }) => {
+exports.addToCart = async (userId, { productId, variantId }) => {
   const product = await Product.findById(productId);
   if (!product || product.isBlocked || !product.isListed) {
     throw new Error("Product not available");
@@ -46,7 +46,7 @@ export const addToCart = async (userId, { productId, variantId }) => {
   return { message: "Item added to cart" };
 };
 
-export const getCart = async (userId) => {
+exports.getCart = async (userId) => {
   const cart = await Cart.findOne({ userId })
     .populate({
       path: "items.productId",
@@ -57,7 +57,7 @@ export const getCart = async (userId) => {
   return cart || { userId, items: [] };
 };
 
-export const updateQuantity = async (userId, { variantId, quantity }) => {
+exports.updateQuantity = async (userId, { variantId, quantity }) => {
   const cart = await Cart.findOne({ userId });
   if (!cart) throw new Error("Cart not found");
 
@@ -76,7 +76,7 @@ export const updateQuantity = async (userId, { variantId, quantity }) => {
   return { message: "Quantity updated" };
 };
 
-export const removeFromCart = async (userId, { variantId }) => {
+exports.removeFromCart = async (userId, { variantId }) => {
   const cart = await Cart.findOneAndUpdate(
     { userId },
     { $pull: { items: { variantId } } },
