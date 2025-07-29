@@ -40,6 +40,8 @@ const ProductDetailsCard = ({ product }) => {
 
   // console.log(product);
 
+  
+
   const finalPrice = () => {
     const totalDiscount =
       (product?.offerPercentage || 0) + (product?.category?.offer || 0);
