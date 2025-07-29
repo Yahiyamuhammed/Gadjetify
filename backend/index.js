@@ -51,8 +51,8 @@ app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', adminProductRoutes);
 app.use('/api/admin', adminBrandRoutes);
 app.use('/api/admin', adminVarientRoutes);
-app.use('/api/admin',userAddressRoutes)
 
+app.use('/api',userAddressRoutes)
 app.use('/api',userProductRoutes)
 
 // MongoDB connection
