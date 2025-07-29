@@ -11,13 +11,22 @@ exports.addAddress = async (userId, data) => {
 }
 
 exports.editAddress = async (addressId, data, userId) => {
-  const address = await Address.findOneAndUpdate(
+   const address = await Address.findOne({ _id: addressId, userId });
+  if (!address) throw new Error('Address not found or unauthorized');
+
+
+   if (data.isPrimary === true) {
+    await Address.updateMany({ userId }, { $set: { isPrimary: false } });
+    address.isPrimary = true;
+  }
+
+   const updated = await Address.findOneAndUpdate(
     { _id: addressId, userId },
-    data,
+    { ...data, isPrimary: data.isPrimary === true }, // ensure correct isPrimary
     { new: true }
-  )
-  if (!address) throw new Error('Address not found or unauthorized')
-  return address
+  );
+  // if (!address) throw new Error('Address not found or unauthorized')
+  return updated
 }
 
 exports.deleteAddress = async (addressId, userId) => {
