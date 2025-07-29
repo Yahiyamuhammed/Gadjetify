@@ -36,13 +36,13 @@ const ProductCard = ({ product, refetch }) => {
   };
 
   const finalPrice = () => {
-    console.log(product.offerPercentage, "this is the offer percent");
+    // console.log(product.offerPercentage, "this is the offer percent");
 
     let effectiveOfferPercent =
       (product?.offerPercentage || 0) + (product?.categoryDetails?.offer || 0);
     effectiveOfferPercent = Math.min(effectiveOfferPercent, 100);
 
-    console.log(effectiveOfferPercent, "this is the effective offer percent");
+    // console.log(effectiveOfferPercent, "this is the effective offer percent");
 
     const price = product.defaultVariant?.price || 10000;
     const discountedPrice = price - (price * effectiveOfferPercent) / 100;
