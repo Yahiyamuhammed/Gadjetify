@@ -230,30 +230,28 @@ const ProductDetailsCard = ({ product }) => {
                   </AddCartButton>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
-                  {product.variants.map((variant) => (
-                    <Card
-                      key={variant._id}
-                      onClick={() => setSelectedVariant(variant)}
-                      className={`cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-indigo-500 ${
-                        selectedVariant?._id === variant._id
-                          ? "ring-2 ring-indigo-500"
-                          : "ring-1 ring-gray-200"
-                      }`}
-                    >
-                      <CardContent className="p-4 text-center space-y-1">
-                        <p className="text-sm font-medium">
-                          RAM: {variant.ram}
-                        </p>
-                        <p className="text-sm font-medium">
-                          Storage: {variant.storage}
-                        </p>
-                        <p className="text-lg font-bold text-indigo-600">
-                          ₹{variant.price.toLocaleString("en-IN")}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+  {product.variants.map((variant) => (
+    <Card
+      key={variant._id}
+      onClick={() => setSelectedVariant(variant)}
+      className={`cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-indigo-500 ${
+        selectedVariant?._id === variant._id
+          ? "ring-2 ring-indigo-500"
+          : "ring-1 ring-gray-200"
+      }`}
+    >
+      <CardContent className="h-24 p-2 flex flex-col justify-center items-center">
+        <div className="text-center">
+          <p className="text-sm font-medium">RAM: {variant.ram}</p>
+          <p className="text-sm font-medium">Storage: {variant.storage}</p>
+          <p className="text-lg font-bold text-indigo-600 mt-1">
+            ₹{variant.price.toLocaleString("en-IN")}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  ))}
+</div>
               </div>
             </div>
 
