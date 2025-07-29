@@ -5,7 +5,8 @@ import {
   updateCartQuantity,
   removeFromCart,
 } from "../controllers/cartController.js";
-import userAuth from "../middleware/userAuth.js";
+
+const userAuth =require ("../middlewares/authMiddleware");
 
 const router = express.Router();
 
