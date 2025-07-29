@@ -7,11 +7,11 @@ const variantSchema = new mongoose.Schema({
     required: true
   },
   storage: {
-    type: String,
+    type: Number,
     required: true
   },
   ram: {
-    type: String,
+    type: Number,
     required: true
   },
   price: {
