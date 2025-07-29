@@ -29,8 +29,9 @@ export const useEditVarient =()=>{
 export const useDeleteVarient =()=>{
     const useQerry=useQueryClient()
     return useMutation({
-        mutationFn:async (data,id)=>{
-            const res= await api.delete(`admin/variants/${id}`,data)
+        mutationFn:async (id)=>{
+            console.log('this is server ;is',id)
+            const res= await api.delete(`admin/variants/${id}`)
             return res.data
         },
         onSuccess:()=>{

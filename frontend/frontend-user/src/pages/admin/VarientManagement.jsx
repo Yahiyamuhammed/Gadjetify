@@ -6,85 +6,101 @@ import DataTableWrapper from "@/components/admin/DataTableWrapper";
 import FormDialog from "@/components/common/FormDialog";
 import VariantFormFields from "@/components/admin/varient/VariantFormFields";
 import { useFetchVarients } from "@/hooks/queries/useVarientQueries";
-import { useAddVarient, useEditVarient } from "@/hooks/mutations/useVarientMutations";
+import {
+  useAddVarient,
+  useDeleteVarient,
+  useEditVarient,
+} from "@/hooks/mutations/useVarientMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
+  const queryClient = useQueryClient();
 
-    const queryClient=useQueryClient()
+  const { mutate: addVariant, error: adderror } = useAddVarient();
+  const { mutate: editVariant, error: editError } = useEditVarient();
+  const { mutate: deleteVarient } = useDeleteVarient();
+  const { data: variants, isError, error } = useFetchVarients();
 
-    const {mutate:addVariant,error:adderror}=useAddVarient()
-    const {mutate:editVariant,error:editError}=useEditVarient()
-    const {data:variants,isError,error}=useFetchVarients()
-
-    
-//   const [variants, setVariants] = useState([]);
+  //   const [variants, setVariants] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [formData, setFormData] = useState({
-    productId:'',
+    productId: "",
     ram: "",
     storage: "",
     price: "",
     stock: "",
-    _id:'',
+    _id: "",
   });
   const [editMode, setEditMode] = useState(false); // track if we're editing
 
-//   console.log('this sis the data',variants)
+  //   console.log('this sis the data',variants)
 
-  const handleEdit = ({formData,variant}) => {
-    const     productId= variant.productId?._id
+  const handleEdit = ({ formData, variant }) => {
+    const productId = variant.productId?._id;
 
-    console.log('this is variant',variant,productId)
-     setFormData({
-    productId:productId,
-    ram: variant.ram,
-    storage: variant.storage,
-    price: variant.price,
-    stock: variant.stock,
-    _id: variant._id,
-  });
-  setEditMode(true)
-    setOpenDialog(true)
-  
+    console.log("this is variant", variant, productId);
+    setFormData({
+      productId: productId,
+      ram: variant.ram,
+      storage: variant.storage,
+      price: variant.price,
+      stock: variant.stock,
+      _id: variant._id,
+    });
+    setEditMode(true);
+    setOpenDialog(true);
   };
 
-  const handleEditSubmit =(formData)=>{
-    console.log('this is the datain submit',formData.formData)
+  const handleEditSubmit = (formData) => {
+    console.log("this is the datain submit", formData.formData);
 
     //   console.log("Edit:", formData);
-    editVariant({data:formData.formData,id:formData.formData._id},{
-        onSuccess:()=>{
-            toast.success('address updated')
-    setOpenDialog(false)
-    setEditMode(false)
-
-        }
-    })
-  }
-  const handleAdd=(data)=>{
-    addVariant(data,{
-        onSuccess:()=>{
-            queryClient.invalidateQueries(['variants'])
-            console.log('variant added')
-            setOpenDialog(false)
+    editVariant(
+      { data: formData.formData, id: formData.formData._id },
+      {
+        onSuccess: () => {
+          toast.success("address updated");
+          setOpenDialog(false);
+          setEditMode(false);
         },
-        onError:(err)=>{
-            console.log(err)
-        }
-    })
-  }
+      }
+    );
+  };
+  const handleAdd = (data) => {
+    console.log("variant added", data.formData);
+
+    const newVariant = { ...formData };
+
+    
+    if (!newVariant._id) {
+      delete newVariant._id;
+    }
+
+    console.log(newVariant,'new varient')
+
+    addVariant(newVariant, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["variants"]);
+        console.log("variant added");
+        setOpenDialog(false);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    });
+  };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.patch(`/api/variants/${id}/delete`);
-
-    } catch (err) {
-      console.error(err);
-    }
+    console.log(id, "this is the id");
+    deleteVarient(id, {
+      onSuccess: () => {
+        toast.success("varient deleted");
+        queryClient.invalidateQueries(["variants"]);
+      },
+    });
   };
-//   console.log(variants,isError,error)
+  //   console.log(variants,isError,error)
 
   return (
     <>
@@ -101,9 +117,8 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
         open={openDialog}
         setOpen={setOpenDialog}
         title="Add Variant"
-        onSubmit={(editMode?handleEditSubmit:handleAdd)}
-          formData={formData}
-
+        onSubmit={editMode ? handleEditSubmit : handleAdd}
+        formData={formData}
       >
         <VariantFormFields formData={formData} setFormData={setFormData} />
       </FormDialog>

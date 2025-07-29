@@ -6,7 +6,6 @@ export const useFetchVarients =()=>{
         queryKey:['variants'],
         queryFn:async ()=>{
             const res=await api.get('/admin/variants')
-            console.log( 'this is the responve', res)
             return res.data
         }
     })
