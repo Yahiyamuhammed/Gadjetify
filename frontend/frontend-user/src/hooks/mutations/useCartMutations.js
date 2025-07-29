@@ -21,7 +21,7 @@ export const useUpdateCartQuantity = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ variantId, quantity }) => {
-      const res = await api.patch(`/cart/${variantId}`, { quantity })
+      const res = await api.patch(`/cart/${variantId}`, {variantId, quantity })
       return res.data
     },
     onSuccess: () => {

@@ -1,34 +1,14 @@
+import { useRemoveFromCart, useUpdateCartQuantity } from "@/hooks/mutations/useCartMutations";
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 const CartPage = () => {
   const { data: items = [] } = useFetchCart();
+  const {mutate:updateItemQuantity}=useUpdateCartQuantity()
+  const {mutate:deleteItem} =useRemoveFromCart()
 
-  console.log(items);
-  // Sample cart data
-  const [cartItemas, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Samsung Galaxy S23 Ultra",
-      image: "https://via.placeholder.com/80",
-      ram: "12GB",
-      storage: "256GB",
-      color: "Phantom Black",
-      price: 1199.99,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: "iPhone 15 Pro Max",
-      image: "https://via.placeholder.com/80",
-      ram: "8GB",
-      storage: "512GB",
-      color: "Titanium Blue",
-      price: 1299.99,
-      quantity: 1,
-    },
-  ]);
-
+//   console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0; // Get from productId
@@ -38,6 +18,7 @@ const CartPage = () => {
     return {
       id: item._id,
       image: item.productId.images?.[0],
+      variantId:item.variantId._id,
       name: item.productId.name,
       ram: item.variantId.ram,
       storage: item.variantId.storage,
@@ -50,7 +31,7 @@ const CartPage = () => {
       customDiscount: 0, // for future use
     };
   });
-//   console.log(formattedItems, "this is formated");
+  console.log(formattedItems, "this is formated");
 
 const IMAGE_BASE_URL = 'http://localhost:5000/products/'; 
 
@@ -87,17 +68,30 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
   // Handle quantity changes
   const updateQuantity = (id, newQuantity) => {
+    console.log(id , newQuantity)
     if (newQuantity < 1) return;
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
+    updateItemQuantity(({variantId:id,quantity:newQuantity}),{
+        onSuccess:()=>{
+            toast.success('quantity updated');
+        },
+            onError:(err)=>{
+                toast.error(`error occured ${err}`)
+            }
+    })
+    
   };
 
   // Remove item from cart
   const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+     deleteItem(({variantId:id}),{
+        onSuccess:()=>{
+            toast.success('item removed');
+        },
+            onError:(err)=>{
+                toast.error(`error occured ${err}`)
+            }
+    })
+    // setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
   return (
@@ -146,7 +140,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                           </span>
                         </div>
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item.variantId)}
                           className="mt-3 text-red-600 hover:text-red-800 text-sm flex items-center"
                         >
                           <svg
@@ -173,7 +167,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                         Price:{" "}
                       </span>
                       <p className="text-gray-900 font-medium">
-                        ${item.price.toFixed(2)}
+                        ₹{item.price.toFixed(2)}
                       </p>
                     </div>
 
@@ -184,7 +178,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                       <div className="flex items-center border rounded-lg">
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
+                            updateQuantity(item.variantId, item.quantity - 1)
                           }
                           className="px-3 py-1 text-gray-600 hover:bg-gray-100"
                         >
@@ -193,7 +187,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                         <span className="px-3 py-1">{item.quantity}</span>
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(item.variantId, item.quantity + 1)
                           }
                           className="px-3 py-1 text-gray-600 hover:bg-gray-100"
                         >
@@ -207,7 +201,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                         Total:{" "}
                       </span>
                       <p className="text-gray-900 font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ₹{(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -226,7 +220,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₹${subtotal.toFixed(2)}</span>
                 </div>
 
                 {/* Show offer discount if exists */}
@@ -236,7 +230,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                       Offer Discount ({totalOfferPercentage}%)
                     </span>
                     <span className="text-green-600">
-                      -${totalOfferDiscount.toFixed(2)}
+                      -₹${totalOfferDiscount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -246,7 +240,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                   <div className="flex justify-between">
                     <span className="text-gray-600">Additional Discount</span>
                     <span className="text-green-600">
-                      -${customDiscount.toFixed(2)}
+                      -₹${customDiscount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -258,7 +252,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                       Total Savings
                     </span>
                     <span className="text-green-600 font-medium">
-                      -${totalDiscount.toFixed(2)}
+                      -₹${totalDiscount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -266,18 +260,18 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                 <div className="flex justify-between">
                   <span className="text-gray-600">Shipping</span>
                   <span>
-                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}
                   </span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>₹{tax.toFixed(2)}</span>
                 </div>
 
                 <div className="border-t pt-4 flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toFixed(2)}</span>
                 </div>
 
                 <button className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 mt-6">

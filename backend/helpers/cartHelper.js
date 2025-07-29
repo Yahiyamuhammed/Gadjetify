@@ -58,6 +58,8 @@ exports.getCart = async (userId) => {
 };
 
 exports.updateQuantity = async (userId, { variantId, quantity }) => {
+
+    console.log(variantId,quantity)
   const cart = await Cart.findOne({ userId });
   if (!cart) throw new Error("Cart not found");
 
