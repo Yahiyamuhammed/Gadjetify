@@ -7,13 +7,21 @@ import AddCartButton from "./AddCartButton";
 // import { successToast } from "../toast";
 import { toast } from "react-hot-toast";
 import { useToggleWishlist } from "@/hooks/mutations/useWishListMutations";
+import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
 
-const ProductCard = ({ product, refetch }) => {
+const ProductCard = ({ product=[], refetch }) => {
   const navigate = useNavigate();
   //   const [toggleWishlist] = useToggleWishListMutation();
 
   //   const { userInfo } = useSelector((state) => state.userAuth);
 const {mutate:toggleWishlist}=useToggleWishlist()
+  const { data: wishlistItems  } = useFetchWishlist()
+
+console.log(wishlistItems,'this is wish')
+  const isInWishlist = wishlistItems.some(
+  (item) => item?._id === product?._id
+)
+
 
 
   const handleClick = (e) => {
@@ -100,7 +108,7 @@ const {mutate:toggleWishlist}=useToggleWishlist()
           >
             <Heart
               className={`w-5 h-5 ${
-                product.isInWishList
+                isInWishlist
                   ? "fill-red-500 text-red-500"
                   : "text-gray-600"
               }`}

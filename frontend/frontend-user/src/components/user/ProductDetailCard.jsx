@@ -88,6 +88,7 @@ const ProductDetailsCard = ({ product }) => {
                     mainImage={mainImage}
                     product={product}
                     onFavClick={() => {}}
+                    selectedVariant={selectedVariant}
                   />
                   {/* <ProductImageZoom src={mainImage} /> */}
                 </div>

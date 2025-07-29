@@ -1,10 +1,19 @@
 import React, { useState, useRef } from "react";
 import { Heart } from "lucide-react";
+import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
 
-const ImageZoom = ({ mainImage, product, onFavClick }) => {
+const ImageZoom = ({ mainImage, product, onFavClick,selectedVariant }) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
+   const { data: wishlistItems  } = useFetchWishlist()
+    
+   const isInWishlist = wishlistItems.some(
+    (item) =>
+      item._id === product._id &&
+      item.defaultVariant._id === selectedVariant._id
+  )
+  
 
   const handleMouseMove = (e) => {
     if (!isZoomed || !containerRef.current) return;
@@ -49,7 +58,7 @@ const ImageZoom = ({ mainImage, product, onFavClick }) => {
 >
   <Heart
     className={
-      product.isInWishList
+      isInWishlist
         ? "text-red-600 fill-current"
         : "text-gray-700 dark:text-gray-300 "
     }
