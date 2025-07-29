@@ -40,19 +40,11 @@ console.log(wishlistItems,'this is wish')
     toggleWishlist(({productId,variantId}),{
       onSuccess:()=>{
         toast.success('wishlist added')
+      },
+      onError:(err)=>{
+        toast.error( `failed to update ${err.message}`)
       }
     })
-
-    try {
-      //   if (!userInfo) {
-      //     toast.success("Login to your account");
-      //     return navigate("/login");
-      //   }
-      //   await toggleWishlist({ productId: product._id });
-      //   refetch();
-    } catch (error) {
-      console.error("Error toggling wishlist:", error);
-    }
   };
 
   // console.log(product,'this is the products from the card')
