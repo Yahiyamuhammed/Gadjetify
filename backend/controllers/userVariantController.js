@@ -6,6 +6,8 @@ exports.getVariantsByProductId = async (req, res) => {
 
     const variants = await fetchVariantsForProduct(productId);
 
+    console.log(variants,'thsi is the varients at back')
+
     return res.status(200).json({
       ...res.product,
       variants,
