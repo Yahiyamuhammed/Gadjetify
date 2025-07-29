@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { verifyUser } = require('../middlewares/authMiddleware');
 const { getWishlist,toggleWishlistItem ,removeFromWishlist,clearWishlist} = require('../controllers/wishlistController');
+const userAuth = require('../middlewares/authMiddleware')
 
-router.use(verifyUser);
+router.use(userAuth);
 
 router.get('/wishlist', getWishlist);
 router.post('/wishlist-toggle', toggleWishlistItem);
