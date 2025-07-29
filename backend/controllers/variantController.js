@@ -12,7 +12,9 @@ exports.createVariant = async (req, res) => {
 
 exports.updateVariant = async (req, res) => {
   try {
+    console.log(req.params.id, req.body)
     const updated = await updateVariant(req.params.id, req.body);
+    console.log(updated)
     res.json(updated);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -30,6 +32,8 @@ exports.deleteVariant = async (req, res) => {
 
 exports.getVariants = async (req, res) => {
   try {
+
+    console.log('reached inside varient')
     const { productId } = req.query;
     const variants = await getVariants(productId);
     res.status(200).json(variants);

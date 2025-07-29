@@ -5,45 +5,86 @@ import { api } from "@/utils/api";
 import DataTableWrapper from "@/components/admin/DataTableWrapper";
 import FormDialog from "@/components/common/FormDialog";
 import VariantFormFields from "@/components/admin/varient/VariantFormFields";
+import { useFetchVarients } from "@/hooks/queries/useVarientQueries";
+import { useAddVarient, useEditVarient } from "@/hooks/mutations/useVarientMutations";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
-  const [variants, setVariants] = useState([]);
+
+    const queryClient=useQueryClient()
+
+    const {mutate:addVariant,error:adderror}=useAddVarient()
+    const {mutate:editVariant,error:editError}=useEditVarient()
+    const {data:variants,isError,error}=useFetchVarients()
+
+    
+//   const [variants, setVariants] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [formData, setFormData] = useState({
-    productId,
+    productId:'',
     ram: "",
     storage: "",
     price: "",
     stock: "",
+    _id:'',
   });
+  const [editMode, setEditMode] = useState(false); // track if we're editing
 
-  const fetchVariants = async () => {
-    try {
-      const res = await api.get(`/admin/variants`);
-      setVariants(res.data);
+//   console.log('this sis the data',variants)
 
-    } catch (err) {
-      console.error(err);
-    }
+  const handleEdit = ({formData,variant}) => {
+    const     productId= variant.productId?._id
+
+    console.log('this is variant',variant,productId)
+     setFormData({
+    productId:productId,
+    ram: variant.ram,
+    storage: variant.storage,
+    price: variant.price,
+    stock: variant.stock,
+    _id: variant._id,
+  });
+  setEditMode(true)
+    setOpenDialog(true)
+  
   };
-  console.log(variants)
 
-  const handleEdit = (variant) => {
-    console.log("Edit:", variant);
-  };
+  const handleEditSubmit =(formData)=>{
+    console.log('this is the datain submit',formData.formData)
+
+    //   console.log("Edit:", formData);
+    editVariant({data:formData.formData,id:formData.formData._id},{
+        onSuccess:()=>{
+            toast.success('address updated')
+    setOpenDialog(false)
+    setEditMode(false)
+
+        }
+    })
+  }
+  const handleAdd=(data)=>{
+    addVariant(data,{
+        onSuccess:()=>{
+            queryClient.invalidateQueries(['variants'])
+            console.log('variant added')
+            setOpenDialog(false)
+        },
+        onError:(err)=>{
+            console.log(err)
+        }
+    })
+  }
 
   const handleDelete = async (id) => {
     try {
       await axios.patch(`/api/variants/${id}/delete`);
-      fetchVariants();
+
     } catch (err) {
       console.error(err);
     }
   };
-
-  useEffect(() => {
-    fetchVariants();
-  }, [productId]);
+//   console.log(variants,isError,error)
 
   return (
     <>
@@ -53,14 +94,16 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
           onEdit: handleEdit,
           onDelete: handleDelete,
         })}
-        data={variants}
+        data={variants ?? []}
         onAdd={() => setOpenDialog(true)}
       />
       <FormDialog
         open={openDialog}
         setOpen={setOpenDialog}
         title="Add Variant"
-        onSubmit={0}
+        onSubmit={(editMode?handleEditSubmit:handleAdd)}
+          formData={formData}
+
       >
         <VariantFormFields formData={formData} setFormData={setFormData} />
       </FormDialog>

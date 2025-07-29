@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-const FormDialog = ({ title,open, setOpen,  triggerLabel, onSubmit, children }) => {
+const FormDialog = ({ title,open, setOpen, formData, triggerLabel, onSubmit, children }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {/* <DialogTrigger asChild>
@@ -17,7 +17,7 @@ const FormDialog = ({ title,open, setOpen,  triggerLabel, onSubmit, children }) 
         <div className="mt-6 flex justify-end">
                       <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
 
-          <Button onClick={onSubmit}>Submit</Button>
+<Button onClick={() => onSubmit({formData:formData})}>Submit</Button>
         </div>
       </DialogContent>
     </Dialog>

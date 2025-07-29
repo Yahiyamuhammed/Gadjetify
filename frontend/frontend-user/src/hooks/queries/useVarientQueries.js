@@ -1,10 +1,12 @@
+import { api } from "@/utils/api"
 import { useQuery } from "@tanstack/react-query"
 
-export const fetchVarients =()=>{
+export const useFetchVarients =()=>{
     return useQuery({
         queryKey:['variants'],
-        queryFn:async (productId={})=>{
-            const res=await api.get('/admin/varients',productId)
+        queryFn:async ()=>{
+            const res=await api.get('/admin/variants')
+            console.log( 'this is the responve', res)
             return res.data
         }
     })

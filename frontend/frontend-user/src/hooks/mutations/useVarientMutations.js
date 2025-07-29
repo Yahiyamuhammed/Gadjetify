@@ -1,11 +1,12 @@
 import { api } from "@/utils/api"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-const useQerry=useQueryClient()
+import { useMutation,  useQueryClient } from "@tanstack/react-query"
+// const useQerry=useQueryClient()
 
 export const useAddVarient =()=>{
+    const useQerry=useQueryClient()
     return useMutation({
         mutationFn:async data=>{
-            const res= await api.post('/admin/varients',data)
+            const res= await api.post('/admin/variants',data)
             return res.data
         },
         onSuccess:()=>{
@@ -14,9 +15,10 @@ export const useAddVarient =()=>{
     })
 }
 export const useEditVarient =()=>{
+    const useQerry=useQueryClient()
     return useMutation({
-        mutationFn:async (data,id)=>{
-            const res= await api.put(`admin/varients/${id}`,data)
+        mutationFn:async ({data,id})=>{
+            const res= await api.put(`admin/variants/${id}`,data)
             return res.data
         },
         onSuccess:()=>{
@@ -25,9 +27,10 @@ export const useEditVarient =()=>{
     })
 }
 export const useDeleteVarient =()=>{
+    const useQerry=useQueryClient()
     return useMutation({
         mutationFn:async (data,id)=>{
-            const res= await api.delete(`admin/varients/${id}`,data)
+            const res= await api.delete(`admin/variants/${id}`,data)
             return res.data
         },
         onSuccess:()=>{
