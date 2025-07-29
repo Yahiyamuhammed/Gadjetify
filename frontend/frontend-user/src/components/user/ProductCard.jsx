@@ -17,8 +17,8 @@ const ProductCard = ({ product=[], refetch }) => {
 const {mutate:toggleWishlist}=useToggleWishlist()
   const { data: wishlistItems  } = useFetchWishlist()
 
-console.log(wishlistItems,'this is wish')
-  const isInWishlist = wishlistItems.some(
+// console.log(wishlistItems,'this is wish')
+  const isInWishlist = wishlistItems?.some(
   (item) => item?._id === product?._id
 )
 
@@ -35,7 +35,7 @@ console.log(wishlistItems,'this is wish')
     // e.stopPropagation();
 
     // toast.success(`wishlist added ${productIdvariantId ${vId}`)
-    console.log(productId,variantId)
+    // console.log(productId,variantId)
 
     toggleWishlist(({productId,variantId}),{
       onSuccess:()=>{
