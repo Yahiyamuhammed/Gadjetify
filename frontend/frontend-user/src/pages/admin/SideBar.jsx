@@ -126,11 +126,11 @@ const Sidebar = () => {
       label: "Order Management",
       path: "/admin/manage-orders",
     },
-    // {
-    //   icon: Layers,
-    //   label: "Category Management",
-    //   path: "/admin/manage-category",
-    // },
+    {
+      icon: Layers,
+      label: "Varient Management",
+      path: "/admin/manage-Varient",
+    },
     {
       icon: Copyright,
       label: "Brand Management",

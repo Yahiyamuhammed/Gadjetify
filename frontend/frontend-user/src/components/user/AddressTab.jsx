@@ -72,9 +72,7 @@ function App() {
   } = getAddresses();
   const queryClient = useQueryClient();
 
-
   const [openDropdownId, setOpenDropdownId] = useState(null);
-
 
   // State for modal visibility
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -129,8 +127,7 @@ function App() {
       onSuccess: () => {
         console.log("address set to primary");
         queryClient.invalidateQueries(["addresses"]);
-                setOpenDropdownId(null);
-
+        setOpenDropdownId(null);
       },
       onError: (err) => {
         console.log("error occured", err);
@@ -140,7 +137,6 @@ function App() {
 
   return (
     <div className="container mx-auto w-full max-w-7xl px-4 py-8 font-inter">
-      
       <Card className="overflow-hidden border shadow-xl rounded-3xl py-0">
         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b p-8 ">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -172,7 +168,7 @@ function App() {
           <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {addresses.length === 0 ? (
               // Empty state message
-              <Card className="col-span-full text-center py-20 px-6" key={1} >
+              <Card className="col-span-full text-center py-20 px-6" key={1}>
                 <MapPin className="w-24 h-24 mx-auto mb-8 text-slate-300 opacity-50" />
                 <h3 className="text-4xl font-extrabold mb-4 text-slate-900">
                   No Addresses Found
@@ -282,22 +278,21 @@ function App() {
                       <DropdownMenuContent align="end">
                         {!address.isPrimary && (
                           <ConfirmAlertDialog
-  title="Set as Primary Address"
-  description="Do you want to set this address as your primary address?"
-  confirmText="Yes"
-  cancelText="Cancel"
-  onConfirm={() => handleSetPrimary(address._id)}
-  trigger={
-    <DropdownMenuItem
-      onSelect={(e) => e.preventDefault()}
-      className="cursor-pointer"
-    >
-      <Star className="w-4 h-4 mr-2 text-indigo-600" />
-      Set as Primary
-    </DropdownMenuItem>
-  }
-/>
-
+                            title="Set as Primary Address"
+                            description="Do you want to set this address as your primary address?"
+                            confirmText="Yes"
+                            cancelText="Cancel"
+                            onConfirm={() => handleSetPrimary(address._id)}
+                            trigger={
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                                className="cursor-pointer"
+                              >
+                                <Star className="w-4 h-4 mr-2 text-indigo-600" />
+                                Set as Primary
+                              </DropdownMenuItem>
+                            }
+                          />
                         )}
                         {/* Edit option with dialog */}
                         <EditAddressDialog

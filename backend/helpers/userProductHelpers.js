@@ -2,6 +2,7 @@ const Product = require("../models/productModel");
 const Brand = require("../models/brandModel");
 
 const mongoose = require("mongoose");
+const Variant = require("../models/variantModel");
 
 exports.fetchFilteredProducts = async (query) => {
   const {
@@ -91,8 +92,23 @@ exports.fetchFilteredProducts = async (query) => {
     Product.countDocuments(filter),
   ]);
 
+  // Fetch and attach default variant to each product
+  const productsWithVariant = await Promise.all(
+    products.map(async (product) => {
+      const defaultVariant = await Variant.findOne({
+        productId: product._id,
+        isDefault: true,
+      });
+
+      return {
+        ...product.toObject(),
+        defaultVariant: defaultVariant || null,
+      };
+    })
+  );
+
   return {
-    products,
+    products:productsWithVariant,
     totalCount,
     totalPages: Math.ceil(totalCount / limit),
     currentPage: parseInt(page),

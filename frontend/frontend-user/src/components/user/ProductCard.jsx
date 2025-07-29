@@ -35,30 +35,37 @@ const ProductCard = ({ product, refetch }) => {
     }
   };
 
-    const finalPrice = () => {
-      let effectiveOfferPercent =
-        (product?.offerPercentage || 0) + (product?.categoryDetails?.offer || 0);
-      effectiveOfferPercent = Math.min(effectiveOfferPercent, 100);
-      return effectiveOfferPercent > 0
-        ? (
-            product?.price|| 10000 -
-            (product?.price || 10000 * effectiveOfferPercent) / 100
-          ).toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })
-        : (product?.price || 10000 ).toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
-    };
+  const finalPrice = () => {
+    console.log(product.offerPercentage, "this is the offer percent");
+
+    let effectiveOfferPercent =
+      (product?.offerPercentage || 0) + (product?.categoryDetails?.offer || 0);
+    effectiveOfferPercent = Math.min(effectiveOfferPercent, 100);
+
+    console.log(effectiveOfferPercent, "this is the effective offer percent");
+
+    const price = product.defaultVariant?.price || 10000;
+    const discountedPrice = price - (price * effectiveOfferPercent) / 100;
+
+    return effectiveOfferPercent > 0
+      ? discountedPrice.toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : price.toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+  };
 
   // console.log(product,'thisis the products')
 
-  
   return (
     <div className="group relative max-w-[290px] min-w-[270px] bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-      <div onClick={handleClick} className="cursor-pointer flex flex-col flex-grow">
+      <div
+        onClick={handleClick}
+        className="cursor-pointer flex flex-col flex-grow"
+      >
         {/* Image Container */}
         <div className="relative h-72 overflow-hidden rounded-t-xl">
           <img
@@ -87,7 +94,8 @@ const ProductCard = ({ product, refetch }) => {
           </button>
 
           {/* Offer Badge */}
-          {(product?.offerPercentage || product?.categoryDetails?.offer) > 0 && (
+          {(product?.offerPercentage || product?.categoryDetails?.offer) >
+            0 && (
             <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
               {Math.min(
                 (product?.offerPercentage || 0) +
@@ -108,7 +116,8 @@ const ProductCard = ({ product, refetch }) => {
             </h3>
             <div className="flex flex-col items-end min-w-[30%] pl-2">
               <span className="text-sm text-gray-500 line-through whitespace-nowrap">
-                ₹{product?.price?.toLocaleString("en-IN", {
+                ₹
+                {product.defaultVariant?.price?.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 }) || "10,000.00"}
@@ -149,12 +158,7 @@ const ProductCard = ({ product, refetch }) => {
                     />
                   );
                 }
-                return (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 text-gray-300"
-                  />
-                );
+                return <Star key={i} className="w-4 h-4 text-gray-300" />;
               })}
             </div>
             <span className="text-sm text-gray-500">
@@ -168,16 +172,16 @@ const ProductCard = ({ product, refetch }) => {
               Out of Stock
             </div>
           ) : (
-            <div className="min-h-[20px]"></div> 
+            <div className="min-h-[20px]"></div>
           )}
 
           {/* Add to Cart Button - Always at bottom */}
           <div className="mt-auto pt-2">
-            <AddCartButton 
+            <AddCartButton
               onClick={(e) => {
                 e.stopPropagation();
                 console.log("Clicked Add to Cart");
-              }} 
+              }}
             />
           </div>
         </div>

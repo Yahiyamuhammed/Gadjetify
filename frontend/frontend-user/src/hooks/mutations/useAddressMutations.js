@@ -6,7 +6,7 @@ export const useAddAddress = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (addressData) => {
-      const res = await api.post('/add-address', addressData);
+      const res = await api.post('/admin/add-address', addressData);
       return res.data;
     },
     onSuccess: () => {
@@ -20,7 +20,7 @@ export const useEditAddress = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ addressId, updateData }) => {
-      const res = await api.put(`/edit-address/${addressId}`, updateData);
+      const res = await api.put(`/admin/edit-address/${addressId}`, updateData);
       return res.data;
     },
     onSuccess: () => {
@@ -34,7 +34,7 @@ export const useDeleteAddress = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (addressId) => {
-      const res = await api.delete(`/delete-address/${addressId}`);
+      const res = await api.delete(`/admin/delete-address/${addressId}`);
       return res.data;
     },
     onSuccess: () => {
@@ -48,7 +48,7 @@ export const useSetPrimaryAddress = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (addressId) => {
-      const res = await api.patch(`/set-primary-address/${addressId}`);
+      const res = await api.patch(`/admin/set-primary-address/${addressId}`);
       return res.data;
     },
     onSuccess: () => {

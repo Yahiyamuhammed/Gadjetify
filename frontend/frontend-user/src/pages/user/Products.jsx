@@ -29,11 +29,11 @@ const Products = () => {
     maxPrice,
   });
 
-  // console.log(selectedBrand);
-
+  
   const products = data?.products || [];
   const totalPages = data?.totalPages || 1;
-
+  
+  // console.log(products);
   const { data: brandData = [] } = useFetchBrands({ search: "", limit: "" });
 
   const brands = (brandData?.brands || []).filter((b) => !b.isDeleted);

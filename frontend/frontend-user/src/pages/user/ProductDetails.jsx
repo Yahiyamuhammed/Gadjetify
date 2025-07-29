@@ -21,7 +21,7 @@ const ProductDetails = () => {
       if (isLoading) return <p>Loading product...</p>;
   if (isError) return <p>Error: {error?.response?.data?.message || error.message}</p>;
 
-  // console.log('this is the product',product)
+  // console.log('this is the product varients',product.variants)
   
 
 
