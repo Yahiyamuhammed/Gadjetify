@@ -6,12 +6,15 @@ import AddCartButton from "./AddCartButton";
 // import { useDispatch, useSelector } from "react-redux";
 // import { successToast } from "../toast";
 import { toast } from "react-hot-toast";
+import { useToggleWishlist } from "@/hooks/mutations/useWishListMutations";
 
 const ProductCard = ({ product, refetch }) => {
   const navigate = useNavigate();
   //   const [toggleWishlist] = useToggleWishListMutation();
 
   //   const { userInfo } = useSelector((state) => state.userAuth);
+const {mutate:toggleWishlist}=useToggleWishlist()
+
 
   const handleClick = (e) => {
     if (!e.target.closest(".wishlist-btn") && !e.target.closest(".cart-btn")) {
@@ -20,8 +23,17 @@ const ProductCard = ({ product, refetch }) => {
     }
   };
 
-  const handleFavClick = async (e) => {
-    e.stopPropagation();
+  const handleFavClick = async (productId,variantId) => {
+    // e.stopPropagation();
+
+    // toast.success(`wishlist added ${productIdvariantId ${vId}`)
+    console.log(productId,variantId)
+
+    toggleWishlist(({productId,variantId}),{
+      onSuccess:()=>{
+        toast.success('wishlist added')
+      }
+    })
 
     try {
       //   if (!userInfo) {
@@ -35,7 +47,7 @@ const ProductCard = ({ product, refetch }) => {
     }
   };
 
-  console.log(product,'this is the products from the card')
+  // console.log(product,'this is the products from the card')
 
   const finalPrice = () => {
     // console.log(product.offerPercentage, "this is the offer percent");
@@ -82,7 +94,7 @@ const ProductCard = ({ product, refetch }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleFavClick();
+              handleFavClick(product._id,product?.defaultVariant?._id);
             }}
             className="wishlist-btn absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform duration-200"
           >

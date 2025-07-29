@@ -3,10 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Trash2, X } from 'lucide-react';
 import { useFetchWishlist } from '@/hooks/queries/useWishlistQueries';
 import ProductCard from '@/components/user/ProductCard';
+import toast from 'react-hot-toast';
+import { useClearWishlist } from '@/hooks/mutations/useWishListMutations';
 
 const WishlistScreen = () => {
 
     const {data:products,isLoading,isError}=useFetchWishlist()
+    const {mutate:clearWishlist}=useClearWishlist()
 
     console.log(products)
 
@@ -36,6 +39,12 @@ const WishlistScreen = () => {
   };
 
   const emptyWishlist = () => {
+    toast.success('clicked clear wishlist')
+    clearWishlist({
+        onSuccess:()=>{
+            toast.success('wishlist cleared')
+        }
+    })
     // setWishlistItems([]);
   };
 
@@ -43,7 +52,7 @@ const WishlistScreen = () => {
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Your Wishlist</h1>
-        {wishlistItems?.length > 0 && (
+        {products?.length > 0 && (
           <Button 
             variant="destructive" 
             onClick={emptyWishlist}
@@ -59,7 +68,7 @@ const WishlistScreen = () => {
               <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
                 {products?.length > 0 ? (
                   products.map((product) => (
-                    <ProductCard key={product._id} product={product} />
+                    <ProductCard key={product.defaultVariant._id} product={product} />
                   ))
                 ) : isLoading ? (
                   <p>Loading products...</p>
