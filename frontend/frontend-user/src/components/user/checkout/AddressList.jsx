@@ -10,33 +10,6 @@ export default function AddressList({
   onAdd = () => {},
   onEdit = (address) => {},
 }) {
-  addresses = [
-    {
-      _id: "1a2b3c4d5e",
-      name: "Home",
-      street: "123 Main Street",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400001",
-    },
-    {
-      _id: "6f7g8h9i0j",
-      name: "Office",
-      street: "456 Business Rd",
-      city: "Pune",
-      state: "Maharashtra",
-      pincode: "411001",
-    },
-    {
-      _id: "k1l2m3n4o5",
-      name: "Parents' Home",
-      street: "789 Old St",
-      city: "Nagpur",
-      state: "Maharashtra",
-      pincode: "440001",
-    },
-  ];
-
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -62,12 +35,21 @@ export default function AddressList({
                 <div className="space-y-1 flex-1">
                   <div className="font-medium flex justify-between">
                     <span>{address.name}</span>
+                    <span className="capitalize text-xs text-gray-500">{address.addressType}</span>
+                  </div>
+                  <div className="text-sm text-gray-500 leading-snug">
+                    {address.address}, {address.locality}, {address.district}, {address.state} - {address.pincode}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {address.street}, {address.city}, {address.state} -{" "}
-                    {address.pincode}
+                    Phone: {address.phone}
+                    {address.alternatePhone && ` | Alt: ${address.alternatePhone}`}
                   </div>
-                  {address._id === selectedAddressId && (
+                  {address.landmark && (
+                    <div className="text-sm text-gray-500">
+                      Landmark: {address.landmark}
+                    </div>
+                  )}
+                  {address.isPrimary && (
                     <div className="text-xs text-green-600 font-medium">
                       Primary Address
                     </div>
