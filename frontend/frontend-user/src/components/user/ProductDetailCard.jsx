@@ -21,6 +21,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useAddToCart } from "@/hooks/mutations/useCartMutations";
+import toast from "react-hot-toast";
 
 // Replace with your backend URL
 const backendUrl = "http://localhost:5000";
@@ -41,9 +42,11 @@ const ProductDetailsCard = ({ product }) => {
     product?.variants?.find((v) => v.isDefault) || product?.variants?.[0]
   );
 
-  // console.log(product.isDeleted);
+  // console.log(selectedVariant.stock);
 
   const handleAddToCart = (productId, variantId) => {
+    toast.success("item added to cart");
+    toast.success(`an error occured ${productId} ${variantId}`);
     addToCart(
       { productId, variantId },
       {
@@ -52,6 +55,7 @@ const ProductDetailsCard = ({ product }) => {
         },
         onError: (err) => {
           toast.error(`an error occured ${err}`);
+          console.error(`an error occured ${err}`);
         },
       }
     );
@@ -222,26 +226,26 @@ const ProductDetailsCard = ({ product }) => {
                 {/* Stock Status */}
                 <p
                   className={`text-lg font-medium ${
-                    (product?.stock || 5) === 0
+                    (selectedVariant.stock ) === 0
                       ? "text-red-600"
-                      : (product?.stock || 5) > 20
+                      : (selectedVariant.stock ) > 20
                       ? "text-green-600"
                       : "text-yellow-600"
                   }`}
                 >
-                  {(product?.stock || 5) === 0
+                  {(selectedVariant.stock ) === 0
                     ? "Out of Stock"
-                    : (product?.stock || 5) > 20
+                    : (selectedVariant.stock ) > 20
                     ? "In Stock"
-                    : `Only ${product?.stock || 5} left`}
+                    : `Only ${selectedVariant.stock } left`}
                 </p>
 
                 {/* Add to Cart */}
                 <div className="grid grid-cols-2 gap-4">
                   <AddCartButton
-                    onClick={handleAddToCart}
+                    onClick={()=>{handleAddToCart(selectedVariant._id,product._id)}}
                     productId={product._id}
-                    disabled={product.stock === 0 || product.isDeleted}
+                    disabled={selectedVariant.stock === 0 || product.isDeleted}
                     className="w-full px-6 py-3 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
                       disabled:bg-gray-100 disabled:text-gray-400 rounded-lg font-medium flex items-center justify-center gap-2"
                   >
