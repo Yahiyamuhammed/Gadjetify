@@ -82,11 +82,18 @@ const CartPage = () => {
       setShowRemoveDialog(true);
       return;
     }
+
+    if (newQuantity > 3) {
+      toast.error("Maximum quantity is 3");
+      return;
+    }
     updateItemQuantity(
       { variantId: id, quantity: newQuantity },
       {
-        onSuccess: () => {
-          toast.success("quantity updated");
+        onSuccess: (res) => {
+          console.log(res);
+          if (res?.message) toast.success(res.message);
+          else toast.success("quantity updated");
         },
         onError: (err) => {
           toast.error(`error occured ${err}`);
@@ -98,7 +105,7 @@ const CartPage = () => {
   const handleDelete = (id) => {
     setItemToRemove(id);
     setShowRemoveDialog(true);
-    // removeItem(id);
+    
   };
   const removeItem = (id) => {
     deleteItem(
