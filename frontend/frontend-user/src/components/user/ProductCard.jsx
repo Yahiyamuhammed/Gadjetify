@@ -58,6 +58,8 @@ const ProductCard = ({ product = [], refetch }) => {
           toast.success("item added to cart");
         },
         onError: (err) => {
+           if (err?.status === 409) toast.error(`Maximum quantity (3) reached for this item in cart`)
+            else
           toast.error(`an error occured ${err}`);
         },
       }
