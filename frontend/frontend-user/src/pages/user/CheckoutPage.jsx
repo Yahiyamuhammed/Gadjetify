@@ -11,14 +11,17 @@ import {
 } from "@/hooks/mutations/useAddressMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useFetchCart } from "@/hooks/queries/useCartQuery";
 
 export default function CheckoutPage() {
   const queryClient = useQueryClient();
 
   const { data: addresses } = getAddresses();
+  const { data: items = [] } = useFetchCart();
 
   const { mutate: addAddress, data: addedAddress } = useAddAddress();
   const { mutate: editAddress, data: editedAddress } = useEditAddress();
+  
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -75,7 +78,6 @@ export default function CheckoutPage() {
       <div>
         <AddressList
           addresses={addresses}
-          selectedAddressId={selectedAddressId}
           onAdd={handleAddAddress}
           onEdit={handleEditAddress}
           onSelect={handleSelectAddress}
@@ -93,7 +95,9 @@ export default function CheckoutPage() {
         <PaymentMethod />
       </div>
       <div>
-        <OrderSummary />
+        <OrderSummary 
+            items={items.items}
+        />
       </div>
     </div>
   );

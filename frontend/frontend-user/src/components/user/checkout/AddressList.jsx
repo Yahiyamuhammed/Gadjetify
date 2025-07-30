@@ -2,14 +2,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
+import { useState } from "react";
 
 export default function AddressList({
   addresses = [],
-  selectedAddressId,
   onSelect = () => {},
   onAdd = () => {},
   onEdit = (address) => {},
 }) {
+  const primaryAddress = addresses.find((addr) => addr.isPrimary);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -20,7 +22,7 @@ export default function AddressList({
       </div>
 
       <RadioGroup
-        value={selectedAddressId}
+        defaultValue={primaryAddress?._id}
         onValueChange={(val) => onSelect(val)}
         className="space-y-2 max-h-64 overflow-y-auto pr-1"
       >
@@ -35,14 +37,18 @@ export default function AddressList({
                 <div className="space-y-1 flex-1">
                   <div className="font-medium flex justify-between">
                     <span>{address.name}</span>
-                    <span className="capitalize text-xs text-gray-500">{address.addressType}</span>
+                    <span className="capitalize text-xs text-gray-500">
+                      {address.addressType}
+                    </span>
                   </div>
                   <div className="text-sm text-gray-500 leading-snug">
-                    {address.address}, {address.locality}, {address.district}, {address.state} - {address.pincode}
+                    {address.address}, {address.locality}, {address.district},{" "}
+                    {address.state} - {address.pincode}
                   </div>
                   <div className="text-sm text-gray-500">
                     Phone: {address.phone}
-                    {address.alternatePhone && ` | Alt: ${address.alternatePhone}`}
+                    {address.alternatePhone &&
+                      ` | Alt: ${address.alternatePhone}`}
                   </div>
                   {address.landmark && (
                     <div className="text-sm text-gray-500">
