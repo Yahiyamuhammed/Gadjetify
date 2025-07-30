@@ -31,12 +31,12 @@ export default function CheckoutPage() {
   const handleAddAddress = () => {
     setEditingAddress(null);
     setDialogOpen(true);
-    // Show modal or navigate to AddAddressPage
+    
   };
   const handleEditAddress = (address) => {
     setEditingAddress(address);
     setDialogOpen(true);
-    // Open modal with address data or navigate to edit page
+   
   };
 
   const handleSelectAddress = (addressId) => {
@@ -73,6 +73,11 @@ export default function CheckoutPage() {
     }
   };
 
+   const handleOrderSummaryData = (data) => {
+    console.log('Data from OrderSummary:', data);
+    
+  };
+
   return (
     <div className="checkout-page p-6 md:p-10 grid md:grid-cols-2 gap-10">
       <div>
@@ -97,6 +102,8 @@ export default function CheckoutPage() {
       <div>
         <OrderSummary 
             items={items.items}
+                    onPlaceOrder={handleOrderSummaryData}
+
         />
       </div>
     </div>
