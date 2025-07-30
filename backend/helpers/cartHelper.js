@@ -38,8 +38,8 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   }
 
   await Wishlist.updateOne(
-    { userId },
-    { $pull: { items: { variantId } } }
+    { user: userId },
+    { $pull: { items: { variant: variantId } } }
   );
 
   await cart.save();
