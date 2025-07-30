@@ -6,6 +6,7 @@ import {
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const CartPage = () => {
   const { data: items = [] } = useFetchCart();
@@ -94,8 +95,8 @@ const CartPage = () => {
     );
   };
 
- const handleDelete = (id) => {
-     setItemToRemove(id);
+  const handleDelete = (id) => {
+    setItemToRemove(id);
     setShowRemoveDialog(true);
     // removeItem(id);
   };
@@ -113,6 +114,58 @@ const CartPage = () => {
     );
     // setCartItems(cartItems.filter((item) => item.id !== id));
   };
+
+  if (cartItems?.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
+        <div className="max-w-md text-center">
+          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-40 h-40 mx-auto flex items-center justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+          </div>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            Your cart is empty
+          </h2>
+          <p className="mt-2 text-gray-600">
+            Looks like you haven't added any phones to your cart yet
+          </p>
+
+          <div className="mt-6 flex justify-center">
+            <Link
+              to="/products"
+              className="flex items-center text-indigo-600 hover:text-indigo-800"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-1"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
