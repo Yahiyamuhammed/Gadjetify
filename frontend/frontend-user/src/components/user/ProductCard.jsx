@@ -208,7 +208,6 @@ const {mutate:addToCart}=useAddToCart()
               onClick={(e) => {
                 e.stopPropagation();
                 handleAddToCart(product._id,product?.defaultVariant?._id)
-                toast.success("Clicked Add to Cart");
               }}
             />
           </div>

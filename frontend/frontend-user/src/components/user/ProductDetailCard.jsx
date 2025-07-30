@@ -20,11 +20,15 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { useAddToCart } from "@/hooks/mutations/useCartMutations";
 
 // Replace with your backend URL
 const backendUrl = "http://localhost:5000";
 
 const ProductDetailsCard = ({ product }) => {
+
+  const {mutate:addToCart}=useAddToCart()
+  
   const navigate = useNavigate();
   const [mainImage, setMainImage] = useState(noImage);
 
@@ -39,6 +43,18 @@ const ProductDetailsCard = ({ product }) => {
   );
 
   // console.log(product);
+  
+    const handleAddToCart =(productId,variantId)=>{
+      addToCart({productId,variantId},{
+        onSuccess:()=>{
+          toast.success('item added to cart')
+        },
+        onError:(err)=>{
+          toast.error(`an error occured ${err}`)
+        }
+      })
+    }
+  
 
   
 
@@ -224,6 +240,7 @@ const ProductDetailsCard = ({ product }) => {
                 {/* Add to Cart */}
                 <div className="grid grid-cols-2 gap-4">
                   <AddCartButton
+                  onClick={handleAddToCart}
                     productId={product._id}
                     disabled={product.stock === 0}
                     className="w-full px-6 py-3 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
