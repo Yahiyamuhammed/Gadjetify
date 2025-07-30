@@ -74,7 +74,8 @@ export default function CheckoutPage() {
 
   const handleOrderSummaryData = (data) => {
     paymentMethod
-    console.log("Data from OrderSummary:", data);
+    selectedAddressId
+    console.log("Data from OrderSummary:", data, paymentMethod,selectedAddressId);
   };
 
   return (
@@ -85,6 +86,8 @@ export default function CheckoutPage() {
           onAdd={handleAddAddress}
           onEdit={handleEditAddress}
           onSelect={handleSelectAddress}
+        //   selectedAddress
+        
         />
 
         <EditAddressDialog
@@ -93,7 +96,7 @@ export default function CheckoutPage() {
           address={editingAddress}
           onSubmit={onFormSubmit}
           validationSchema={addressSchema}
-          selectedAddressId={selectedAddressId}
+          
            // your yup schema
           // no trigger here; you're opening manually
         />

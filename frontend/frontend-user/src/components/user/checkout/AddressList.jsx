@@ -33,8 +33,10 @@ export default function AddressList({
       </div>
 
       <RadioGroup
-        defaultValue={primaryAddress?._id}
-        onValueChange={(val) => onSelect(val)}
+        value={selectedAddressId}
+        onValueChange={(val) => {
+          onSelect(val)
+          setSelectedAddressId(val)}}
         className="space-y-2 max-h-64 overflow-y-auto pr-1"
       >
         {addresses.map((address) => (
