@@ -1,41 +1,55 @@
-const Order = require('../models/orderModel');
-const Product = require('../models/productModel');
-const Variant = require('../models/variantModel');
-const Brand = require('../models/brandModel');
+const Order = require("../models/orderModel");
+const Product = require("../models/productModel");
+const Variant = require("../models/variantModel");
+const Brand = require("../models/brandModel");
 const Address = require("../models/addressModal");
-
-
 
 exports.getUserOrders = async (userId) => {
   const orders = await Order.find({ userId })
     .sort({ createdAt: -1 })
-    .select('-__v');
+    .select("-__v");
 
   return {
     status: 200,
-    message: 'Orders fetched successfully',
-    data: orders
+    message: "Orders fetched successfully",
+    data: orders,
   };
 };
 
 exports.getOrderById = async (userId, orderId) => {
-  const order = await Order.findOne({ userId, _id: orderId }).select('-__v');
+  const order = await Order.findOne({ userId, _id: orderId }).select("-__v");
 
   if (!order) {
-    return { status: 404, message: 'Order not found' };
+    return { status: 404, message: "Order not found" };
   }
 
   return {
     status: 200,
-    message: 'Order details fetched successfully',
-    data: order
+    message: "Order details fetched successfully",
+    data: order,
   };
 };
 
-
-exports.placeOrder = async ({ userId, addressId, paymentMethod, items, summary }) => {
+exports.placeOrder = async ({
+  userId,
+  addressId,
+  paymentMethod,
+  items,
+  finalTotal,
+  summary,
+}) => {
   if (!items || items.length === 0) {
     return { status: 400, message: "No items to order" };
+  }
+
+  if (!addressId || !items?.length || !paymentMethod || !finalTotal || !summary) {
+  return {status:400 ,message: "Missing required fields" };
+}
+
+  const address = await Address.findById(addressId).lean();
+  console.log(address);
+  if (!address) {
+    return { status: 404, message: "Address not found" };
   }
 
   const itemSnapshots = [];
@@ -66,36 +80,31 @@ exports.placeOrder = async ({ userId, addressId, paymentMethod, items, summary }
       price: variant.price,
       quantity,
       offerPercentage: product.offerPercentage,
-      image: product.images?.[0] || ""
+      image: product.images[0] || "",
     });
 
     await Variant.findByIdAndUpdate(variantId, { $inc: { stock: -quantity } });
-  }
-
-  const address = await Address.findOne({ _id: addressId, userId }).lean();
-  if (!address) {
-    return { status: 404, message: "Address not found" };
   }
 
   const newOrder = await Order.create({
     userId,
     addressId,
     addressSnapshot: {
-      fullName: address.fullName,
+      name: address.name,
       phone: address.phone,
-      city: address.city,
+      alternatePhone: address.alternatePhone,
+      pincode: address.pincode,
+      locality: address.locality,
+      address: address.address,
+      district: address.district,
       state: address.state,
-      zip: address.zip,
-      street: address.street,
+      landmark: address.landmark,
     },
     paymentMethod,
     paymentStatus: paymentMethod === "COD" ? "pending" : "completed",
     items: itemSnapshots,
-    subtotal: summary?.subtotal || 0,
-    offerDiscount: summary?.totalOfferDiscount || 0,
-    customDiscount: summary?.customDiscount || 0,
-    tax: summary?.tax || 0,
-    finalTotal: summary?.total || 0,
+    finalTotal,
+    summary,
   });
 
   return {

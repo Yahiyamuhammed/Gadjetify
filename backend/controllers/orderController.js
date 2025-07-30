@@ -32,7 +32,7 @@ exports.placeOrder = async (req, res) => {
   try {
     const userId = req.user;
 
-    const { addressId, paymentMethod, items, finalTotal } = req.body;
+    const { addressId, paymentMethod, items, finalTotal,summary } = req.body;
 
     const response = await orderHelper.placeOrder({
       userId,
@@ -40,6 +40,7 @@ exports.placeOrder = async (req, res) => {
       paymentMethod,
       items,
       finalTotal,
+      summary,
     });
 
     res.status(response.status).json({

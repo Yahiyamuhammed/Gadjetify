@@ -78,7 +78,7 @@ export default function CheckoutPage() {
   const handleOrderSummaryData = (data) => {
     paymentMethod
     selectedAddressId
-    console.log("Data from OrderSummary:", data, paymentMethod,selectedAddressId);
+    console.log("Data from OrderSummary:", data, paymentMethod,selectedAddressId,data.summary);
 
 
      const payload = {
@@ -86,6 +86,7 @@ export default function CheckoutPage() {
     paymentMethod,
     finalTotal: data.summary.total,
     items:data.items,
+    summary:data.summary
   };
 
   console.log("Placing order with:", payload);
