@@ -2,7 +2,6 @@ const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const Variant = require('../models/variantModel');
 const Brand = require('../models/brandModel');
-const Order = require('../models/orderModel');
 
 
 exports.getUserOrders = async (userId) => {
