@@ -8,6 +8,7 @@ import AddCartButton from "./AddCartButton";
 import { toast } from "react-hot-toast";
 import { useToggleWishlist } from "@/hooks/mutations/useWishListMutations";
 import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
+import { useAddToCart } from "@/hooks/mutations/useCartMutations";
 
 const ProductCard = ({ product=[], refetch }) => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const ProductCard = ({ product=[], refetch }) => {
 
   //   const { userInfo } = useSelector((state) => state.userAuth);
 const {mutate:toggleWishlist}=useToggleWishlist()
+const {mutate:addToCart}=useAddToCart()
   const { data: wishlistItems  } = useFetchWishlist()
 
 // console.log(wishlistItems,'this is wish')
@@ -46,6 +48,17 @@ const {mutate:toggleWishlist}=useToggleWishlist()
       }
     })
   };
+
+  const handleAddToCart =(productId,variantId)=>{
+    addToCart({productId,variantId},{
+      onSuccess:()=>{
+        toast.success('item added to cart')
+      },
+      onError:(err)=>{
+        toast.error(`an error occured ${err}`)
+      }
+    })
+  }
 
   // console.log(product,'this is the products from the card')
 
@@ -194,7 +207,8 @@ const {mutate:toggleWishlist}=useToggleWishlist()
             <AddCartButton
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("Clicked Add to Cart");
+                handleAddToCart(product._id,product?.defaultVariant?._id)
+                toast.success("Clicked Add to Cart");
               }}
             />
           </div>
