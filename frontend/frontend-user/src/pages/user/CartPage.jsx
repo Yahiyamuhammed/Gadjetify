@@ -1,14 +1,21 @@
-import { useRemoveFromCart, useUpdateCartQuantity } from "@/hooks/mutations/useCartMutations";
+import ConfirmAlertDialog from "@/components/common/ExternalConfirmDialog";
+import {
+  useRemoveFromCart,
+  useUpdateCartQuantity,
+} from "@/hooks/mutations/useCartMutations";
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 const CartPage = () => {
   const { data: items = [] } = useFetchCart();
-  const {mutate:updateItemQuantity}=useUpdateCartQuantity()
-  const {mutate:deleteItem} =useRemoveFromCart()
+  const { mutate: updateItemQuantity } = useUpdateCartQuantity();
+  const { mutate: deleteItem } = useRemoveFromCart();
 
-//   console.log(items);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState(null);
+
+  //   console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0; // Get from productId
@@ -18,7 +25,7 @@ const CartPage = () => {
     return {
       id: item._id,
       image: item.productId.images?.[0],
-      variantId:item.variantId._id,
+      variantId: item.variantId._id,
       name: item.productId.name,
       ram: item.variantId.ram,
       storage: item.variantId.storage,
@@ -33,8 +40,7 @@ const CartPage = () => {
   });
   console.log(formattedItems, "this is formated");
 
-const IMAGE_BASE_URL = 'http://localhost:5000/products/'; 
-
+  const IMAGE_BASE_URL = "http://localhost:5000/products/";
 
   // Price details
   //   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -68,29 +74,43 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
   // Handle quantity changes
   const updateQuantity = (id, newQuantity) => {
-    console.log(id , newQuantity)
-    if (newQuantity < 1) return;
-    updateItemQuantity(({variantId:id,quantity:newQuantity}),{
-        onSuccess:()=>{
-            toast.success('quantity updated');
+    console.log(id, newQuantity);
+    // if (newQuantity < 1) return;
+    if (newQuantity < 1) {
+      setItemToRemove(id);
+      setShowRemoveDialog(true);
+      return;
+    }
+    updateItemQuantity(
+      { variantId: id, quantity: newQuantity },
+      {
+        onSuccess: () => {
+          toast.success("quantity updated");
         },
-            onError:(err)=>{
-                toast.error(`error occured ${err}`)
-            }
-    })
-    
+        onError: (err) => {
+          toast.error(`error occured ${err}`);
+        },
+      }
+    );
   };
 
-  // Remove item from cart
+ const handleDelete = (id) => {
+     setItemToRemove(id);
+    setShowRemoveDialog(true);
+    // removeItem(id);
+  };
   const removeItem = (id) => {
-     deleteItem(({variantId:id}),{
-        onSuccess:()=>{
-            toast.success('item removed');
+    deleteItem(
+      { variantId: id },
+      {
+        onSuccess: () => {
+          toast.success("item removed");
         },
-            onError:(err)=>{
-                toast.error(`error occured ${err}`)
-            }
-    })
+        onError: (err) => {
+          toast.error(`error occured ${err}`);
+        },
+      }
+    );
     // setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
@@ -140,7 +160,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                           </span>
                         </div>
                         <button
-                          onClick={() => removeItem(item.variantId)}
+                          onClick={() => handleDelete(item.variantId)}
                           className="mt-3 text-red-600 hover:text-red-800 text-sm flex items-center"
                         >
                           <svg
@@ -230,7 +250,7 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
                       Offer Discount ({totalOfferPercentage}%)
                     </span>
                     <span className="text-green-600">
-                      -₹${totalOfferDiscount.toFixed(2)}
+                      -₹{totalOfferDiscount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -288,6 +308,18 @@ const IMAGE_BASE_URL = 'http://localhost:5000/products/';
           </div>
         </div>
       </div>
+      <ConfirmAlertDialog
+        open={showRemoveDialog}
+        onOpenChange={setShowRemoveDialog}
+        title="Remove Item from Cart"
+        description="This will remove the product from your cart. Are you sure you want to continue?"
+        confirmText="Remove"
+        cancelText="Cancel"
+        onConfirm={() => {
+          removeItem(itemToRemove);
+          setShowRemoveDialog(false);
+        }}
+      />
     </div>
   );
 };
