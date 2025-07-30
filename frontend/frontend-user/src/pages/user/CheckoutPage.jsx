@@ -30,9 +30,9 @@ export default function CheckoutPage() {
     setDialogOpen(true);
     // Show modal or navigate to AddAddressPage
   };
-  const handleEditAddress = async (address) => {
+  const handleEditAddress = (address) => {
     console.log(address);
-    await setEditingAddress(address);
+    setEditingAddress(address);
     setDialogOpen(true);
     // Open modal with address data or navigate to edit page
   };
