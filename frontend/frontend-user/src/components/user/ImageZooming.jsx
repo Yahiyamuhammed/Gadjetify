@@ -8,7 +8,7 @@ const ImageZoom = ({ mainImage, product, onFavClick, selectedVariant }) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
-  const { data: wishlistItems } = useFetchWishlist();
+  const { data: wishlistItems=[] } = useFetchWishlist();
   const { mutate: toggleWishlist } = useToggleWishlist();
 
   const isInWishlist = wishlistItems.some(
