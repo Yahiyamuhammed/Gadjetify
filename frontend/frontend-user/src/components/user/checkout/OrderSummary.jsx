@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function OrderSummary({ items = [], onPlaceOrder }) {
-  console.log(items);
+  console.log(items,'these are the items');
   const formattedItems = items.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -11,7 +11,7 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
       offerPercentage > 0 ? (actualPrice * offerPercentage) / 100 : 0;
 
     return {
-      id: item._id,
+      productId: item.productId._id,
       name: item.productId.name,
       ram: item.variantId.ram,
       storage: item.variantId.storage,
@@ -21,6 +21,9 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
       offerPercentage,
       offerDiscount,
       customDiscount: 0,
+      brand:item.productId.brand._id,
+      variantId:item.variantId._id
+      
     };
   });
 
@@ -68,7 +71,19 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
 
     // Call parent function
     if (onPlaceOrder) {
-      onPlaceOrder(formatOrderItems(items));
+    //   onPlaceOrder(formatOrderItems(items));
+    onPlaceOrder({
+      items: formattedItems,
+      summary: {
+        subtotal,
+        totalOfferDiscount,
+        customDiscount,
+        totalDiscount,
+        shipping,
+        tax,
+        total,
+      },
+    });
     }
   };
 

@@ -2,7 +2,7 @@ const orderHelper = require("../helpers/orderHelper");
 
 exports.getUserOrders = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user;
     const response = await orderHelper.getUserOrders(userId);
     res.status(response.status).json({
       message: response.message,
@@ -15,7 +15,7 @@ exports.getUserOrders = async (req, res) => {
 
 exports.getSingleOrder = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user;
     const orderId = req.params.orderId;
 
     const response = await orderHelper.getOrderById(userId, orderId);
@@ -30,7 +30,8 @@ exports.getSingleOrder = async (req, res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user;
+
     const { addressId, paymentMethod, items, finalTotal } = req.body;
 
     const response = await orderHelper.placeOrder({

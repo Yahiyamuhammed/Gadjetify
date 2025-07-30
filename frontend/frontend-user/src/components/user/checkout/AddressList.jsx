@@ -15,10 +15,12 @@ export default function AddressList({
     primaryAddress?._id
   );
 
+  console.log('sdjf;laksdjf')
   useEffect(() => {
     // If addresses change, re-set primary
     if (primaryAddress?._id) {
       setSelectedAddressId(primaryAddress._id);
+      onSelect(primaryAddress._id)
     }
   }, [primaryAddress?._id]);
 

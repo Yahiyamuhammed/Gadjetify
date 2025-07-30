@@ -12,6 +12,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
+import { usePlaceOrder } from "@/hooks/mutations/usePlaceOrder";
 
 export default function CheckoutPage() {
   const queryClient = useQueryClient();
@@ -21,6 +22,8 @@ export default function CheckoutPage() {
 
   const { mutate: addAddress, data: addedAddress } = useAddAddress();
   const { mutate: editAddress, data: editedAddress } = useEditAddress();
+  const { mutate: placeOrder, isPending } = usePlaceOrder();
+
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -76,6 +79,28 @@ export default function CheckoutPage() {
     paymentMethod
     selectedAddressId
     console.log("Data from OrderSummary:", data, paymentMethod,selectedAddressId);
+
+
+     const payload = {
+    addressId: selectedAddressId,
+    paymentMethod,
+    finalTotal: data.summary.total,
+    items:data.items,
+  };
+
+  console.log("Placing order with:", payload);
+
+  placeOrder(payload, {
+    onSuccess: (res) => {
+      toast.success("Order placed!", res);
+      // Navigate to success page or clear cart
+    },
+    onError: (err) => {
+      console.error("Failed to place order", err);
+    }
+  });
+
+//   console.log("Formatted order payload:", payload);
   };
 
   return (

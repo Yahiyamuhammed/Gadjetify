@@ -41,6 +41,8 @@ exports.placeOrder = async ({ userId, addressId, paymentMethod, items, finalTota
   for (let item of items) {
     const { productId, variantId, quantity } = item;
 
+    console.log(productId, variantId, quantity)
+
     const product = await Product.findById(productId).lean();
     const variant = await Variant.findById(variantId).lean();
     const brand = await Brand.findById(product.brand).lean();
