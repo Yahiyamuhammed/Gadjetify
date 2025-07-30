@@ -2,6 +2,35 @@ const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const Variant = require('../models/variantModel');
 const Brand = require('../models/brandModel');
+const Order = require('../models/orderModel');
+
+
+exports.getUserOrders = async (userId) => {
+  const orders = await Order.find({ userId })
+    .sort({ createdAt: -1 })
+    .select('-__v');
+
+  return {
+    status: 200,
+    message: 'Orders fetched successfully',
+    data: orders
+  };
+};
+
+exports.getOrderById = async (userId, orderId) => {
+  const order = await Order.findOne({ userId, _id: orderId }).select('-__v');
+
+  if (!order) {
+    return { status: 404, message: 'Order not found' };
+  }
+
+  return {
+    status: 200,
+    message: 'Order details fetched successfully',
+    data: order
+  };
+};
+
 
 exports.placeOrder = async ({ userId, addressId, paymentMethod, items, finalTotal }) => {
   if (!items || items.length === 0) {
