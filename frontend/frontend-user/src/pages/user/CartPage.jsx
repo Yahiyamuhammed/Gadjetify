@@ -39,7 +39,7 @@ const CartPage = () => {
       customDiscount: 0, // for future use
     };
   });
-  console.log(formattedItems, "this is formated");
+//   console.log(formattedItems, "this is formated");
 
   const IMAGE_BASE_URL = "http://localhost:5000/products/";
 
