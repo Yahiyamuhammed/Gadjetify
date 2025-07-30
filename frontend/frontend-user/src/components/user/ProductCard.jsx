@@ -10,21 +10,19 @@ import { useToggleWishlist } from "@/hooks/mutations/useWishListMutations";
 import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
 import { useAddToCart } from "@/hooks/mutations/useCartMutations";
 
-const ProductCard = ({ product=[], refetch }) => {
+const ProductCard = ({ product = [], refetch }) => {
   const navigate = useNavigate();
   //   const [toggleWishlist] = useToggleWishListMutation();
 
   //   const { userInfo } = useSelector((state) => state.userAuth);
-const {mutate:toggleWishlist}=useToggleWishlist()
-const {mutate:addToCart}=useAddToCart()
-  const { data: wishlistItems  } = useFetchWishlist()
+  const { mutate: toggleWishlist } = useToggleWishlist();
+  const { mutate: addToCart } = useAddToCart();
+  const { data: wishlistItems } = useFetchWishlist();
 
-// console.log(wishlistItems,'this is wish')
+  // console.log(wishlistItems,'this is wish')
   const isInWishlist = wishlistItems?.some(
-  (item) => item?._id === product?._id
-)
-
-
+    (item) => item?._id === product?._id
+  );
 
   const handleClick = (e) => {
     if (!e.target.closest(".wishlist-btn") && !e.target.closest(".cart-btn")) {
@@ -33,32 +31,38 @@ const {mutate:addToCart}=useAddToCart()
     }
   };
 
-  const handleFavClick = async (productId,variantId) => {
+  const handleFavClick = async (productId, variantId) => {
     // e.stopPropagation();
 
     // toast.success(`wishlist added ${productIdvariantId ${vId}`)
     // console.log(productId,variantId)
 
-    toggleWishlist(({productId,variantId}),{
-      onSuccess:()=>{
-        toast.success('wishlist added')
-      },
-      onError:(err)=>{
-        toast.error( `failed to update ${err.message}`)
+    toggleWishlist(
+      { productId, variantId },
+      {
+        onSuccess: () => {
+          toast.success("wishlist added");
+        },
+        onError: (err) => {
+          toast.error(`failed to update ${err.message}`);
+        },
       }
-    })
+    );
   };
 
-  const handleAddToCart =(productId,variantId)=>{
-    addToCart({productId,variantId},{
-      onSuccess:()=>{
-        toast.success('item added to cart')
-      },
-      onError:(err)=>{
-        toast.error(`an error occured ${err}`)
+  const handleAddToCart = (productId, variantId) => {
+    addToCart(
+      { productId, variantId },
+      {
+        onSuccess: () => {
+          toast.success("item added to cart");
+        },
+        onError: (err) => {
+          toast.error(`an error occured ${err}`);
+        },
       }
-    })
-  }
+    );
+  };
 
   // console.log(product,'this is the products from the card')
 
@@ -85,7 +89,7 @@ const {mutate:addToCart}=useAddToCart()
         });
   };
 
-  // console.log(product,'thisis the products')
+  console.log(product, "thisis the products");
 
   return (
     <div className="group relative max-w-[290px] min-w-[270px] bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full">
@@ -107,15 +111,13 @@ const {mutate:addToCart}=useAddToCart()
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleFavClick(product._id,product?.defaultVariant?._id);
+              handleFavClick(product._id, product?.defaultVariant?._id);
             }}
             className="wishlist-btn absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform duration-200"
           >
             <Heart
               className={`w-5 h-5 ${
-                isInWishlist
-                  ? "fill-red-500 text-red-500"
-                  : "text-gray-600"
+                isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600"
               }`}
             />
           </button>
@@ -194,20 +196,26 @@ const {mutate:addToCart}=useAddToCart()
           </div>
 
           {/* Stock Status */}
-          {product.stock === 0 ? (
-            <div className="text-red-500 text-sm font-medium mb-2">
-              Out of Stock
-            </div>
+          {product?.defaultVariant?.stock === 0 ? (
+            <>
+              <p className="text-sm mb-2">
+  <span className="text-red-500 font-medium">Out of Stock</span>
+  <span className="text-gray-500"> – you may explore more variants on the product page</span>
+</p>
+
+            </>
           ) : (
             <div className="min-h-[20px]"></div>
           )}
 
-          {/* Add to Cart Button - Always at bottom */}
           <div className="mt-auto pt-2">
             <AddCartButton
+              disabled={
+                product?.defaultVariant?.stock === 0 || product.isDeleted
+              }
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart(product._id,product?.defaultVariant?._id)
+                handleAddToCart(product._id, product?.defaultVariant?._id);
               }}
             />
           </div>
