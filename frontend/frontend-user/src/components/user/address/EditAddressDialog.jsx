@@ -36,7 +36,7 @@ const EditAddressDialog = ({
   });
   // onSubmit(updatedAddress);
 
-  console.log('this  si edit ',address)
+
 useEffect(() => {
   if (open) {
     if (address && Object.keys(address).length > 0) {
@@ -60,7 +60,6 @@ useEffect(() => {
 
 
   const onFormSubmit = (data) => {
-    console.log("this is sthe data form ", data);
     onSubmit(data);
   };
 
