@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,16 +29,35 @@ const EditAddressDialog = ({
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
-    // defaultValues: address,
-    defaultValues: {
-      ...address,
-      addressType: address?.addressType || "home",
-    },
   });
   // onSubmit(updatedAddress);
+
+  console.log('this  si edit ',address)
+useEffect(() => {
+  if (open) {
+    if (address && Object.keys(address).length > 0) {
+      reset({
+        ...address,
+        addressType: address.addressType || "home",
+      });
+    } else {
+      reset({
+        name: "",
+        street: "",
+        city: "",
+        state: "",
+        pincode: "",
+        phone: "",
+        addressType: "home",
+      });
+    }
+  }
+}, [open, address, reset]);
+
 
   const onFormSubmit = (data) => {
     console.log("this is sthe data form ", data);
@@ -52,10 +71,10 @@ const EditAddressDialog = ({
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <DialogHeader>
             <DialogTitle>
-              {address?.id ? "Edit Address" : "Add Address"}
+              {address?._id ? "Edit Address" : "Add Address"}
             </DialogTitle>
             <DialogDescription>
-              {address?.id
+              {address?._id
                 ? "Update the address information."
                 : "Fill in the details to add a new address."}
             </DialogDescription>
