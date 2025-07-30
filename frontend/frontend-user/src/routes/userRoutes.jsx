@@ -9,6 +9,7 @@ import HomePage from "@/pages/user/HomePage.jsx";
 import UserProfile from "@/pages/user/UserProfile,.jsx";
 import WishlistScreen from "@/pages/user/Wishlist.jsx";
 import CartPage from "@/pages/user/CartPage.jsx";
+import CheckoutPage from "@/pages/user/CheckoutPage.jsx";
 // import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
@@ -69,6 +70,11 @@ const UserRoutes=()=>(
     <Route path="/cart" element={
         <MainLayout>
             <CartPage />
+        </MainLayout>
+        } />
+    <Route path="/checkout" element={
+        <MainLayout>
+            <CheckoutPage />
         </MainLayout>
         } />
 </Routes>
