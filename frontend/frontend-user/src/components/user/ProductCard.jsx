@@ -89,7 +89,7 @@ const ProductCard = ({ product = [], refetch }) => {
         });
   };
 
-  console.log(product, "thisis the products");
+  // console.log(product, "thisis the products");
 
   return (
     <div className="group relative max-w-[290px] min-w-[270px] bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full">
@@ -199,10 +199,12 @@ const ProductCard = ({ product = [], refetch }) => {
           {product?.defaultVariant?.stock === 0 ? (
             <>
               <p className="text-sm mb-2">
-  <span className="text-red-500 font-medium">Out of Stock</span>
-  <span className="text-gray-500"> – you may explore more variants on the product page</span>
-</p>
-
+                <span className="text-red-500 font-medium">Out of Stock</span>
+                <span className="text-gray-500">
+                  {" "}
+                  – you may explore more variants on the product page
+                </span>
+              </p>
             </>
           ) : (
             <div className="min-h-[20px]"></div>
