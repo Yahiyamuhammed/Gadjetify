@@ -44,9 +44,8 @@ const ProductDetailsCard = ({ product }) => {
 
   // console.log(selectedVariant.stock);
 
-  const handleAddToCart = (productId, variantId) => {
-    toast.success("item added to cart");
-    toast.success(`an error occured ${productId} ${variantId}`);
+  
+  const handleAddToCart = (variantId, productId) => {
     addToCart(
       { productId, variantId },
       {
@@ -55,11 +54,11 @@ const ProductDetailsCard = ({ product }) => {
         },
         onError: (err) => {
           toast.error(`an error occured ${err}`);
-          console.error(`an error occured ${err}`);
         },
       }
     );
   };
+
 
   const finalPrice = () => {
     const totalDiscount =
