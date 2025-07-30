@@ -4,18 +4,20 @@ const Variant = require("../models/variantModel");
 const Wishlist = require("../models/wishListModel");
 
 exports.addToCart = async (userId, { productId, variantId }) => {
+  const MAX_QUANTITY = 3;
+
   const product = await Product.findById(productId);
   if (!product || product.isBlocked || !product.isListed) {
-    throw new Error("Product not available");
+    return { status: 400, message: "Product not available" };
   }
 
   if (product.category?.isBlocked) {
-    throw new Error("Product category is blocked");
+    return { status: 400, message: "Product category is blocked" };
   }
 
   const variant = await Variant.findById(variantId);
   if (!variant || variant.isDeleted || variant.stock < 1) {
-    throw new Error("Variant not available");
+    return { status: 400, message: "Variant not available" };
   }
 
   let cart = await Cart.findOne({ userId });
@@ -28,11 +30,20 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   );
 
   if (itemIndex > -1) {
-    const currentQuantity = cart.items[itemIndex].quantity;
-    if (currentQuantity + 1 > variant.stock) {
-      throw new Error("Quantity exceeds stock");
+      const currentQuantity = cart.items[itemIndex].quantity;
+
+      if (currentQuantity >= MAX_QUANTITY) {
+         cart.items[itemIndex].quantity = MAX_QUANTITY;
+      await cart.save();
+      return {
+        status: 409,
+        message: `Maximum quantity (${MAX_QUANTITY}) reached for this item`,
+      };
     }
-    cart.items[itemIndex].quantity += 1;
+
+    const newQuantity = Math.min(currentQuantity + 1, variant.stock, MAX_QUANTITY);
+    cart.items[itemIndex].quantity = newQuantity;
+
   } else {
     cart.items.push({ productId, variantId, quantity: 1 });
   }
@@ -43,8 +54,9 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   );
 
   await cart.save();
-  return { message: "Item added to cart" };
+  return { status: 200, message: "Item added to cart" };
 };
+
 
 exports.getCart = async (userId) => {
   const cart = await Cart.findOne({ userId })
@@ -58,24 +70,43 @@ exports.getCart = async (userId) => {
 };
 
 exports.updateQuantity = async (userId, { variantId, quantity }) => {
+  const MAX_QUANTITY = 3;
 
-    console.log(variantId,quantity)
   const cart = await Cart.findOne({ userId });
-  if (!cart) throw new Error("Cart not found");
+  if (!cart) return { status: 404, message: "Cart not found" };
 
   const item = cart.items.find(
     (item) => item.variantId.toString() === variantId
   );
-  if (!item) throw new Error("Item not in cart");
+  if (!item) return { status: 404, message: "Item not in cart" };
 
   const variant = await Variant.findById(variantId);
-  if (!variant || variant.stock < quantity) {
-    throw new Error("Insufficient stock");
+  if (!variant) return { status: 400, message: "Variant not found" };
+
+  const cappedQuantity = Math.min(quantity, variant.stock, MAX_QUANTITY);
+
+  if (item.quantity !== cappedQuantity) {
+    item.quantity = cappedQuantity;
+    await cart.save();
+
+    if (quantity > MAX_QUANTITY) {
+      return {
+        status: 200,
+        message: `Maximum limit is ${MAX_QUANTITY}. Quantity reset.`,
+      };
+    }
+
+    if (quantity > variant.stock) {
+      return {
+        status: 200,
+        message: "Quantity reduced to match available stock",
+      };
+    }
+
+    return { status: 200, message: "Quantity updated" };
   }
 
-  item.quantity = quantity;
-  await cart.save();
-  return { message: "Quantity updated" };
+  return { status: 200, message: "Quantity unchanged" };
 };
 
 exports.removeFromCart = async (userId, { variantId }) => {
