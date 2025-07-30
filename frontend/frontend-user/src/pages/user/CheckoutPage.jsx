@@ -21,22 +21,21 @@ export default function CheckoutPage() {
 
   const { mutate: addAddress, data: addedAddress } = useAddAddress();
   const { mutate: editAddress, data: editedAddress } = useEditAddress();
-  
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cod");
+
   // const [addresse, setAddresses] = useState([]);
 
   const handleAddAddress = () => {
     setEditingAddress(null);
     setDialogOpen(true);
-    
   };
   const handleEditAddress = (address) => {
     setEditingAddress(address);
     setDialogOpen(true);
-   
   };
 
   const handleSelectAddress = (addressId) => {
@@ -73,9 +72,9 @@ export default function CheckoutPage() {
     }
   };
 
-   const handleOrderSummaryData = (data) => {
-    console.log('Data from OrderSummary:', data);
-    
+  const handleOrderSummaryData = (data) => {
+    paymentMethod
+    console.log("Data from OrderSummary:", data);
   };
 
   return (
@@ -93,17 +92,18 @@ export default function CheckoutPage() {
           setOpen={setDialogOpen}
           address={editingAddress}
           onSubmit={onFormSubmit}
-          validationSchema={addressSchema} // your yup schema
+          validationSchema={addressSchema}
+          selectedAddressId={selectedAddressId}
+           // your yup schema
           // no trigger here; you're opening manually
         />
         {/* <AddressForm /> */}
-        <PaymentMethod />
+        <PaymentMethod value={paymentMethod} onChange={setPaymentMethod} />
       </div>
       <div>
-        <OrderSummary 
-            items={items.items}
-                    onPlaceOrder={handleOrderSummaryData}
-
+        <OrderSummary
+          items={items.items}
+          onPlaceOrder={handleOrderSummaryData}
         />
       </div>
     </div>
