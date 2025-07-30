@@ -6,11 +6,18 @@ import {
   TbReceiptRupee,
   TbHelpTriangle,
   TbLogout,
+  TbHeart,
+  TbShoppingCart,
 } from "react-icons/tb";
+import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ProfileDropdown({ onSignOut }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef();
+
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["auth-user"]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -50,19 +57,42 @@ export default function ProfileDropdown({ onSignOut }) {
               />
             </div>
             <div>
-              <h6 className="text-gray-900 font-semibold">John Doe</h6>
-              <small className="text-gray-500">Admin</small>
+              <h6 className="text-gray-900 font-semibold">
+                {user?.name || "User"}
+              </h6>
+              <small className="text-gray-500">{user?.email || ""}</small>
             </div>
           </li>
           <hr className="my-1" />
           <li>
-            <a
-              href="#"
+            <Link
+              to="/profile"
               className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              onClick={() => setIsOpen(false)}
             >
               <TbUser className="text-lg" />
               My Profile
-            </a>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/cart"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              onClick={() => setIsOpen(false)}
+            >
+              <TbShoppingCart className="text-lg" />
+              Cart
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/wishlist"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              onClick={() => setIsOpen(false)}
+            >
+              <TbHeart className="text-lg" />
+              Wishlist
+            </Link>
           </li>
           <li>
             <a
