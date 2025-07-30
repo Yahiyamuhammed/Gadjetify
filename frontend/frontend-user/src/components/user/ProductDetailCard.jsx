@@ -26,9 +26,8 @@ import { useAddToCart } from "@/hooks/mutations/useCartMutations";
 const backendUrl = "http://localhost:5000";
 
 const ProductDetailsCard = ({ product }) => {
+  const { mutate: addToCart } = useAddToCart();
 
-  const {mutate:addToCart}=useAddToCart()
-  
   const navigate = useNavigate();
   const [mainImage, setMainImage] = useState(noImage);
 
@@ -42,21 +41,21 @@ const ProductDetailsCard = ({ product }) => {
     product?.variants?.find((v) => v.isDefault) || product?.variants?.[0]
   );
 
-  // console.log(product);
-  
-    const handleAddToCart =(productId,variantId)=>{
-      addToCart({productId,variantId},{
-        onSuccess:()=>{
-          toast.success('item added to cart')
-        },
-        onError:(err)=>{
-          toast.error(`an error occured ${err}`)
-        }
-      })
-    }
-  
+  // console.log(product.isDeleted);
 
-  
+  const handleAddToCart = (productId, variantId) => {
+    addToCart(
+      { productId, variantId },
+      {
+        onSuccess: () => {
+          toast.success("item added to cart");
+        },
+        onError: (err) => {
+          toast.error(`an error occured ${err}`);
+        },
+      }
+    );
+  };
 
   const finalPrice = () => {
     const totalDiscount =
@@ -240,9 +239,9 @@ const ProductDetailsCard = ({ product }) => {
                 {/* Add to Cart */}
                 <div className="grid grid-cols-2 gap-4">
                   <AddCartButton
-                  onClick={handleAddToCart}
+                    onClick={handleAddToCart}
                     productId={product._id}
-                    disabled={product.stock === 0}
+                    disabled={product.stock === 0 || product.isDeleted}
                     className="w-full px-6 py-3 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
                       disabled:bg-gray-100 disabled:text-gray-400 rounded-lg font-medium flex items-center justify-center gap-2"
                   >
