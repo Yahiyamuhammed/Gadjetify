@@ -2,8 +2,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export default function OrderSummary({ items = [] }) {
-//   console.log(items);
+export default function OrderSummary({ items = [], onPlaceOrder }) {
+  console.log(items);
   const formattedItems = items.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -42,6 +42,35 @@ export default function OrderSummary({ items = [] }) {
   const total = subtotal - totalDiscount + shipping + tax;
   const totalOfferPercentage =
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
+
+  const handlePlaceOrder = () => {
+    const formatOrderItems = (items = []) => {
+      return items.map((item) => {
+        const product = item.productId;
+        const variant = item.variantId;
+        const brand = product.brand;
+
+        return {
+          productId: product._id,
+          productName: product.name,
+          brandId: brand._id,
+          brandName: brand.name,
+          variantId: variant._id,
+          ram: variant.ram,
+          storage: variant.storage,
+          price: variant.price,
+          quantity: item.quantity,
+          offerPercentage: product.offerPercentage,
+          image: product.images?.[0] || null,
+        };
+      });
+    };
+
+    // Call parent function
+    if (onPlaceOrder) {
+      onPlaceOrder(formatOrderItems(items));
+    }
+  };
 
   return (
     <Card>
@@ -138,7 +167,9 @@ export default function OrderSummary({ items = [] }) {
           </div>
         </div>
 
-        <Button className="w-full mt-4">Place Order</Button>
+        <Button className="w-full mt-4" onClick={handlePlaceOrder}>
+          Place Order
+        </Button>
       </CardContent>
     </Card>
   );
