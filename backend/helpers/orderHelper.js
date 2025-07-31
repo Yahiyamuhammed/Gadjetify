@@ -3,6 +3,8 @@ const Product = require("../models/productModel");
 const Variant = require("../models/variantModel");
 const Brand = require("../models/brandModel");
 const Address = require("../models/addressModal");
+const Cart = require("../models/cartModel"); 
+
 
 exports.getUserOrders = async (userId) => {
   const orders = await Order.find({ userId })
@@ -106,6 +108,12 @@ exports.placeOrder = async ({
     finalTotal,
     summary,
   });
+
+   await Cart.findOneAndUpdate(
+    { userId },
+    { $set: { items: [] } },
+    { new: true }
+  );
 
   return {
     status: 201,
