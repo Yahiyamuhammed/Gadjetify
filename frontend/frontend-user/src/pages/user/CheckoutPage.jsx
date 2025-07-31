@@ -97,6 +97,7 @@ export default function CheckoutPage() {
       // Navigate to success page or clear cart
     },
     onError: (err) => {
+        toast.error(`error occuerd ${err}`)
       console.error("Failed to place order", err);
     }
   });
