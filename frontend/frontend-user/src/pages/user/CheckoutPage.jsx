@@ -13,9 +13,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import { usePlaceOrder } from "@/hooks/mutations/usePlaceOrder";
+import { useNavigate } from "react-router-dom";
+// import { Navigate } from "react-router-dom";
 
 export default function CheckoutPage() {
   const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
 
   const { data: addresses } = getAddresses();
   const { data: items = [] } = useFetchCart();
@@ -94,7 +98,7 @@ export default function CheckoutPage() {
   placeOrder(payload, {
     onSuccess: (res) => {
       toast.success("Order placed!", res);
-      // Navigate to success page or clear cart
+      navigate('/orderSuccess')
     },
     onError: (err) => {
         toast.error(`error occuerd ${err}`)
