@@ -73,10 +73,10 @@ exports.getCart = async (userId) => {
   const cart = await Cart.findOne({ userId })
     .populate({
       path: "items.productId",
-      select: "name brand model images offerPercentage",
+      select: "name brand model images offerPercentage isListed",
       populate: {
         path: "brand", // This is the nested population
-        select: "name" // Select brand fields you want to return
+        select: "name isDeleted" // Select brand fields you want to return
       }
     })
     .populate("items.variantId"); // Assuming variantId is already a reference

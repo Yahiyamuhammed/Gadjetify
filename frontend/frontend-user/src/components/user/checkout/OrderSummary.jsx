@@ -2,8 +2,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export default function OrderSummary({ items = [] }) {
-//   console.log(items);
+export default function OrderSummary({ items = [], onPlaceOrder }) {
+  console.log(items,'these are the items');
   const formattedItems = items.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -11,7 +11,7 @@ export default function OrderSummary({ items = [] }) {
       offerPercentage > 0 ? (actualPrice * offerPercentage) / 100 : 0;
 
     return {
-      id: item._id,
+      productId: item.productId._id,
       name: item.productId.name,
       ram: item.variantId.ram,
       storage: item.variantId.storage,
@@ -21,6 +21,9 @@ export default function OrderSummary({ items = [] }) {
       offerPercentage,
       offerDiscount,
       customDiscount: 0,
+      brand:item.productId.brand._id,
+      variantId:item.variantId._id
+      
     };
   });
 
@@ -42,6 +45,47 @@ export default function OrderSummary({ items = [] }) {
   const total = subtotal - totalDiscount + shipping + tax;
   const totalOfferPercentage =
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
+
+  const handlePlaceOrder = () => {
+    const formatOrderItems = (items = []) => {
+      return items.map((item) => {
+        const product = item.productId;
+        const variant = item.variantId;
+        const brand = product.brand;
+
+        return {
+          productId: product._id,
+          productName: product.name,
+          brandId: brand._id,
+          brandName: brand.name,
+          variantId: variant._id,
+          ram: variant.ram,
+          storage: variant.storage,
+          price: variant.price,
+          quantity: item.quantity,
+          offerPercentage: product.offerPercentage,
+          image: product.images?.[0] || null,
+        };
+      });
+    };
+
+    // Call parent function
+    if (onPlaceOrder) {
+    //   onPlaceOrder(formatOrderItems(items));
+    onPlaceOrder({
+      items: formattedItems,
+      summary: {
+        subtotal,
+        totalOfferDiscount,
+        customDiscount,
+        totalDiscount,
+        shipping,
+        tax,
+        total,
+      },
+    });
+    }
+  };
 
   return (
     <Card>
@@ -138,7 +182,9 @@ export default function OrderSummary({ items = [] }) {
           </div>
         </div>
 
-        <Button className="w-full mt-4">Place Order</Button>
+        <Button className="w-full mt-4" onClick={handlePlaceOrder}>
+          Place Order
+        </Button>
       </CardContent>
     </Card>
   );

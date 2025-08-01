@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AddressList({
   addresses = [],
@@ -11,6 +11,19 @@ export default function AddressList({
   onEdit = (address) => {},
 }) {
   const primaryAddress = addresses.find((addr) => addr.isPrimary);
+  const [selectedAddressId, setSelectedAddressId] = useState(
+    primaryAddress?._id
+  );
+
+  console.log('sdjf;laksdjf')
+  useEffect(() => {
+    // If addresses change, re-set primary
+    if (primaryAddress?._id) {
+      setSelectedAddressId(primaryAddress._id);
+      onSelect(primaryAddress._id)
+    }
+  }, [primaryAddress?._id]);
+
 
   return (
     <div>
@@ -22,8 +35,10 @@ export default function AddressList({
       </div>
 
       <RadioGroup
-        defaultValue={primaryAddress?._id}
-        onValueChange={(val) => onSelect(val)}
+        value={selectedAddressId}
+        onValueChange={(val) => {
+          onSelect(val)
+          setSelectedAddressId(val)}}
         className="space-y-2 max-h-64 overflow-y-auto pr-1"
       >
         {addresses.map((address) => (

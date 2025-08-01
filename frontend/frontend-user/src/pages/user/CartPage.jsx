@@ -6,7 +6,7 @@ import {
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const { data: items = [] } = useFetchCart();
@@ -16,12 +16,20 @@ const CartPage = () => {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
 
+  const navigate = useNavigate();
+
+
   //   console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
-    const offerPercentage = item.productId.offerPercentage || 0; // Get from productId
+    const offerPercentage = item.productId.offerPercentage || 0;
     const offerDiscount =
       offerPercentage > 0 ? (actualPrice * offerPercentage) / 100 : 0;
+
+    const isOutOfStock =
+      !item.variantId.stock || item.variantId.stock < item.quantity;
+    const isUnlisted = item.productId.isListed === false;
+    const isBrandDeleted = item.productId.brand?.isDeleted === true;
 
     return {
       id: item._id,
@@ -31,15 +39,21 @@ const CartPage = () => {
       ram: item.variantId.ram,
       storage: item.variantId.storage,
       color: item.variantId.color || "N/A",
-      price: item.variantId.price, // unit price
+      price: item.variantId.price,
       quantity: item.quantity,
-      actualPrice: actualPrice, // price * quantity
-      offerPercentage: offerPercentage,
-      offerDiscount: offerDiscount,
-      customDiscount: 0, // for future use
+      actualPrice,
+      offerPercentage,
+      offerDiscount,
+      customDiscount: 0,
+
+      isOutOfStock,
+      isUnlisted,
+      isBrandDeleted,
+      isUnavailable: isOutOfStock || isUnlisted || isBrandDeleted,
     };
   });
-//   console.log(formattedItems, "this is formated");
+
+  //   console.log(formattedItems, "this is formated");
 
   const IMAGE_BASE_URL = "http://localhost:5000/products/";
 
@@ -105,7 +119,6 @@ const CartPage = () => {
   const handleDelete = (id) => {
     setItemToRemove(id);
     setShowRemoveDialog(true);
-    
   };
   const removeItem = (id) => {
     deleteItem(
@@ -119,7 +132,20 @@ const CartPage = () => {
         },
       }
     );
-    // setCartItems(cartItems.filter((item) => item.id !== id));
+  };
+
+  const handleCheckout = () => {
+    const hasUnavailableItems = cartItems.some((item) => item.isUnavailable);
+
+    if (hasUnavailableItems) {
+      toast.error(
+        "Some items in your cart are unavailable. Please remove or update them."
+      );
+      return;
+    }
+      navigate("/checkout");
+
+  
   };
 
   if (cartItems?.length === 0) {
@@ -239,6 +265,14 @@ const CartPage = () => {
                           </svg>
                           Remove
                         </button>
+                        {item.isUnavailable && (
+                          <p className="text-sm text-red-600 mt-2">
+                            {item.isOutOfStock && "Not enough stock available."}
+                            {item.isUnlisted &&
+                              "Product is not currently listed."}
+                            {item.isBrandDeleted && "Brand has been deleted."}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -315,7 +349,6 @@ const CartPage = () => {
                   </div>
                 )}
 
-                {/* Show custom discount if exists */}
                 {customDiscount > 0 && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Additional Discount</span>
@@ -325,7 +358,6 @@ const CartPage = () => {
                   </div>
                 )}
 
-                {/* Show total discount if any discount exists */}
                 {totalDiscount > 0 && (
                   <div className="flex justify-between border-t pt-2">
                     <span className="text-gray-600 font-medium">
@@ -354,7 +386,10 @@ const CartPage = () => {
                   <span>₹{total.toFixed(2)}</span>
                 </div>
 
-                <button className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 mt-6">
+                <button
+                  onClick={handleCheckout}
+                  className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 mt-6"
+                >
                   Proceed to Checkout
                 </button>
 
