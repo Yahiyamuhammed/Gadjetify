@@ -4,56 +4,27 @@ import { getAdminOrderColumns } from "@/components/admin/orders/adminOrderColumn
 import DataTableWrapper from "@/components/admin/DataTableWrapper";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useOrders } from "@/hooks/queries/useOrders";
 import { useAdminFetchOrders } from "@/hooks/queries/useAdminOrdersQueries";
-
-// Mock data (Replace with your API data)
-const mockOrders = [
-  {
-    _id: "order1",
-    customer: { name: "John Doe", email: "john@example.com" },
-    totalAmount: 3200,
-    status: "Pending",
-    date: "2025-08-06",
-    products: [
-      {
-        _id: "product1",
-        name: "Product A",
-        quantity: 2,
-        price: 1200,
-        returnRequested: false,
-        returnStatus: "None"
-      },
-      {
-        _id: "product2",
-        name: "Product B",
-        quantity: 1,
-        price: 800,
-        returnRequested: true,
-        returnStatus: "Requested"
-      }
-    ]
-  }
-];
+import { Pagination } from "@/components/ui/pagination";
 
 export default function AdminOrders() {
-    const [orderss, setOrders] = useState(mockOrders);
-    const [search, setSearch] = useState("");
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [showDialog, setShowDialog] = useState(false);
-    
-    const {data:orders}=useAdminFetchOrders({page:1,limit:10,search})
-    console.log(orders)
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+
+  const { data, isLoading } = useAdminFetchOrders({ page, limit: 10, search });
+  const orders = data?.data || [];
+  const pagination = data?.pagination || { page: 1, pages: 1 };
 
   const handleSearch = (value) => {
+    console.log(value)
     setSearch(value.toLowerCase());
   };
 
   const handleStatusChange = (orderId, status) => {
-    const updated = orders.map((order) =>
-      order._id === orderId ? { ...order, status } : order
-    );
-    setOrders(updated);
+    // Integrate with mutation to update status in backend
+    console.log("Change status", orderId, status);
   };
 
   const handleViewDetails = (order) => {
@@ -61,30 +32,35 @@ export default function AdminOrders() {
     setShowDialog(true);
   };
 
-  const handleApproveReturn = (orderId, productId) => {
-    const updated = orders.map((order) => {
-      if (order._id === orderId) {
-        const updatedProducts = order.products.map((p) =>
-          p._id === productId
-            ? { ...p, returnStatus: "Approved" }
-            : p
-        );
-        return { ...order, products: updatedProducts };
-      }
-      return order;
-    });
-    setOrders(updated);
+  const handleApproveReturn = (orderId, itemId) => {
+    // Integrate with mutation to approve return
+    console.log("Approve return", orderId, itemId);
   };
 
-//   const filteredOrders = orders.filter((order) =>
-//     order.customer.name.toLowerCase().includes(search)
-//   );
+  const transformedOrders = orders.map((order) => ({
+    ...order,
+    customer: {
+      name: order.addressSnapshot?.name || "",
+      phone: order.addressSnapshot?.phone || "",
+    },
+    date: order.createdAt,
+    totalAmount: order.finalTotal,
+    products: order.items.map((item) => ({
+      _id: item._id,
+      name: item.productName,
+      quantity: item.quantity,
+      price: item.price,
+      returnStatus: item.returnStatus,
+      returnReason: item.returnReason,
+      returnRequested: item.returnStatus === "requested"
+    }))
+  }));
 
   return (
     <>
       <DataTableWrapper
         title="Orders"
-        data={filteredOrders}
+        data={transformedOrders}
         columns={getAdminOrderColumns(
           handleStatusChange,
           handleViewDetails,
@@ -92,6 +68,12 @@ export default function AdminOrders() {
         )}
         filterFn={handleSearch}
         addButton=""
+      />
+
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={pagination.pages}
+        onPageChange={setPage}
       />
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -108,15 +90,19 @@ export default function AdminOrders() {
                   <div>Price: ₹{product.price}</div>
                   <div>Return Status: {product.returnStatus}</div>
                   {product.returnRequested &&
-                    product.returnStatus === "Requested" && (
+                    product.returnStatus === "requested" && (
+                        <>
+                        <div>Return Reason: {product.returnReason}</div>
+
                       <Button
                         variant="outline"
                         onClick={() =>
-                          handleApproveReturn(selectedOrder._id, product._id)
+                            handleApproveReturn(selectedOrder._id, product._id)
                         }
-                      >
+                        >
                         Approve Return
                       </Button>
+                          </>
                     )}
                 </div>
               ))}
