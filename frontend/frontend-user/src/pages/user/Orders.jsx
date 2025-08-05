@@ -6,9 +6,13 @@ import React, { useState } from "react";
 import OrderList from "@/components/user/order/OrderList";
 import MOCK_ORDERS from "@/components/user/order/mockOrders";
 import OrderDetail from "@/components/user/order/OrderDetail";
+import { useOrders } from "@/hooks/queries/useOrders";
 
 const Orders = () => {
-  const [orders] = useState(MOCK_ORDERS);
+  const {data:orders} = useOrders();
+
+// const [orders] = useState(MOCK_ORDERS);
+console.log(orders)
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const navigateToOrder = (orderId) => {
