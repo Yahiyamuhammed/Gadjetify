@@ -2,14 +2,21 @@
 import { useState } from "react";
 import { getAdminOrderColumns } from "@/components/admin/orders/adminOrderColumns";
 import DataTableWrapper from "@/components/admin/DataTableWrapper";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAdminFetchOrders } from "@/hooks/queries/useAdminOrdersQueries";
 import { Pagination } from "@/components/ui/pagination";
-
+import { useApproveReturn } from "@/hooks/mutations/useAdminOrderMutations";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 export default function AdminOrders() {
-
-    
+  const { mutate: approveReturn } = useApproveReturn();
+  const querryClient = useQueryClient();
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -21,7 +28,7 @@ export default function AdminOrders() {
   const pagination = data?.pagination || { page: 1, pages: 1 };
 
   const handleSearch = (value) => {
-    console.log(value)
+    console.log(value);
     setSearch(value.toLowerCase());
   };
 
@@ -36,6 +43,18 @@ export default function AdminOrders() {
   };
 
   const handleApproveReturn = (orderId, itemId) => {
+    approveReturn(
+      { orderId, itemId },
+      {
+        onSuccess: () => {
+          toast.success("return accepted");
+          querryClient.invalidateQueries(["admin-orders",page, limit, search]);
+        },
+        onError: (err) => {
+          toast.error(err.response.data.message || err.message);
+        },
+      }
+    );
     // Integrate with mutation to approve return
     console.log("Approve return", orderId, itemId);
   };
@@ -55,8 +74,8 @@ export default function AdminOrders() {
       price: item.price,
       returnStatus: item.returnStatus,
       returnReason: item.returnReason,
-      returnRequested: item.returnStatus === "requested"
-    }))
+      returnRequested: item.returnStatus === "requested",
+    })),
   }));
 
   return (
@@ -94,18 +113,18 @@ export default function AdminOrders() {
                   <div>Return Status: {product.returnStatus}</div>
                   {product.returnRequested &&
                     product.returnStatus === "requested" && (
-                        <>
+                      <>
                         <div>Return Reason: {product.returnReason}</div>
 
-                      <Button
-                        variant="outline"
-                        onClick={() =>
+                        <Button
+                          variant="outline"
+                          onClick={() =>
                             handleApproveReturn(selectedOrder._id, product._id)
-                        }
+                          }
                         >
-                        Approve Return
-                      </Button>
-                          </>
+                          Approve Return
+                        </Button>
+                      </>
                     )}
                 </div>
               ))}
