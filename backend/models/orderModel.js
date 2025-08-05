@@ -11,7 +11,16 @@ const orderItemSchema = new mongoose.Schema({
   price: Number,
   quantity: Number,
   offerPercentage: Number,
-  image: String
+  image: String,
+   returnStatus: {
+    type: String,
+    enum: ['not_requested', 'requested', 'approved', 'rejected', 'returned'],
+    default: 'not_requested'
+  },
+  returnReason: { type: String },
+  returnRequestedAt: { type: Date },
+  returnApprovedAt: { type: Date },
+  refundAmount: { type: Number },
 });
 
 // Snapshot of address during order
