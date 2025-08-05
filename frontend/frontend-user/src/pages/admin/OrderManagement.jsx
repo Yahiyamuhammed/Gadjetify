@@ -11,11 +11,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAdminFetchOrders } from "@/hooks/queries/useAdminOrdersQueries";
 import { Pagination } from "@/components/ui/pagination";
-import { useApproveReturn } from "@/hooks/mutations/useAdminOrderMutations";
+import {
+  useApproveReturn,
+  useUpdateOrderStatus,
+} from "@/hooks/mutations/useAdminOrderMutations";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 export default function AdminOrders() {
   const { mutate: approveReturn } = useApproveReturn();
+  const { mutate: updateStatus } = useUpdateOrderStatus();
+
   const querryClient = useQueryClient();
 
   const [search, setSearch] = useState("");
@@ -33,8 +38,22 @@ export default function AdminOrders() {
   };
 
   const handleStatusChange = (orderId, status) => {
-    // Integrate with mutation to update status in backend
-    console.log("Change status", orderId, status);
+    updateStatus(
+      { orderId, status: status },
+      {
+        onSuccess: (data) => {
+          toast.success("Status updated:", data);
+          // You can invalidate queries or show a toast here
+          querryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+        },
+        onError: (error) => {
+          toast.error(
+            "Failed to update status:",
+            error.response.data.message || error.message
+          );
+        },
+      }
+    );
   };
 
   const handleViewDetails = (order) => {
@@ -48,7 +67,7 @@ export default function AdminOrders() {
       {
         onSuccess: () => {
           toast.success("return accepted");
-          querryClient.invalidateQueries(["admin-orders",page, limit, search]);
+          querryClient.invalidateQueries({ queryKey: ["admin-orders"] });
         },
         onError: (err) => {
           toast.error(err.response.data.message || err.message);
