@@ -3,18 +3,32 @@ const Product = require("../models/productModel");
 const Variant = require("../models/variantModel");
 const Brand = require("../models/brandModel");
 const Address = require("../models/addressModal");
-const Cart = require("../models/cartModel"); 
-
+const Cart = require("../models/cartModel");
 
 exports.getUserOrders = async (userId) => {
   const orders = await Order.find({ userId })
+
     .sort({ createdAt: -1 })
     .select("-__v");
+
+  const simplifiedOrders = orders.map((order) => ({
+    orderId: order._id,
+    status: order.status,
+    date: order.createdAt,
+    items: order.items.map((item) => ({
+      image: item.image || null,
+      name: item.name,
+      ram: item.ram,
+      storage: item.storage,
+      quantity: item.quantity,
+      price: item.quantity * item.price,
+    })),
+  }));
 
   return {
     status: 200,
     message: "Orders fetched successfully",
-    data: orders,
+    data: simplifiedOrders,
   };
 };
 
@@ -24,11 +38,30 @@ exports.getOrderById = async (userId, orderId) => {
   if (!order) {
     return { status: 404, message: "Order not found" };
   }
+const simplifiedOrder = {
+      orderId: order._id,
+      status: order.status,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+      paymentMethod: order.paymentMethod,
+      paymentStatus: order.paymentStatus,
+      addressSnapshot: order.addressSnapshot,
+      summary: order.summary,
+      items: order.items.map(item => ({
+        productName: item.productName,
+        image: item.image || null,
+        ram: item.ram,
+        storage: item.storage,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    };
 
+  console.log(order)
   return {
     status: 200,
     message: "Order details fetched successfully",
-    data: order,
+    data: simplifiedOrder,
   };
 };
 
@@ -44,9 +77,15 @@ exports.placeOrder = async ({
     return { status: 400, message: "No items to order" };
   }
 
-  if (!addressId || !items?.length || !paymentMethod || !finalTotal || !summary) {
-  return {status:400 ,message: "Missing required fields" };
-}
+  if (
+    !addressId ||
+    !items?.length ||
+    !paymentMethod ||
+    !finalTotal ||
+    !summary
+  ) {
+    return { status: 400, message: "Missing required fields" };
+  }
 
   const address = await Address.findById(addressId).lean();
   console.log(address);
@@ -109,7 +148,7 @@ exports.placeOrder = async ({
     summary,
   });
 
-   await Cart.findOneAndUpdate(
+  await Cart.findOneAndUpdate(
     { userId },
     { $set: { items: [] } },
     { new: true }
@@ -120,4 +159,25 @@ exports.placeOrder = async ({
     message: "Order placed successfully",
     data: newOrder,
   };
+};
+
+
+exports.requestReturnHelper = async ({ userId, orderId, itemId, reason }) => {
+  const order = await Order.findOne({ _id: orderId, userId });
+
+  if (!order) return { status: 404, message: "Order not found" };
+
+  const item = order.items.id(itemId);
+  if (!item) return { status: 404, message: "Item not found" };
+
+  if (item.returnStatus !== 'not_requested')
+    return { status: 400, message: "Return already requested or processed" };
+
+  item.returnStatus = 'requested';
+  item.returnReason = reason;
+  item.returnRequestedAt = new Date();
+
+  await order.save();
+
+  return { status: 200, message: "Return requested successfully" };
 };
