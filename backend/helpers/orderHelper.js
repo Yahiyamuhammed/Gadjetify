@@ -183,3 +183,34 @@ exports.requestReturnHelper = async ({ userId, orderId, itemId, reason }) => {
 
   return { status: 200, message: "Return requested successfully" };
 };
+
+exports.cancelOrderHelper = async (orderId, userId) => {
+  const order = await Order.findOne({ _id: orderId, userId });
+
+  if (!order) {
+    return { status: 404, message: 'Order not found' };
+  }
+
+  if (order.status === 'Delivered') {
+    return { status: 400, message: 'Cannot cancel a delivered order' };
+  }
+
+  // Check if already cancelled
+  if (order.status === 'Cancelled') {
+    return { status: 400, message: 'Order already cancelled' };
+  }
+
+  // Update order status
+  order.status = 'Cancelled';
+
+  // Restore stock
+  for (const item of order.items) {
+    await Product.findByIdAndUpdate(item.productId, {
+      $inc: { stock: item.quantity },
+    });
+  }
+
+  await order.save();
+
+  return { status: 200, message: 'Order cancelled successfully', data: order };
+};

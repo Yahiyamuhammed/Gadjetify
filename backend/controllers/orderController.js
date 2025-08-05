@@ -1,4 +1,4 @@
-const { requestReturnHelper,getUserOrders ,getOrderById ,placeOrder} = require("../helpers/orderHelper");
+const { requestReturnHelper,getUserOrders ,getOrderById ,placeOrder,cancelOrderHelper} = require("../helpers/orderHelper");
 
 exports.getUserOrders = async (req, res) => {
   try {
@@ -64,5 +64,22 @@ exports.requestReturn = async (req, res) => {
     res.status(response.status).json(response);
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user._id; // assuming you use auth middleware
+
+    const response = await cancelOrderHelper(orderId, userId);
+
+    res.status(response.status).json(response);
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: 'Internal server error',
+      error: error.message,
+    });
   }
 };
