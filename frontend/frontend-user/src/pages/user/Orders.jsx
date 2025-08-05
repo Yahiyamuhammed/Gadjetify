@@ -12,12 +12,14 @@ const Orders = () => {
   const {data:orders} = useOrders();
 
 // const [orders] = useState(MOCK_ORDERS);
-console.log(orders)
-  const [selectedOrder, setSelectedOrder] = useState(null);
+const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const navigateToOrder = (orderId) => {
-    const order = orders.find((o) => o._id === orderId);
-    setSelectedOrder(order);
+const navigateToOrder = (orderId) => {
+
+    // console.log('navigating',orderId)
+    // const order = orders.find((o) => o._id === orderId);
+    // console.log(order)
+    setSelectedOrder(orderId);
   };
 
   const backToList = () => {
@@ -27,7 +29,7 @@ console.log(orders)
   return (
     <div className="font-sans bg-gray-100 min-h-screen p-8">
       {selectedOrder ? (
-        <OrderDetail order={selectedOrder} onBack={backToList} />
+        <OrderDetail orderId={selectedOrder} onBack={backToList} />
       ) : (
         <OrderList orders={orders} navigate={navigateToOrder} />
       )}
