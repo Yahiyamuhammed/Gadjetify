@@ -24,7 +24,7 @@ exports.getUserOrders = async (userId) => {
       price: item.quantity * item.price,
     })),
   }));
-  
+
   return {
     status: 200,
     message: "Orders fetched successfully",
@@ -38,11 +38,30 @@ exports.getOrderById = async (userId, orderId) => {
   if (!order) {
     return { status: 404, message: "Order not found" };
   }
+const simplifiedOrder = {
+      orderId: order._id,
+      status: order.status,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+      paymentMethod: order.paymentMethod,
+      paymentStatus: order.paymentStatus,
+      addressSnapshot: order.addressSnapshot,
+      summary: order.summary,
+      items: order.items.map(item => ({
+        productName: item.productName,
+        image: item.image || null,
+        ram: item.ram,
+        storage: item.storage,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    };
 
+  console.log(order)
   return {
     status: 200,
     message: "Order details fetched successfully",
-    data: order,
+    data: simplifiedOrder,
   };
 };
 

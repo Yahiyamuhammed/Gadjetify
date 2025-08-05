@@ -16,7 +16,7 @@ const [selectedOrder, setSelectedOrder] = useState(null);
 
 const navigateToOrder = (orderId) => {
 
-    // console.log('navigating',orderId)
+    console.log('navigating',orderId)
     // const order = orders.find((o) => o._id === orderId);
     // console.log(order)
     setSelectedOrder(orderId);
