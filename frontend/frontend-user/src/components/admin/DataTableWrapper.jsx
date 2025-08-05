@@ -2,7 +2,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table"; // your reusable DataTable
 
-const DataTableWrapper = ({ title, data, columns, onAdd, filterFn ,addButton='' }) => {
+const DataTableWrapper = ({
+  title,
+  data,
+  columns,
+  onAdd,
+  filterFn,
+  addButton = "",
+}) => {
   return (
     <div className="p-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
@@ -14,7 +21,7 @@ const DataTableWrapper = ({ title, data, columns, onAdd, filterFn ,addButton='' 
             onChange={(e) => filterFn(e.target.value)}
             className="max-w-xs"
           />
-          <Button onClick={onAdd}>{addButton}</Button>
+          {addButton && <Button onClick={onAdd}>{addButton}</Button>}
         </div>
       </div>
 
