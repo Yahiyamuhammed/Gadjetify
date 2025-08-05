@@ -9,3 +9,12 @@ export const useApproveReturn = () => {
     }
   });
 };
+
+export const useUpdateOrderStatus = () => {
+  return useMutation({
+    mutationFn: async ({ orderId, status }) => {
+      const res = await api.patch(`/admin/orders/${orderId}/status`, { status });
+      return res.data;
+    }
+  });
+};
