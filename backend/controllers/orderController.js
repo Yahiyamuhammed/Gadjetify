@@ -9,7 +9,7 @@ exports.getUserOrders = async (req, res) => {
       data: response.data,
     });
   } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error",error:err?.message });
   }
 };
 

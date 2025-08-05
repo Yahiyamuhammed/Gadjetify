@@ -3,18 +3,32 @@ const Product = require("../models/productModel");
 const Variant = require("../models/variantModel");
 const Brand = require("../models/brandModel");
 const Address = require("../models/addressModal");
-const Cart = require("../models/cartModel"); 
-
+const Cart = require("../models/cartModel");
 
 exports.getUserOrders = async (userId) => {
   const orders = await Order.find({ userId })
+
     .sort({ createdAt: -1 })
     .select("-__v");
 
+  const simplifiedOrders = orders.map((order) => ({
+    orderId: order._id,
+    status: order.status,
+    date: order.createdAt,
+    items: order.items.map((item) => ({
+      image: item.image || null,
+      name: item.name,
+      ram: item.ram,
+      storage: item.storage,
+      quantity: item.quantity,
+      price: item.quantity * item.price,
+    })),
+  }));
+  
   return {
     status: 200,
     message: "Orders fetched successfully",
-    data: orders,
+    data: simplifiedOrders,
   };
 };
 
@@ -44,9 +58,15 @@ exports.placeOrder = async ({
     return { status: 400, message: "No items to order" };
   }
 
-  if (!addressId || !items?.length || !paymentMethod || !finalTotal || !summary) {
-  return {status:400 ,message: "Missing required fields" };
-}
+  if (
+    !addressId ||
+    !items?.length ||
+    !paymentMethod ||
+    !finalTotal ||
+    !summary
+  ) {
+    return { status: 400, message: "Missing required fields" };
+  }
 
   const address = await Address.findById(addressId).lean();
   console.log(address);
@@ -109,7 +129,7 @@ exports.placeOrder = async ({
     summary,
   });
 
-   await Cart.findOneAndUpdate(
+  await Cart.findOneAndUpdate(
     { userId },
     { $set: { items: [] } },
     { new: true }
