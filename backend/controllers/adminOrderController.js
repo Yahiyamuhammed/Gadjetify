@@ -1,4 +1,4 @@
-const { approveReturnHelper, getAllOrdersHelper } = require('../helpers/adminOrderHelper');
+const { approveReturnHelper, getAllOrdersHelper, updateOrderStatusHelper } = require('../helpers/adminOrderHelper');
 
 exports.approveReturn = async (req, res) => {
   try {
@@ -19,4 +19,14 @@ exports.getAllOrders = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
+};
+
+
+
+exports.updateOrderStatus = async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  const result = await updateOrderStatusHelper({ orderId, status });
+  return res.status(result.status).json(result);
 };
