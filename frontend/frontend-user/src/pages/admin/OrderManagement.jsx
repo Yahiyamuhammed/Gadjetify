@@ -5,6 +5,7 @@ import DataTableWrapper from "@/components/admin/DataTableWrapper";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useOrders } from "@/hooks/queries/useOrders";
+import { useAdminFetchOrders } from "@/hooks/queries/useAdminOrdersQueries";
 
 // Mock data (Replace with your API data)
 const mockOrders = [
@@ -36,11 +37,13 @@ const mockOrders = [
 ];
 
 export default function AdminOrders() {
-    const {data:orders}=useOrders()
-//   const [orders, setOrders] = useState(mockOrders);
-  const [search, setSearch] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [showDialog, setShowDialog] = useState(false);
+    const [orderss, setOrders] = useState(mockOrders);
+    const [search, setSearch] = useState("");
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [showDialog, setShowDialog] = useState(false);
+    
+    const {data:orders}=useAdminFetchOrders({page:1,limit:10,search})
+    console.log(orders)
 
   const handleSearch = (value) => {
     setSearch(value.toLowerCase());
@@ -73,9 +76,9 @@ export default function AdminOrders() {
     setOrders(updated);
   };
 
-  const filteredOrders = orders.filter((order) =>
-    order.customer.name.toLowerCase().includes(search)
-  );
+//   const filteredOrders = orders.filter((order) =>
+//     order.customer.name.toLowerCase().includes(search)
+//   );
 
   return (
     <>
