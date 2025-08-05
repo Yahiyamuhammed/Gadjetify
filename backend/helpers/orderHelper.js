@@ -160,3 +160,24 @@ exports.placeOrder = async ({
     data: newOrder,
   };
 };
+
+
+exports.requestReturnHelper = async ({ userId, orderId, itemId, reason }) => {
+  const order = await Order.findOne({ _id: orderId, userId });
+
+  if (!order) return { status: 404, message: "Order not found" };
+
+  const item = order.items.id(itemId);
+  if (!item) return { status: 404, message: "Item not found" };
+
+  if (item.returnStatus !== 'not_requested')
+    return { status: 400, message: "Return already requested or processed" };
+
+  item.returnStatus = 'requested';
+  item.returnReason = reason;
+  item.returnRequestedAt = new Date();
+
+  await order.save();
+
+  return { status: 200, message: "Return requested successfully" };
+};
