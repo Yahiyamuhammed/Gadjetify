@@ -12,7 +12,7 @@ export const useOrders = () => {
 };
 
 
-export const useOrderDetails = (orderId) => {
+export const useOrderDetails = ({orderId}) => {
   return useQuery({
     queryKey: ["order", orderId],
     queryFn: async () => {
