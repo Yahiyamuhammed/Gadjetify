@@ -55,6 +55,7 @@ const simplifiedOrder = {
         price: item.price,
         quantity: item.quantity,
         itemId:item._id,
+        returnStatus:item?.returnStatus,
       })),
     };
 
