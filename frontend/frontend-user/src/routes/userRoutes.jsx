@@ -12,6 +12,7 @@ import CartPage from "@/pages/user/CartPage.jsx";
 import CheckoutPage from "@/pages/user/CheckoutPage.jsx";
 import OrderSuccessPage from "@/pages/user/OrderSuccessPage.jsx";
 import Orders from "@/pages/user/Orders.jsx";
+import WalletPage from "@/pages/user/WalletPage.jsx";
 // import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
@@ -87,6 +88,11 @@ const UserRoutes=()=>(
     <Route path="/orders" element={
         <MainLayout>
             <Orders />
+        </MainLayout>
+        } />
+    <Route path="/wallet" element={
+        <MainLayout>
+            <WalletPage />
         </MainLayout>
         } />
 </Routes>
