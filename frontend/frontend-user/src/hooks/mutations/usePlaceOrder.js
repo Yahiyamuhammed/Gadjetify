@@ -14,3 +14,17 @@ export const usePlaceOrder = () => {
     },
   });
 };
+
+export const useRequestReturn = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ orderId, itemId, reason }) => {
+      const res = await api.patch(`/order/${orderId}/return/${itemId}`, { reason });
+      return res.data;
+    },
+    onSuccess: (_, { orderId }) => {
+      queryClient.invalidateQueries({ queryKey: ['user-order-detail', orderId] });
+    }
+  });
+};
