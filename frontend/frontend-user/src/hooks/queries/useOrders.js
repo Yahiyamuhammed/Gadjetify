@@ -14,7 +14,7 @@ export const useOrders = () => {
 
 export const useOrderDetails = ({orderId}) => {
   return useQuery({
-    queryKey: ["order", orderId],
+    queryKey: ["orderDetails", orderId],
     queryFn: async () => {
       const res = await api.get(`/order/${orderId}`);
       return res.data.data;

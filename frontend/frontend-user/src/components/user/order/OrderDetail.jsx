@@ -7,9 +7,12 @@ import { useOrderDetails } from "@/hooks/queries/useOrders";
 import FormDialog from "@/components/common/FormDialog";
 import { useRequestReturn } from "@/hooks/mutations/usePlaceOrder";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 const OrderDetail = ({ orderId, onBack }) => {
   if (!orderId) return <div> no Id returned </div>;
+  const queryClient = useQueryClient();
+
 
   const [openReturnDialog, setOpenReturnDialog] = useState(false);
   const [returnProduct, setReturnProduct] = useState(null);
@@ -21,6 +24,7 @@ const OrderDetail = ({ orderId, onBack }) => {
     isLoading,
     isError,
   } = useOrderDetails({ orderId });
+  
 
   if (isLoading || !OrderDetail) return <div>Loading...</div>;
   if (isError) return <div>Failed to load order details</div>;
@@ -51,6 +55,7 @@ const OrderDetail = ({ orderId, onBack }) => {
       {
         onSuccess: () => {
           toast.success("Return Requested");
+          queryClient.invalidateQueries(['orders',OrderDetail?.orderId])
           setOpenReturnDialog(false);
           setReturnReason("");
           setReturnProduct(null);
