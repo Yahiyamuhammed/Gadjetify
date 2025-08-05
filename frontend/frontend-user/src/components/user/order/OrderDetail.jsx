@@ -11,13 +11,11 @@ import toast from "react-hot-toast";
 const OrderDetail = ({ orderId, onBack }) => {
   if (!orderId) return <div> no Id returned </div>;
 
-
-  
   const [openReturnDialog, setOpenReturnDialog] = useState(false);
   const [returnProduct, setReturnProduct] = useState(null);
-  const [returnReason, setReturnReason] = useState('');
-  
-  const {mutate:requestReturn , isError:requestError}=useRequestReturn({returnProduct,returnReason})
+  const [returnReason, setReturnReason] = useState("");
+
+  const { mutate: requestReturn, isError: requestError } = useRequestReturn();
   const {
     data: OrderDetail,
     isLoading,
@@ -35,27 +33,39 @@ const OrderDetail = ({ orderId, onBack }) => {
     0
   );
 
-  const handleSubmit=()=>{
-     console.log("Returning:", returnProduct);
-          console.log("Reason:", returnReason);
+  const handleSubmit = () => {
+    console.log("Returning:", returnProduct);
+    console.log("Reason:", returnReason);
 
-          requestReturn({itemId:returnProduct.itemId,reason:returnReason,orderId:OrderDetail?.orderId},{
-            onSuccess:()=>{
-              toast.success('Return Requested')
-              setOpenReturnDialog(false);
-              setReturnReason("");
-              setReturnProduct(null);
-            },
-            onError:(err)=>{
-              toast.error(err?.response?.data?.message || err.message)
-              setOpenReturnDialog(false);
-              setReturnReason("");
-              setReturnProduct(null);
-            }
-          })
+    if (returnReason.trim()?.length < 6) {
+      toast.error("Please provide a valid reason for the return.");
+      return;
+    }
 
-          // Reset
-  }
+    requestReturn(
+      {
+        itemId: returnProduct.itemId,
+        reason: returnReason,
+        orderId: OrderDetail?.orderId,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Return Requested");
+          setOpenReturnDialog(false);
+          setReturnReason("");
+          setReturnProduct(null);
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || err.message);
+          setOpenReturnDialog(false);
+          setReturnReason("");
+          setReturnProduct(null);
+        },
+      }
+    );
+
+    // Reset
+  };
 
   return (
     <>
@@ -138,50 +148,51 @@ const OrderDetail = ({ orderId, onBack }) => {
         {/* Order Items */}
         <CardContent className="space-y-4">
           {OrderDetail.items.map((item, index) => {
-            console.log(item)
+            console.log(item);
             return (
-            <div
-              key={index}
-              className="flex gap-4 border p-4 rounded-lg bg-gray-50 items-center"
-            >
-              <img
-                src={item.image[0]}
-                className="w-20 h-20 rounded object-cover"
-                alt={item.productName}
-              />
-              <div className="flex-1">
-                <p className="font-medium text-lg">{item.productName}</p>
+              <div
+                key={index}
+                className="flex gap-4 border p-4 rounded-lg bg-gray-50 items-center"
+              >
+                <img
+                  src={item.image[0]}
+                  className="w-20 h-20 rounded object-cover"
+                  alt={item.productName}
+                />
+                <div className="flex-1">
+                  <p className="font-medium text-lg">{item.productName}</p>
 
-                {item.ram && item.storage && (
+                  {item.ram && item.storage && (
+                    <p className="text-md text-gray-600">
+                      {item.ram} GB / {item.storage} GB
+                    </p>
+                  )}
+
                   <p className="text-md text-gray-600">
-                    {item.ram} GB / {item.storage} GB
+                    Quantity: {item.quantity}
                   </p>
+
+                  <p className="text-md font-semibold text-blue-600">
+                    Price: ₹{item.price}
+                  </p>
+                </div>
+
+                {OrderDetail.status.toLowerCase() === "delivered" && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setReturnProduct(item);
+                      setReturnReason("");
+                      setOpenReturnDialog(true);
+                    }}
+                  >
+                    Return
+                  </Button>
                 )}
-
-                <p className="text-md text-gray-600">
-                  Quantity: {item.quantity}
-                </p>
-
-                <p className="text-md font-semibold text-blue-600">
-                  Price: ₹{item.price}
-                </p>
               </div>
-
-              {OrderDetail.status.toLowerCase() === "delivered" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setReturnProduct(item);
-                    setReturnReason("");
-                    setOpenReturnDialog(true);
-                  }}
-                >
-                  Return
-                </Button>
-              )}
-            </div>
-          )})}
+            );
+          })}
         </CardContent>
 
         {/* Actions */}
@@ -199,9 +210,7 @@ const OrderDetail = ({ orderId, onBack }) => {
         setOpen={setOpenReturnDialog}
         title={`Return: ${returnProduct?.productName}`}
         onSubmit={() => {
-          handleSubmit()
-          // Perform return mutation here
-         
+          handleSubmit();
         }}
         formData={{}} // if not used, pass empty object
       >
