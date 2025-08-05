@@ -177,8 +177,8 @@ const OrderDetail = ({ orderId, onBack }) => {
                   </p>
                 </div>
 
-                {OrderDetail.status.toLowerCase() === "delivered" &&
-                item.returnStatus === "not_requested" ? (
+                {OrderDetail.status.toLowerCase() !==
+                "delivered" ? null : item.returnStatus === "not_requested" ? (
                   <Button
                     variant="outline"
                     size="sm"
@@ -192,7 +192,7 @@ const OrderDetail = ({ orderId, onBack }) => {
                   </Button>
                 ) : (
                   <span className="text-sm text-gray-600 capitalize">
-                    {item.returnStatus}
+                    {item.returnStatus.replace("_", " ")}
                   </span>
                 )}
               </div>
