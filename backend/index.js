@@ -20,6 +20,7 @@ const adminVarientRoutes=require('./routes/adminVarientRoutes')
 const wishlistRoutes=require('./routes/wishlistRoute')
 const cartRoutes=require('./routes/cartRoutes')
 const orderRoutes=require('./routes/orderRoutes')
+const adminOrderRoutes=require('./routes/adminOrderRoutes')
 
 const userProductRoutes=require('./routes/userProductRoutes')
 const allowedOrigins = [
@@ -54,6 +55,7 @@ app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', adminProductRoutes);
 app.use('/api/admin', adminBrandRoutes);
 app.use('/api/admin', adminVarientRoutes);
+app.use('/api/admin', adminOrderRoutes);
 
 app.use('/api',userAddressRoutes)
 app.use('/api',userProductRoutes)

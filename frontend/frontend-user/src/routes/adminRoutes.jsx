@@ -6,6 +6,7 @@ import BrandManagement from "../pages/admin/BrandManagement";
 import UserManagement from "../pages/admin/UserManagement";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import VariantList from "@/pages/admin/VarientManagement";
+import AdminOrders from "@/pages/admin/OrderManagement";
 // import { Sidebar } from "lucide-react";
 
 const AdminLayout = ({ children }) => {
@@ -53,6 +54,12 @@ const AdminRoutes=()=>(
         <Route path="/manage-Varient" element={
             <AdminLayout>
                 <VariantList />
+
+            </AdminLayout>
+            }/>
+        <Route path="/manage-orders" element={
+            <AdminLayout>
+                <AdminOrders />
 
             </AdminLayout>
             }/>

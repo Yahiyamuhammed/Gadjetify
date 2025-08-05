@@ -5,16 +5,16 @@ export const useOrders = () => {
   return useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
-      const res = await api.get("/orders");
+      const res = await api.get("/order");
       return res.data.data;
     },
   });
 };
 
 
-export const useOrderDetails = (orderId) => {
+export const useOrderDetails = ({orderId}) => {
   return useQuery({
-    queryKey: ["order", orderId],
+    queryKey: ["orderDetails", orderId],
     queryFn: async () => {
       const res = await api.get(`/order/${orderId}`);
       return res.data.data;

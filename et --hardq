@@ -1,0 +1,302 @@
+[33m6365c5e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/order[m[33m, [m[1;32mmain[m[33m)[m feat: add the mutation function for order
+[33m511f475[m feat: add the admin order helper
+[33mee62e1a[m feat: add the admin order controller
+[33mb7f10d0[m fix: changed the order route from orders to order and also created the route for admin also
+[33mc36d5b8[m feat: add the order return controlller and helper
+[33mfed2e05[m feat: add the return request route
+[33ma1df14d[m feat: add the wallet transaction chema
+[33m193259c[m feat: add the return field in the user collection
+[33md4c6a17[m[33m ([m[1;31morigin/main[m[33m)[m fix: formated form dialog
+[33mb1a11d6[m feat: made the order details use use the user data and flatened it in backend
+[33m2097f3e[m fix: passed the order id to order detail
+[33ma782b46[m fix: made the navigate to use the correct name as data orderId
+[33mbabe65d[m fix: add the optional chaining at order length and made the orderId passing to order card
+[33ma73035f[m fix: fixed the query to use orderid as object
+[33ma10fad7[m fix: removed the logs at the check bloacked user
+[33mcf2dbe3[m fix: used the original data to show at order
+[33m622fb37[m fix: modified the get order to pass only necessary data
+[33mda61561[m feat: changed the order detail page and changed the data
+[33m775cc39[m feat: add the orders to the route
+[33maada68a[m feat: add the order detail page
+[33m1ff1eb8[m feat: add the mock order data
+[33m7bb7188[m feat: add the order card
+[33mfb8ab85[m feat: add the order list component
+[33m411adb5[m Merge pull request #7 from Yahiyamuhammed/feature/order
+[33m3f3c5ba[m[33m ([m[1;31morigin/feature/order[m[33m)[m feat: navigate to checkout after success order
+[33mba8908e[m feat: connected to path
+[33m8ea26e7[m feat: created the order success page
+[33mc3bf27a[m feat: add the functionality to block the chckout and also navigate to checkout
+[33m8434dd3[m feat: added the toast to error and also geting brand deleted data from back
+[33m88cc23f[m feat: removed from cart after order
+[33m61e5f15[m feat: more data is storing at orders
+[33m57a4906[m feat: added the address details to order
+[33m77dc3b2[m feat: made the order placing is working
+[33m5797a4f[m fix: fixed the issue with the address not selecting as default again
+[33mf2bb996[m fix: fixed the issue with the address not selecting as default
+[33m1756af4[m feat: passed the data order summary
+[33mdfa91e2[m feat: getting the data from order summary
+[33me469696[m feat: add the queries functions
+[33mf217703[m feat: add the mutation function
+[33mb0ce930[m fix: removed the duplicate order importing
+[33m19e39eb[m feat: add the controller for getting orders
+[33ma0ff135[m feat: add the helper for getting orders
+[33m6fe9403[m feat: add the routed for getting orders
+[33m181321f[m feat: connected the order route to main
+[33m8b1103a[m feat: created the order route
+[33m2c8af8e[m feat: created the order controller
+[33m09c5951[m feat: created the order helper
+[33mfce01e0[m feat: created the order schema
+[33ma0f960d[m[33m ([m[1;31morigin/feature/checkout[m[33m, [m[1;32mfeature/checkout[m[33m)[m fix: made some changes
+[33m1066014[m fix: changed the address to select default value , and also made the summary at checkout more info
+[33m6424588[m fix: removed the logs
+[33m1d4b65f[m feat: add the mutation function to use the address edit or add
+[33m10f1d21[m feat: add the mutation function to use the address edit or add
+[33m1b78876[m fix: changed the dialog woekflow to use useefect
+[33m04f7f12[m feat: added the address from db
+[33m799b5e0[m fix: changed the address style
+[33ma6bdf55[m added the checkout route
+[33m7eef434[m feat: created the checkout page
+[33m7534c87[m fix: renamed js to jsx to components
+[33m73d7db7[m feat: created the order summary
+[33m89c49ee[m feat: created the payment method component
+[33me1d9c6f[m feat: created the address list
+[33m47bb0bd[m[33m ([m[1;31morigin/feature/userProfile[m[33m, [m[1;32mfeature/userProfile[m[33m)[m feat: added user detail on profile, and also added cart and wishlist on profile and also gave link to profile
+[33m2aad393[m[33m ([m[1;31morigin/feature/cart[m[33m, [m[1;32mfeature/cart[m[33m)[m feat: toasting message based on code
+[33m599dc93[m feat: toasting the messege from server
+[33m00a3a5a[m feat: add the status codes from helper
+[33m3a61252[m feat: add the functionality to automatically divert to maxlimit and check if the quantity is above max
+[33ma9a857a[m feat: designed the empty cart
+[33m0502857[m fix: add to cart at detail page
+[33mc1a1b7d[m temp commit
+[33m253cade[m fix: removed the logs
+[33m0d15c5b[m feat: disabled the add to cart if default prpoduct dont have stock
+[33m4f49fae[m fix: disabled the add to cart if the product is blocked
+[33m5b1599e[m feat: add the functionality to add to cart
+[33ma14a9be[m feat: add the function to add to cart
+[33m00f6df3[m feat: created the external depended dialog and made use of it at cart
+[33ma666598[m fix: fixed the schema name of wishlist
+[33m0c8e42a[m feat: add the remove option
+[33m1c1ed94[m fix: fixed the cart page display issues
+[33m69a7a48[m fix: added the select for offerPercentage
+[33mb257fe6[m changed the name of useQuery
+[33m75e7b0f[m created a cart page
+[33mba8ced2[m feat: add the cart queries
+[33m239361f[m feat: add the cart mutations
+[33mea6f37f[m fix: changed the remove cart from body to params
+[33m7977b97[m fix: changed to common js on many file
+[33mea53afd[m fix: changed the import of userAuth
+[33mf9461f2[m fix: converted conroller to commonjs functions
+[33mdeaf96e[m fix: converted helper to commonjs functions
+[33m2c977ee[m feat: add the cart helper
+[33m87c07d7[m feat: add the cart controller
+[33mbef498e[m feat: add the cart routes
+[33m8ad27c6[m[33m ([m[1;31morigin/feature/wishlist[m[33m, [m[1;32mfeature/wishlist[m[33m)[m fix: fixed the issue of . some in image zooming
+[33m726a34b[m fix: add optional chaining for the some function
+[33mf4c7c10[m feat: added the favclick on product details also
+[33mbc13e6f[m fix: added error handling on handlefavclick
+[33m1bfa0f9[m feat: made use of fav icon red
+[33m91d1db8[m feat: add the function functions to wishlist
+[33mb276fbc[m Merge branch 'main' into feature/wishlist
+[33m4931adf[m fix: changed the address mutations avoid admin
+[33m785e8cf[m Merge remote-tracking branch 'origin/feature/address'
+[33md2e2ba8[m[33m ([m[1;31morigin/feature/address[m[33m, [m[1;32mfeature/address[m[33m)[m fix: checked the primary when edititng
+[33me541ccb[m fix: changed the returning data form back
+[33m413fc43[m changed the back code to match the product list
+[33ma7b9411[m feat: created the page for wishlist
+[33mf2972d0[m feat: add the wishlist queries
+[33m379758c[m feat: add the wishlist mutation
+[33m1496776[m fix: changed the route path
+[33m3e8ea0e[m fix: fixed the error at controller duplicate import
+[33mc5f4783[m feat: connected the route to main
+[33m640f985[m fix: changed the useAuth function
+[33m6ad3c7a[m feat: created the route file
+[33m6257b64[m feat: created the controller file
+[33mcbc7b26[m feat: created the helper function
+[33me749ede[m feat: created the wishlis schema
+[33mfd30290[m fix:
+[33m070c5a4[m Merge branch 'feature/varients'
+[33mc64e86c[m[33m ([m[1;31morigin/feature/varients[m[33m, [m[1;32mfeature/varients[m[33m)[m fix: changed the layout of varients listing
+[33mfc129f0[m feat: geting the default varient at products and homepage and also seeing the prize
+[33m75d191b[m fix: fixed the issue when returning the varient
+[33m5191661[m feat: added the varients in req
+[33m92abe83[m feat: added the user vaient controller for user
+[33m1d3a881[m feat: added the user vaient helper for user
+[33mc5bfff1[m fix: fixed the error id is passung as null when ading varient
+[33m021fabb[m fix: updated the schema to number of variants
+[33mba46abd[m feat: add the functinality to edit the product
+[33m14b67c4[m feat: add the query functions for varient
+[33mefaa536[m feat: add the query mutations for varient
+[33mcf9e372[m fix: changed the varient getting to all
+[33m06a9e0d[m fix: changed the dialog to control to open and onopen
+[33m040ab15[m feat: created the add varient fields
+[33m3e45887[m feat: created a reusable form dialog
+[33m35a996c[m feat: add the varient columns and data table
+[33m1627b3c[m feat: add the varient management page
+[33ma8787a2[m feat: add the columns for varients
+[33mbdb1588[m feat: add the reusable data table of shardcn
+[33m6de9fdc[m feat: add the reusable data table of shardcn
+[33m1c97d87[m fix: changed to soft delete
+[33maf13777[m fix: changed the module style
+[33mabcf3c9[m feat: add the varient route to index
+[33m2f4eef0[m fix: changed the function importing method at varient controller
+[33m90d7f68[m fix: changed the import of functions in controller
+[33m1e24420[m feat: created varient helper
+[33m1d5d712[m feat: created varient controller
+[33m534efd6[m feat: created varient routes
+[33m5954e83[m feat: created varient model
+[33m503f43e[m fix: give key to cards
+[33mbe489a7[m fix: make it use the alert dialog
+[33me4e7407[m feat: created a reusable confirm dialog
+[33m723f114[m feat: add the functionality to delete the address
+[33m1811a5f[m feat: add the functionality to edit the address
+[33m15bf1a5[m fix: removed some logs on query
+[33m24e6741[m fix: removed some logs
+[33m74c6008[m fix: made the address tab to use real userdata
+[33mbfaa905[m feat: add the query function
+[33med7a643[m fix: made the address dialog and tab synced
+[33m6576d23[m feat: added the validation file yup
+[33m37d91aa[m fix: aligned with new names at the dialog and also the fields
+[33mf607e53[m fix: changed the fields to align backend
+[33m6221585[m fix: changed the fields to accept address type
+[33m1bf6f5d[m fix: changed the mutations format single export to multiple export
+[33mb3bc609[m fix: changed the name when importing the api in address mutation
+[33m11529b2[m feat: add the mutation functions
+[33mfa6ee9e[m fix: fixed the the conditions for address management
+[33ma6fcfd3[m feat: created the models for address
+[33mcb49450[m feat: created the helpers for address
+[33m7710e00[m feat: created the controllers for address
+[33mad1098d[m feat: created the routes for address
+[33m37640e0[m Merge branch 'feature/userProfile'
+[33m12aaa02[m fix: add the add address button shardcn and also connected with the dialog
+[33mbe13d53[m fix: removed the button inside a dropdown
+[33m7f3cdfe[m feat: created the edit address dialog file
+[33mbea55d7[m feat: created the address fields file
+[33m0738be9[m feat: added the address tab
+[33m243df9a[m fix: removed some coments
+[33mdd67406[m Merge branch 'fix/validation'
+[33m8b499dd[m[33m ([m[1;31morigin/fix/validation[m[33m, [m[1;32mfix/validation[m[33m)[m fix: set the offerpersentage default to null
+[33m5f5702d[m[33m ([m[1;31morigin/feature/email-otp[m[33m, [m[1;32mfeature/email-otp[m[33m)[m fix: removed the coments at send mail
+[33mc4928f8[m feat: add the functionality to sent the email
+[33m08ab1bf[m feat: added the user profile remaining temporary , need to change it later
+[33m357584b[m feat: created the user profile page
+[33m6cbffe0[m feat: created the profile card
+[33m7aa023c[m fix: made the dropdown to accept the logout functions and changed it to use actuall logout function
+[33mb89a38d[m feat: add the profile icon and its dropdown as a component
+[33mbd60a55[m[33m ([m[1;31morigin/fix/product_page[m[33m, [m[1;32mfix/product_page[m[33m)[m fix: made the product caed align irrespective of description
+[33m51c5877[m[33m ([m[1;31morigin/fix/image-crop[m[33m, [m[1;32mfix/image-crop[m[33m)[m fix: changed the product validation of adding product , and also made some fixes at image croping and also removed the background of images it was being black prevously
+[33mec7d8b8[m[33m ([m[1;31morigin/feature/image-Zoom[m[33m, [m[1;32mfeature/image-Zoom[m[33m)[m fix: goan back to prevous image zoom and made the image appear full width in product detail page
+[33ma0f4cc8[m Merge branch 'main' into feature/image-Zoom
+[33m49adbe8[m fix: changed the image upload form view
+[33m38006eb[m fix: changed some fields to required and optional
+[33mbf7bbac[m fix: fixed the schema of product
+[33m4f2508c[m fix: modified the schemas some conditions like avoiding the repeated charecters
+[33mfe862eb[m feat: added the new image zoom in product
+[33me41ccb1[m fix: sorted the brands at updatedAt field
+[33me97a258[m fix: sorted the users at updatedAt field
+[33m63279a7[m removed some not available icons
+[33m2468b96[m[33m ([m[1;31morigin/fix/editProduct[m[33m, [m[1;32mfix/editProduct[m[33m)[m feat: created the feature for editing images at productEdit
+[33m0dffb60[m[33m ([m[1;31morigin/feature/adminLogout[m[33m, [m[1;32mfeature/adminLogout[m[33m)[m fix: add the middleware to user and brand routes
+[33m753d91d[m feat: add the interceptor for admin auth also
+[33mf615f9d[m fix: fixed the navigate in sidebar and also at navbar
+[33m2ab1e90[m fix: add the imports for mutation
+[33m45dd7dd[m fix: changed the backend for the functionalites of login and logout
+[33m8af0cc4[m feat: add the adminLogoutMutation
+[33mab8ebec[m feat: add the route logout
+[33m8b28356[m feat: add the logout route and signout cookie
+[33m1471ac5[m feat: set the token to cookie
+[33m319e8f8[m[33m ([m[1;31morigin/feature/adminDashboard[m[33m, [m[1;32mfeature/adminDashboard[m[33m)[m feat: created the admin dashboard
+[33mcc1ff24[m M :erge branch 'feature/google-auth'
+[33m25fc8db[m[33m ([m[1;31morigin/feature/google-auth[m[33m, [m[1;32mfeature/google-auth[m[33m)[m fix: add the automatic logout when admin blocked the user
+[33m4cdd087[m[33m ([m[1;31morigin/feature/loggout[m[33m, [m[1;32mfeature/loggout[m[33m)[m Merge branch 'feature/google-auth'
+[33m1af33c3[m[33m ([m[1;31morigin/feature/middleware[m[33m, [m[1;32mfeature/middleware[m[33m)[m fix: removed the log of fetchUser
+[33m78a0842[m fix: add navigate to home after login
+[33m54517c3[m fix: added the mutation import and navigate to home after login
+[33m1ce44d9[m fix: navigate to home after signup
+[33m06a1003[m[33m ([m[1;31morigin/feature/productDetails[m[33m, [m[1;32mfeature/productDetails[m[33m)[m feat: add the functionalities for related products
+[33m21cadcf[m fix:changed the passing of brand name to brand id
+[33mbe1aa62[m feat: passsed the brand name also to product detail page
+[33md1d39e5[m merged conflicts
+[33md5f95b5[m fix: removed the duplicate useQuerryClient import
+[33m3cc96e9[m fix: removed duplicate declaration
+[33m1d2b3c7[m Merge pull request #6 from Yahiyamuhammed/feature/productDetails
+[33m2cb3580[m Merge pull request #5 from Yahiyamuhammed/feature/homePage
+[33m6ca09a1[m Merge pull request #4 from Yahiyamuhammed/feature/middleware
+[33m0eaaf3d[m Merge branch 'main' into feature/middleware
+[33md975505[m Merge pull request #3 from Yahiyamuhammed/feature/loggout
+[33mb5179bf[m Merge branch 'main' into feature/loggout
+[33mf88a4e5[m Merge pull request #2 from Yahiyamuhammed/feature/google-auth
+[33m03fd2ea[m Merge branch 'main' into feature/google-auth
+[33mddfaafb[m Merge pull request #1 from Yahiyamuhammed/feature/shadcn_button
+[33meddc1aa[m[33m ([m[1;31morigin/feature/shadcn_button[m[33m)[m Merge branch 'main' into feature/shadcn_button
+[33mde8f62f[m fix: removed the product image from git
+[33m52089ea[m fix: removed the fetching of auth user in useUserProducts
+[33mbce95f4[m fix: removed comented codes on productQueries adn also at products page and refactored
+[33m54b6747[m[33m ([m[1;31morigin/feature/homePage[m[33m, [m[1;32mfeature/homePage[m[33m)[m feat: add the flash sale section
+[33m5d86c84[m fix: made change to sorting option to support discount sale in userProductHelpers
+[33mcf5106c[m fix: add optional chaining at displaying products
+[33ma42ec38[m feat: changed the div to be responsive at p
+[33mf78b3e7[m feat: add the second image on homescreen
+[33m7134341[m fix: change the offerpercentage name in product card
+[33ma5f230b[m feat: add the functionalities of newest arrival
+[33me84e1a6[m fix: check the user is bloacked at google and also fixed the breadcump
+[33m4f0bbea[m feat: add imege at homescreen
+[33m2e39eec[m fix: removed the fixed breadcom in products and product detailed page
+[33m4c4aaf6[m fix: implemented the user chache consistently
+[33m77e1a5e[m feat: added the functionalities of fetch user data in me
+[33ma50040a[m feat: add the middleware for me to get the user
+[33m73680fe[m added the functionalities for logout
+[33m0216019[m feat: add the functionality to logout
+[33m63dd313[m feat: add the functionalities to store cookie in google and signup
+[33mb5726d9[m fix: connected the middleware checkbloacked user to login and product
+[33me7b7675[m fix: fixed the import of user
+[33mcc1ed72[m feat: created the middleware routes for user : public and protected
+[33m3d56996[m feat: add function of google auth to signup
+[33m8ea2429[m feat: made the form use the shadButton
+[33m6ea5bcc[m wip: save current login page before restoring stash
+[33me67d71c[m feat: changed the google login flow to use useGoogleLogin and connected to the shad button
+[33m20ad4c8[m[33m ([m[1;32mfeature/shadcn_button[m[33m)[m feat: added the spinning buton usin shadcn and connected the form with it
+[33m1a99b1e[m feat: added the functionality of google login at frontent
+[33m460c347[m fix: added route to gogle login
+[33m3d26a9f[m feat: added google auth and also added helper files for auth user in backend
+[33md4268e5[m completed some bugs
+[33m9c823bb[m added the user list product page
+[33m672dba8[m added the user list product page
+[33m988925a[m aded product upload image feature and show in product management
+[33m8163d81[m changed the dark theme
+[33mc18270a[m added user listing and also user blocking
+[33m1a7e92c[m added the feature of giving default brand in edit  the product
+[33m08ecd41[m added the feature of editing the product
+[33mc5a20be[m changed the product listing to edit and delete , and implemented delete and restore functions
+[33ma5edba4[m added the feature for fetching the brands when adding
+[33m4748ccd[m added the brand edit feature
+[33m7163932[m added the search filter in brand
+[33m8a93cc1[m added the features to delete and restore brands and also creating brands
+[33mfea154f[m connected to api get brands
+[33me063504[m added brand management
+[33m0f1422b[m added api for getting products and also added filters
+[33m73bd587[m addeda api for adding product
+[33me4c9a78[m changed product fields
+[33m924580b[m created admin product management and adding product form
+[33mf61e2eb[m added sidebar
+[33mfec2567[m added admin login and admin routes
+[33m17f7e8a[m added react code of signup and login and also the navbar
+[33mead47bc[m connected to backend
+[33m740ba2d[m started frontent and created form and also login page
+[33m39ea573[m added get poducts for user
+[33m7568633[m added collection and add, edit, delete, restore
+[33m069a0f1[m added brand schema and also referenced product to brand
+[33m4906d07[m added function for soft delete and edit products
+[33m09c5325[m added product without images
+[33m3f6e3ea[m added the logic of login when user is blocked
+[33mb05ca0f[m added block user function
+[33m842594f[m added admin user listin and search
+[33mf9edd42[m addedadmin middleware
+[33m0716708[m added admin login
+[33mfee6433[m added login and resend otp
+[33mb4bb259[m added otp verification
+[33m4dd7a85[m added signup route and otp generation
+[33mae844c2[m added signup sample
+[33mbaca775[m addeed user model
+[33m4630dca[m created backend and frontend
+[33m1b793bb[m created server
+[33m473358e[m first commit

@@ -2,11 +2,9 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModal");
 const mongoose = require("mongoose");
 const checkBlockedUser = async (req, res, next) => {
-  console.log("entered the check");
 
   const token = req.cookies.token;
   if (!token) {
-    console.log("no token");
     return next();
   }
 
@@ -19,12 +17,10 @@ const checkBlockedUser = async (req, res, next) => {
     } catch (err) {
       console.log("an error occure", err);
     }
-    console.log("token found and user is :", user);
     if (user && user.isBlocked === true) {
       console.log("user is blocked");
       return res.status(403).json({ message: "User is blocked" });
     }
-    console.log("user verified");
     req.user = user; // optional, for UI logic
     next();
   } catch (err) {
