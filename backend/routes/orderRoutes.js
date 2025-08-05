@@ -6,5 +6,7 @@ const { placeOrder, getUserOrders, getSingleOrder } = require('../controllers/or
 router.post('/order', userAuth, placeOrder);
 router.get('/orders', userAuth, getUserOrders); 
 router.get('/order/:orderId', userAuth, getSingleOrder);
+router.patch('/order/:orderId/item/:itemId/request-return', requestReturn);
+
 
 module.exports = router;
