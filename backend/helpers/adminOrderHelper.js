@@ -40,6 +40,7 @@ exports.getAllOrdersHelper = async ({ page, limit, search }) => {
         $or: [
           { "items.productName": { $regex: search, $options: 'i' } },
           { "items.brandName": { $regex: search, $options: 'i' } },
+          { "addressSnapshot.name": { $regex: search, $options: 'i' } },
           { status: { $regex: search, $options: 'i' } }
         ]
       }
