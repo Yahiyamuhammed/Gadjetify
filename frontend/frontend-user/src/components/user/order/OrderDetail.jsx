@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useOrderDetails } from "@/hooks/queries/useOrders";
 import FormDialog from "@/components/common/FormDialog";
-import { useRequestReturn } from "@/hooks/mutations/usePlaceOrder";
+import {
+  useCancelOrder,
+  useRequestReturn,
+} from "@/hooks/mutations/usePlaceOrder";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -13,18 +16,18 @@ const OrderDetail = ({ orderId, onBack }) => {
   if (!orderId) return <div> no Id returned </div>;
   const queryClient = useQueryClient();
 
-
   const [openReturnDialog, setOpenReturnDialog] = useState(false);
   const [returnProduct, setReturnProduct] = useState(null);
   const [returnReason, setReturnReason] = useState("");
 
   const { mutate: requestReturn, isError: requestError } = useRequestReturn();
+  const { mutate: cancelOrder } = useCancelOrder();
+
   const {
     data: OrderDetail,
     isLoading,
     isError,
   } = useOrderDetails({ orderId });
-  
 
   if (isLoading || !OrderDetail) return <div>Loading...</div>;
   if (isError) return <div>Failed to load order details</div>;
@@ -36,6 +39,21 @@ const OrderDetail = ({ orderId, onBack }) => {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  const handleCancelOrder = () => {
+    cancelOrder(
+      { orderId },
+      {
+        onSuccess: () => {
+          toast.success("order cancelled");
+          queryClient.invalidateQueries(["orders", orderId]);
+        },
+        onError: (err) => {
+          toast.error(err.response.data.message || err.message);
+        },
+      }
+    );
+  };
 
   const handleSubmit = () => {
     console.log("Returning:", returnProduct);
@@ -55,7 +73,7 @@ const OrderDetail = ({ orderId, onBack }) => {
       {
         onSuccess: () => {
           toast.success("Return Requested");
-          queryClient.invalidateQueries(['orders',OrderDetail?.orderId])
+          queryClient.invalidateQueries(["orders", OrderDetail?.orderId]);
           setOpenReturnDialog(false);
           setReturnReason("");
           setReturnProduct(null);
@@ -68,8 +86,6 @@ const OrderDetail = ({ orderId, onBack }) => {
         },
       }
     );
-
-    // Reset
   };
 
   return (
@@ -211,7 +227,9 @@ const OrderDetail = ({ orderId, onBack }) => {
             Back to Orders
           </Button>
           {OrderDetail.status.toLowerCase() === "placed" && (
-            <Button variant="destructive">Cancel Order</Button>
+            <Button onClick={() => handleCancelOrder()} variant="destructive">
+              Cancel Order
+            </Button>
           )}
         </div>
       </Card>

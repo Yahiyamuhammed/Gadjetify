@@ -28,3 +28,17 @@ export const useRequestReturn = () => {
     }
   });
 };
+
+export const useCancelOrder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({orderId}) => {
+      const res = await api.patch(`/orders/${orderId}/cancel`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-orders"] });
+    },
+  });
+};
