@@ -5,7 +5,7 @@ export const useOrders = () => {
   return useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
-      const res = await api.get("/orders");
+      const res = await api.get("/order");
       return res.data.data;
     },
   });
