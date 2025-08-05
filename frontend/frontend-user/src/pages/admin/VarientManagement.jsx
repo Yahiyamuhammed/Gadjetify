@@ -112,6 +112,7 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
         })}
         data={variants ?? []}
         onAdd={() => setOpenDialog(true)}
+        addButton="Add Variant"
       />
       <FormDialog
         open={openDialog}
