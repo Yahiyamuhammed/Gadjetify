@@ -9,8 +9,9 @@ const userSchema = new mongoose.Schema(
     otpExpiresAt: { type: Date },
     isVerified: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
-    authType: {type: String,enum: ["local", "google"],default: "local"},
-    googleId: {type: String,default: null},
+    authType: { type: String, enum: ["local", "google"], default: "local" },
+    googleId: { type: String, default: null },
+    wallet: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
