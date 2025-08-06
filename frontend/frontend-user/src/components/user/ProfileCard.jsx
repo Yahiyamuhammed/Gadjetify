@@ -1,12 +1,38 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import toast from "react-hot-toast";
+import FormDialog from "../common/FormDialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useUpdateProfile } from "@/hooks/mutations/useUpdateProfile";
 
 const ProfileCard = ({ user }) => {
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+  });
+
+  const { mutate } = useUpdateProfile();
+
+  const handleSubmit = ({ formData }) => {
+    mutate(formData, {
+      onSuccess: (data) => {
+        toast.success("Profile updated:", data);
+        setOpen(false);
+      },
+      onError: (err) => {
+        toast.error(err.response?.data?.message || "Something went wrong");
+      },
+    });
+  };
+
   return (
     <Card className="p-6">
       <figure>
-         <svg
+        <svg
           className="w-full h-40"
           preserveAspectRatio="none"
           viewBox="0 0 1113 161"
@@ -45,14 +71,18 @@ const ProfileCard = ({ user }) => {
 
         {/* User Info */}
         <div className="text-center mt-4">
-          <h1 className="text-xl font-semibold dark:text-neutral-200">{user.name}</h1>
-          <p className="text-sm text-gray-500 dark:text-neutral-400">{user.email}</p>
+          <h1 className="text-xl font-semibold dark:text-neutral-200">
+            {user.name}
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-neutral-400">
+            {user.email}
+          </p>
         </div>
       </div>
 
       {/* Action Buttons and Tabs */}
       <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <Button variant="secondary" size="sm">
+        <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
           Edit
         </Button>
 
@@ -65,8 +95,39 @@ const ProfileCard = ({ user }) => {
           </TabsList>
         </Tabs>
       </div>
+      <FormDialog
+        title="Edit Profile"
+        open={open}
+        setOpen={setOpen}
+        triggerLabel="Edit"
+        formData={formData}
+        onSubmit={handleSubmit}
+      >
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, email: e.target.value }))
+              }
+            />
+          </div>
+        </div>
+      </FormDialog>
     </Card>
-  )
-}
+  );
+};
 
-export default ProfileCard
+export default ProfileCard;

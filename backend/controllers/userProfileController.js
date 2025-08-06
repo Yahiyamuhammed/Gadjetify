@@ -1,4 +1,4 @@
-const updateUserProfile =require( "../helpers/userProfileHelper")
+const { updateUserProfile } = require("../helpers/userProfileHelper");
 
 exports.updateProfile = async (req, res) => {
   try {
