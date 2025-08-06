@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useUpdateProfile } from "@/hooks/mutations/useUpdateProfile";
+import EditProfileFormFields from "./profile/EditProfileFormFields";
 
 const ProfileCard = ({ user }) => {
   const [open, setOpen] = useState(false);
@@ -103,28 +104,8 @@ const ProfileCard = ({ user }) => {
         formData={formData}
         onSubmit={handleSubmit}
       >
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, name: e.target.value }))
-              }
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, email: e.target.value }))
-              }
-            />
-          </div>
-        </div>
+        <EditProfileFormFields formData={formData} setFormData={setFormData} />
+
       </FormDialog>
     </Card>
   );
