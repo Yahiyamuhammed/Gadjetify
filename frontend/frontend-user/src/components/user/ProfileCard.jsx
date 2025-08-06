@@ -6,8 +6,6 @@ const ProfileCard = ({ user }) => {
   return (
     <Card className="p-6">
       <figure>
-        {/* Your existing SVG background */}
-        {/* <svg className="w-full h-40" ...>...</svg> */}
          <svg
           className="w-full h-40"
           preserveAspectRatio="none"
@@ -43,31 +41,12 @@ const ProfileCard = ({ user }) => {
             src={user.avatarUrl}
             alt={user.name}
           />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute bottom-0 right-0 p-1 rounded-full border bg-white dark:bg-neutral-800"
-            title="Set status"
-          >
-            <svg
-              className="w-6 h-6 text-gray-600 dark:text-neutral-400"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-              <line x1="9" x2="9.01" y1="9" y2="9" />
-              <line x1="15" x2="15.01" y1="9" y2="9" />
-            </svg>
-          </Button>
         </div>
 
         {/* User Info */}
         <div className="text-center mt-4">
           <h1 className="text-xl font-semibold dark:text-neutral-200">{user.name}</h1>
-          <p className="text-sm text-gray-500 dark:text-neutral-400">{user.username}</p>
+          <p className="text-sm text-gray-500 dark:text-neutral-400">{user.email}</p>
         </div>
       </div>
 
