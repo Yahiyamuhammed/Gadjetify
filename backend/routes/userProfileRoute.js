@@ -1,8 +1,8 @@
-import express from "express";
+const express = require('express');
 const router = express.Router();
-import { updateProfile } from "../controllers/userController.js";
 const checkBlockedUser = require("../middlewares/checkBlockedUser");
+const { updateProfile } = require('../controllers/userProfileController');
 
 router.put("/edit", checkBlockedUser, updateProfile);
 
-export default router;
+module.exports=  router;

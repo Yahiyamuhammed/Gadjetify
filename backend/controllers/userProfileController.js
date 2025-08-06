@@ -1,6 +1,6 @@
-import { updateUserProfile } from "../helpers/userHelper.js";
+const updateUserProfile =require( "../helpers/userProfileHelper")
 
-export const updateProfile = async (req, res) => {
+exports.updateProfile = async (req, res) => {
   try {
     const { name, email } = req.body;
     const userId = req.user._id;

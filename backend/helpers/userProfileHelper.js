@@ -1,6 +1,7 @@
-import User from "../models/userModel.js";
+const User = require('../models/userModal');
 
-export const updateUserProfile = async (userId, name, email) => {
+
+exports.updateUserProfile = async (userId, name, email) => {
   const user = await User.findById(userId);
   if (!user) throw { status: 404, message: "User not found" };
 
