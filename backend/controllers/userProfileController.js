@@ -3,7 +3,7 @@ const { getProfile,updateProfile,verifyEmailOtp } = require('../helpers/userProf
 
 exports.getProfile = async (req, res) => {
     try {
-        const response = await getProfile(req.user.id);
+        const response = await getProfile(req.user);
         return res.status(response.status).json(response);
     } catch (err) {
         return res.status(500).json({ status: 500, message: 'Server error' });
@@ -13,7 +13,7 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const { name, email } = req.body;
-        const response = await updateProfile(req.user.id, name, email);
+        const response = await updateProfile(req.user, name, email);
         return res.status(response.status).json(response);
     } catch (err) {
         return res.status(500).json({ status: 500, message: 'Server error' });
@@ -24,7 +24,7 @@ exports.updateProfile = async (req, res) => {
 exports.verifyEmailOtp = async (req, res) => {
     try {
         const { otp } = req.body;
-        const response = await verifyEmailOtp(req.user.id, otp);
+        const response = await verifyEmailOtp(req.user, otp);
         return res.status(response.status).json(response);
     } catch (err) {
         return res.status(500).json({ status: 500, message: 'Server error' });
