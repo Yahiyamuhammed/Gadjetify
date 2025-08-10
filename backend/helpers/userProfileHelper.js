@@ -40,6 +40,7 @@ exports.updateProfile = async (userId, name, email) => {
   if (emailChanged) {
     return {
       status: 200,
+      otp:true,
       message: "Name updated, OTP sent for email verification",
     };
   }
@@ -54,9 +55,9 @@ exports.verifyEmailOtp = async (userId, otp) => {
   }
 
   if (
-    !user.emailOtp ||
-    user.emailOtp !== parseInt(otp) ||
-    user.emailOtpExpires < Date.now()
+    !user.otp ||
+    user.otp !== parseInt(otp) ||
+    user.otpExpiresAt < Date.now()
   ) {
     return { status: 400, message: "Invalid or expired OTP" };
   }
