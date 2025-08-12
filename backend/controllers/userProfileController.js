@@ -23,10 +23,13 @@ exports.updateProfile = async (req, res) => {
 
 exports.verifyEmailOtp = async (req, res) => {
     try {
-        const { otp } = req.body;
+              console.log(req.body)
+
+        const {otp}  = req.body;
         const response = await verifyEmailOtp(req.user, otp);
         return res.status(response.status).json(response);
     } catch (err) {
+      console.log(err)
         return res.status(500).json({ status: 500, message: 'Server error' });
     }
 };

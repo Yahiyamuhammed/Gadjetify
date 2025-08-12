@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
     authType: { type: String, enum: ["local", "google"], default: "local" },
     googleId: { type: String, default: null },
     wallet: { type: Number, default: 0 },
+    pendingEmail: { type: String, unique: true },
   },
   { timestamps: true }
 );

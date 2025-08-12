@@ -53,11 +53,10 @@ exports.verifyEmailOtp = async (userId, otp) => {
   if (!user) {
     return { status: 404, message: "User not found" };
   }
-
   if (
     !user.otp ||
-    user.otp !== parseInt(otp) ||
-    user.otpExpiresAt < Date.now()
+    user.otp !==  otp ||
+    user.otpExpiresAt < new Date()
   ) {
     return { status: 400, message: "Invalid or expired OTP" };
   }

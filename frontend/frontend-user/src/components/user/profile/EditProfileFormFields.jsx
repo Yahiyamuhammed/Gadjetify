@@ -1,7 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const EditProfileFormFields = ({ formData, setFormData }) => {
+const EditProfileFormFields = ({
+  formData,
+  setFormData,
+  originalEmail,
+  onEmailChange
+}) => {
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
@@ -19,9 +24,11 @@ const EditProfileFormFields = ({ formData, setFormData }) => {
         <Input
           id="email"
           value={formData.email}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, email: e.target.value }))
-          }
+          onChange={(e) => {
+            const newEmail = e.target.value;
+            setFormData((prev) => ({ ...prev, email: newEmail }));
+            onEmailChange(newEmail !== originalEmail); 
+          }}
         />
       </div>
     </div>

@@ -6,28 +6,81 @@ import FormDialog from "../common/FormDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useUpdateProfile } from "@/hooks/mutations/useUpdateProfile";
+import {
+  useUpdateProfile,
+  useVerifyEmailOtp,
+} from "@/hooks/mutations/useUpdateProfile";
 import EditProfileFormFields from "./profile/EditProfileFormFields";
+import { InputOTPForm } from "../common/InputOtp";
+import { useFetchUserDetail } from "@/hooks/queries/useProfileQueries";
+import { useQueryClient } from "@tanstack/react-query";
 
-const ProfileCard = ({ user }) => {
+const ProfileCard = () => {
+  const { mutate } = useUpdateProfile();
+  const { mutate: verifyOtp } = useVerifyEmailOtp();
+  const { data: userDetail } = useFetchUserDetail();
+  const useQuery = useQueryClient();
+
+  console.log(userDetail);
+
   const [open, setOpen] = useState(false);
+  const [openOtp, setOpenOtp] = useState(false);
+  const [otp, setOtp] = useState(null);
   const [formData, setFormData] = useState({
-    name: user.name,
-    email: user.email,
+    name: userDetail?.name || "",
+    email: userDetail?.email || "",
+    pin: "",
   });
 
-  const { mutate } = useUpdateProfile();
+  const avatarUrl =
+    "https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...";
 
   const handleSubmit = ({ formData }) => {
+    console.log(formData);
     mutate(formData, {
       onSuccess: (data) => {
         toast.success("Profile updated:", data);
+        if (data?.otp) {
+          setOpenOtp(true);
+        }
+        useQuery.invalidateQueries(["userProfile"]);
+
         setOpen(false);
       },
       onError: (err) => {
+        console.log(err);
         toast.error(err.response?.data?.message || "Something went wrong");
       },
     });
+  };
+
+  const handleOtpSubmit = ({ formData }) => {
+    // You can use mutate or a different API call here to verify OTP
+    toast.success("OTP verified: " + formData);
+    verifyOtp(
+      { otp: formData },
+      {
+        onSuccess: () => {
+          toast.success("success fully changed the email");
+          useQuery.invalidateQueries(["userProfile"]);
+          setOpenOtp(false);
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "some error occured");
+        },
+      }
+    );
+  };
+
+  const handleOpenEdit = () => {
+    if (userDetail) {
+      setFormData({
+        name: userDetail.name || "",
+        email: userDetail.email || "",
+        pin: "",
+      });
+    }
+    setOpen(true);
   };
 
   return (
@@ -65,25 +118,25 @@ const ProfileCard = ({ user }) => {
         <div className="relative">
           <img
             className="w-32 h-32 rounded-full border-4 border-white dark:border-neutral-800 shadow-lg object-cover"
-            src={user.avatarUrl}
-            alt={user.name}
+            src={avatarUrl}
+            alt={userDetail?.name}
           />
         </div>
 
         {/* User Info */}
         <div className="text-center mt-4">
           <h1 className="text-xl font-semibold dark:text-neutral-200">
-            {user.name}
+            {userDetail?.name}
           </h1>
           <p className="text-sm text-gray-500 dark:text-neutral-400">
-            {user.email}
+            {userDetail?.email}
           </p>
         </div>
       </div>
 
       {/* Action Buttons and Tabs */}
       <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
+        <Button variant="secondary" size="sm" onClick={handleOpenEdit}>
           Edit
         </Button>
 
@@ -105,7 +158,21 @@ const ProfileCard = ({ user }) => {
         onSubmit={handleSubmit}
       >
         <EditProfileFormFields formData={formData} setFormData={setFormData} />
+      </FormDialog>
 
+      <FormDialog
+        title="Enter OTP"
+        open={openOtp}
+        setOpen={setOpenOtp}
+        onSubmit={handleOtpSubmit}
+        triggerLabel="Verify OTP"
+        formData={otp}
+      >
+        <InputOTPForm
+          formData={otp}
+          setFormData={setOtp}
+          onSubmit={handleOtpSubmit}
+        />
       </FormDialog>
     </Card>
   );
