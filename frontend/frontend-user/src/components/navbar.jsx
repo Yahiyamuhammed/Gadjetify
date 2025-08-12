@@ -25,7 +25,7 @@ const Navbar = () => {
 
   const { data: user } = useAuthUser();
 
-  console.log("this is the user in navbar", !!user);
+  // console.log("this is the user in navbar", !!user);
 
   const navLinks = [
     { name: "HOME", path: "/" },

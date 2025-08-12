@@ -1,14 +1,92 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import toast from "react-hot-toast";
+import FormDialog from "../common/FormDialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import {
+  useUpdateProfile,
+  useVerifyEmailOtp,
+} from "@/hooks/mutations/useUpdateProfile";
+import EditProfileFormFields from "./profile/EditProfileFormFields";
+import { InputOTPForm } from "../common/InputOtp";
+import { useFetchUserDetail } from "@/hooks/queries/useProfileQueries";
+import { useQueryClient } from "@tanstack/react-query";
 
-const ProfileCard = ({ user }) => {
+const ProfileCard = () => {
+  const { mutate } = useUpdateProfile();
+  const { mutate: verifyOtp } = useVerifyEmailOtp();
+  const { data: userDetail } = useFetchUserDetail();
+  const useQuery = useQueryClient();
+
+  console.log(userDetail);
+
+  const [open, setOpen] = useState(false);
+  const [openOtp, setOpenOtp] = useState(false);
+  const [otp, setOtp] = useState(null);
+  const [formData, setFormData] = useState({
+    name: userDetail?.name || "",
+    email: userDetail?.email || "",
+    pin: "",
+  });
+
+  const avatarUrl =
+    "https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...";
+
+  const handleSubmit = ({ formData }) => {
+    console.log(formData);
+    mutate(formData, {
+      onSuccess: (data) => {
+        toast.success("Profile updated:", data);
+        if (data?.otp) {
+          setOpenOtp(true);
+        }
+        useQuery.invalidateQueries(["userProfile"]);
+
+        setOpen(false);
+      },
+      onError: (err) => {
+        console.log(err);
+        toast.error(err.response?.data?.message || "Something went wrong");
+      },
+    });
+  };
+
+  const handleOtpSubmit = ({ formData }) => {
+    // You can use mutate or a different API call here to verify OTP
+    toast.success("OTP verified: " + formData);
+    verifyOtp(
+      { otp: formData },
+      {
+        onSuccess: () => {
+          toast.success("success fully changed the email");
+          useQuery.invalidateQueries(["userProfile"]);
+          setOpenOtp(false);
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "some error occured");
+        },
+      }
+    );
+  };
+
+  const handleOpenEdit = () => {
+    if (userDetail) {
+      setFormData({
+        name: userDetail.name || "",
+        email: userDetail.email || "",
+        pin: "",
+      });
+    }
+    setOpen(true);
+  };
+
   return (
     <Card className="p-6">
       <figure>
-        {/* Your existing SVG background */}
-        {/* <svg className="w-full h-40" ...>...</svg> */}
-         <svg
+        <svg
           className="w-full h-40"
           preserveAspectRatio="none"
           viewBox="0 0 1113 161"
@@ -40,40 +118,25 @@ const ProfileCard = ({ user }) => {
         <div className="relative">
           <img
             className="w-32 h-32 rounded-full border-4 border-white dark:border-neutral-800 shadow-lg object-cover"
-            src={user.avatarUrl}
-            alt={user.name}
+            src={avatarUrl}
+            alt={userDetail?.name}
           />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute bottom-0 right-0 p-1 rounded-full border bg-white dark:bg-neutral-800"
-            title="Set status"
-          >
-            <svg
-              className="w-6 h-6 text-gray-600 dark:text-neutral-400"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-              <line x1="9" x2="9.01" y1="9" y2="9" />
-              <line x1="15" x2="15.01" y1="9" y2="9" />
-            </svg>
-          </Button>
         </div>
 
         {/* User Info */}
         <div className="text-center mt-4">
-          <h1 className="text-xl font-semibold dark:text-neutral-200">{user.name}</h1>
-          <p className="text-sm text-gray-500 dark:text-neutral-400">{user.username}</p>
+          <h1 className="text-xl font-semibold dark:text-neutral-200">
+            {userDetail?.name}
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-neutral-400">
+            {userDetail?.email}
+          </p>
         </div>
       </div>
 
       {/* Action Buttons and Tabs */}
       <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <Button variant="secondary" size="sm">
+        <Button variant="secondary" size="sm" onClick={handleOpenEdit}>
           Edit
         </Button>
 
@@ -86,8 +149,33 @@ const ProfileCard = ({ user }) => {
           </TabsList>
         </Tabs>
       </div>
-    </Card>
-  )
-}
+      <FormDialog
+        title="Edit Profile"
+        open={open}
+        setOpen={setOpen}
+        triggerLabel="Edit"
+        formData={formData}
+        onSubmit={handleSubmit}
+      >
+        <EditProfileFormFields formData={formData} setFormData={setFormData} />
+      </FormDialog>
 
-export default ProfileCard
+      <FormDialog
+        title="Enter OTP"
+        open={openOtp}
+        setOpen={setOpenOtp}
+        onSubmit={handleOtpSubmit}
+        triggerLabel="Verify OTP"
+        formData={otp}
+      >
+        <InputOTPForm
+          formData={otp}
+          setFormData={setOtp}
+          onSubmit={handleOtpSubmit}
+        />
+      </FormDialog>
+    </Card>
+  );
+};
+
+export default ProfileCard;
