@@ -50,14 +50,14 @@ exports.getAllBrands = async (query={}) => {
   const filter = {};
   
   if (search) {
-    filter.name = { $regex: search, $options: "i" }; // Case-insensitive search
+    filter.name = { $regex: search, $options: "i" };
   }
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
   const [brands, totalCount] = await Promise.all([
     Brand.find(filter)
-      .collation({ locale: "en", strength: 2 }) // Case-insensitive sorting
+      .collation({ locale: "en", strength: 2 }) 
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(parseInt(limit)),
