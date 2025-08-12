@@ -12,7 +12,12 @@ import { toast } from "react-hot-toast";
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { useAddProduct, useRestoreProduct, useUnlistProduct, useUpdateProduct } from "../../hooks/mutations/useProductMutations.js";
+import {
+  useAddProduct,
+  useRestoreProduct,
+  useUnlistProduct,
+  useUpdateProduct,
+} from "../../hooks/mutations/useProductMutations.js";
 import { useFetchProducts } from "@/hooks/queries/useProductQueries";
 import DataTableWrapper from "@/components/admin/DataTableWrapper.jsx";
 import { getAdminProductColumns } from "@/components/admin/product/adminProductColumns.jsx";
@@ -25,29 +30,34 @@ const ProductManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-    const [editingProduct, setEditingProduct] = useState(null);
+  const [editingProduct, setEditingProduct] = useState(null);
 
-//   const [totalPages, setTotalPages] = useState(1);
+  //   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 8;
   const [categoryFilter, setCategoryFilter] = useState("");
   const [serverError, setServerError] = useState("");
 
   const queryClient = useQueryClient();
 
-
   const { mutate, isPending, error } = useAddProduct();
-    const { mutate: unlistProduct } = useUnlistProduct();
-    const { mutate: updateProduct } = useUpdateProduct();
-    const { mutate: restoreProduct } = useRestoreProduct();
+  const { mutate: unlistProduct } = useUnlistProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: restoreProduct } = useRestoreProduct();
 
   const {
     data: productsData,
     isLoading,
     isError,
     error: fetchError,
-  } = useFetchProducts({ page: currentPage,limit: pageSize,search: searchTerm,brand: "",isDeleted:filter, });
+  } = useFetchProducts({
+    page: currentPage,
+    limit: pageSize,
+    search: searchTerm,
+    brand: "",
+    isDeleted: filter,
+  });
 
-//   console.log('this is the raw', productsData)
+  //   console.log('this is the raw', productsData)
   const products = productsData?.products || [];
   // const products = productsData?.products || [];
   const totalPages = productsData?.totalPages || 1;
@@ -56,12 +66,12 @@ const ProductManagement = () => {
   // const totalCount = productsData?.totalCount || 0;
 
   useEffect(() => {
-//   if (currentPageFromApi !== currentPage) {
+    //   if (currentPageFromApi !== currentPage) {
     setCurrentPage(currentPageFromApi);
-//   }
-}, [currentPageFromApi]);
+    //   }
+  }, [currentPageFromApi]);
 
-//   console.log(products);
+  //   console.log(products);
 
   const totalCount = products.length;
 
@@ -78,10 +88,9 @@ const ProductManagement = () => {
         // console.log(" Product Added Successfully:", data);
         toast.success("Product added successfully");
         setIsModalFormOpen(false);
-         queryClient.invalidateQueries(["products"]);
+        queryClient.invalidateQueries(["products"]);
       },
       onError: (err) => {
-        
         const message =
           err?.response?.data?.message || err.message || "Something went wrong";
         console.error("Product Add Error:", message);
@@ -92,8 +101,7 @@ const ProductManagement = () => {
     });
   };
 
-
-   const handleStatusChange = (product) => {
+  const handleStatusChange = (product) => {
     if (product.isListed) {
       unlistProduct(product._id, {
         onSuccess: () => {
@@ -101,7 +109,9 @@ const ProductManagement = () => {
           queryClient.invalidateQueries(["products"]);
         },
         onError: (err) => {
-          toast.error(err?.response?.data?.message || "Failed to unlist product");
+          toast.error(
+            err?.response?.data?.message || "Failed to unlist product"
+          );
         },
       });
     } else {
@@ -111,7 +121,9 @@ const ProductManagement = () => {
           queryClient.invalidateQueries(["products"]);
         },
         onError: (err) => {
-          toast.error(err?.response?.data?.message || "Failed to restore product");
+          toast.error(
+            err?.response?.data?.message || "Failed to restore product"
+          );
         },
       });
     }
@@ -122,7 +134,26 @@ const ProductManagement = () => {
     setIsModalFormOpen(true);
   };
 
- 
+  const handleEditProduct = (formData) => {
+      if (!editingProduct) return;
+  
+      updateProduct(
+        { id: editingProduct._id, updatedData: formData },
+        {
+          onSuccess: () => {
+            toast.success("Product updated");
+            setIsModalFormOpen(false);
+            setEditingProduct(null);
+          },
+          onError: (err) => {
+            toast.error(
+              err?.response?.data?.message || "Failed to update product"
+            );
+          },
+        }
+      );
+    };
+
   return (
     <div className="p-4">
       {/* Breadcrumbs */}
@@ -149,8 +180,10 @@ const ProductManagement = () => {
       <ProductAddForm
         isModalFormOpen={isModalFormOpen}
         onClose={() => setIsModalFormOpen(false)}
-        onSubmit={handleAddProduct}
+        onSubmit={editingProduct?handleAddProduct:handleEditProduct}
         serverError={serverError}
+        initialValues={editingProduct}
+        mode={editingProduct ? "edit" : "add"}
       />
 
       <div className="mb-5">
