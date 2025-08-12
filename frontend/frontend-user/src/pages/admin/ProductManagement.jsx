@@ -12,8 +12,10 @@ import { toast } from "react-hot-toast";
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { useAddProduct } from "../../hooks/mutations/useProductMutations.js";
+import { useAddProduct, useRestoreProduct, useUnlistProduct, useUpdateProduct } from "../../hooks/mutations/useProductMutations.js";
 import { useFetchProducts } from "@/hooks/queries/useProductQueries";
+import DataTableWrapper from "@/components/admin/DataTableWrapper.jsx";
+import { getAdminProductColumns } from "@/components/admin/product/adminProductColumns.jsx";
 
 // import { RotatingLines } from "react-loader-spinner";
 // import { successToast, errorToast } from "../../components/toast/index.js"; // 🔗 API PLACEHOLDER
@@ -23,6 +25,8 @@ const ProductManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+    const [editingProduct, setEditingProduct] = useState(null);
+
 //   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 8;
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -32,6 +36,9 @@ const ProductManagement = () => {
 
 
   const { mutate, isPending, error } = useAddProduct();
+    const { mutate: unlistProduct } = useUnlistProduct();
+    const { mutate: updateProduct } = useUpdateProduct();
+    const { mutate: restoreProduct } = useRestoreProduct();
 
   const {
     data: productsData,
@@ -83,6 +90,36 @@ const ProductManagement = () => {
         setServerError(message);
       },
     });
+  };
+
+
+   const handleStatusChange = (product) => {
+    if (product.isListed) {
+      unlistProduct(product._id, {
+        onSuccess: () => {
+          toast.success("Product unlisted");
+          queryClient.invalidateQueries(["products"]);
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "Failed to unlist product");
+        },
+      });
+    } else {
+      restoreProduct(product._id, {
+        onSuccess: () => {
+          toast.success("Product restored");
+          queryClient.invalidateQueries(["products"]);
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "Failed to restore product");
+        },
+      });
+    }
+  };
+
+  const handleEditClick = (product) => {
+    setEditingProduct(product);
+    setIsModalFormOpen(true);
   };
 
  
@@ -158,7 +195,14 @@ const ProductManagement = () => {
       </div>
 
       {/* Product List */}
-      <ProductList products={products} icon="fa-solid fa-box" />
+      {/* <ProductList products={products} icon="fa-solid fa-box" /> */}
+      {/* Product Table */}
+      <DataTableWrapper
+        title="Products"
+        data={products}
+        columns={getAdminProductColumns(handleStatusChange, handleEditClick)}
+        filterFn={(val) => setSearchTerm(val.toLowerCase())}
+      />
 
       {/* Pagination */}
       <div className="flex justify-center mt-5">
