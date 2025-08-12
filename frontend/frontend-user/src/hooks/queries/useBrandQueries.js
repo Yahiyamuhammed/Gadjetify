@@ -11,3 +11,12 @@ export const useFetchBrands = (queryParams = {}) => {
     },
   });
 };
+export const useFetchUserBrands = (queryParams = {}) => {
+  return useQuery({
+    queryKey: ["brands",queryParams],
+    queryFn: async () => {
+      const response = await api.get("/brands",{ params: queryParams });
+      return response.data;
+    },
+  });
+};

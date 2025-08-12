@@ -6,7 +6,7 @@ import { Link } from "react-router";
 import { ChevronRight, Home, ListFilter, Search, SortAsc } from "lucide-react";
 import Pagination from "../../components/common/Pagination";
 import { useUserFetchProducts } from "../../hooks/queries/useUserProductQueries";
-import { useFetchBrands } from "../../hooks/queries/useBrandQueries";
+import { useFetchUserBrands } from "../../hooks/queries/useBrandQueries";
 
 const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +33,7 @@ const Products = () => {
   const totalPages = data?.totalPages || 1;
 
   // console.log(products);
-  const { data: brandData = [] } = useFetchBrands({ search: "", limit: "" });
+  const { data: brandData = [] } = useFetchUserBrands({ search: "", limit: "" });
 
   const brands = (brandData?.brands || []).filter((b) => !b.isDeleted);
 
