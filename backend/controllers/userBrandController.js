@@ -1,3 +1,5 @@
+const { getAllBrands } = require("../helpers/userBrandHelpers");
+
 exports.getUserBrands = async (req, res) => {
   try {
     const brands = await getAllBrands(req.query, { includeBlockedOrDeleted: false });
