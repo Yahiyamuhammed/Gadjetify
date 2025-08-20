@@ -24,8 +24,9 @@ const adminOrderRoutes=require('./routes/adminOrderRoutes')
 const walletRoutes=require('./routes/walletRoutes')
 const profileRoutes=require('./routes/userProfileRoute')
 const userBrandRoutes=require('./routes/userBrandRoutes')
-
 const userProductRoutes=require('./routes/userProductRoutes')
+const paymentRoutes=require('./routes/paymentRoutes')
+
 const allowedOrigins = [
   "http://localhost:5173",              // for local dev
   "https://456fd9d6dd75.ngrok-free.app" // your frontend via ngrok
@@ -68,6 +69,8 @@ app.use('/api',orderRoutes)
 app.use('/api',walletRoutes)
 app.use('/api',profileRoutes)
 app.use('/api',userBrandRoutes)
+app.use("/api", paymentRoutes);
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
