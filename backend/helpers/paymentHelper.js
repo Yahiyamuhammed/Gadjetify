@@ -1,8 +1,10 @@
-import Stripe from "stripe";
+// import Stripe from "stripe";
+const Stripe = require("stripe");
+
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export const createPaymentIntent = async (amount) => {
+exports.createPaymentIntent = async (amount) => {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,

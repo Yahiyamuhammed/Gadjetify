@@ -14,12 +14,12 @@ import toast from "react-hot-toast";
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import { usePlaceOrder } from "@/hooks/mutations/usePlaceOrder";
 import { useNavigate } from "react-router-dom";
+import { useStripePayment } from "@/hooks/mutations/useStripePayment";
 // import { Navigate } from "react-router-dom";
 
 export default function CheckoutPage() {
   const queryClient = useQueryClient();
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   const { data: addresses } = getAddresses();
   const { data: items = [] } = useFetchCart();
@@ -27,7 +27,7 @@ export default function CheckoutPage() {
   const { mutate: addAddress, data: addedAddress } = useAddAddress();
   const { mutate: editAddress, data: editedAddress } = useEditAddress();
   const { mutate: placeOrder, isPending } = usePlaceOrder();
-
+  const { mutate: createPaymentIntent } = useStripePayment();
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -80,33 +80,40 @@ export default function CheckoutPage() {
   };
 
   const handleOrderSummaryData = (data) => {
-    paymentMethod
-    selectedAddressId
-    console.log("Data from OrderSummary:", data, paymentMethod,selectedAddressId,data.summary);
+    console.log(paymentMethod)
+    return 
+    paymentMethod;
+    selectedAddressId;
+    console.log(
+      "Data from OrderSummary:",
+      data,
+      paymentMethod,
+      selectedAddressId,
+      data.summary
+    );
 
+    const payload = {
+      addressId: selectedAddressId,
+      paymentMethod,
+      finalTotal: data.summary.total,
+      items: data.items,
+      summary: data.summary,
+    };
 
-     const payload = {
-    addressId: selectedAddressId,
-    paymentMethod,
-    finalTotal: data.summary.total,
-    items:data.items,
-    summary:data.summary
-  };
+    console.log("Placing order with:", payload);
 
-  console.log("Placing order with:", payload);
+    placeOrder(payload, {
+      onSuccess: (res) => {
+        toast.success("Order placed!", res);
+        navigate("/orderSuccess");
+      },
+      onError: (err) => {
+        toast.error(`error occuerd ${err}`);
+        console.error("Failed to place order", err);
+      },
+    });
 
-  placeOrder(payload, {
-    onSuccess: (res) => {
-      toast.success("Order placed!", res);
-      navigate('/orderSuccess')
-    },
-    onError: (err) => {
-        toast.error(`error occuerd ${err}`)
-      console.error("Failed to place order", err);
-    }
-  });
-
-//   console.log("Formatted order payload:", payload);
+    //   console.log("Formatted order payload:", payload);
   };
 
   return (
@@ -117,8 +124,7 @@ export default function CheckoutPage() {
           onAdd={handleAddAddress}
           onEdit={handleEditAddress}
           onSelect={handleSelectAddress}
-        //   selectedAddress
-        
+          //   selectedAddress
         />
 
         <EditAddressDialog
@@ -127,8 +133,8 @@ export default function CheckoutPage() {
           address={editingAddress}
           onSubmit={onFormSubmit}
           validationSchema={addressSchema}
-          
-           // your yup schema
+
+          // your yup schema
           // no trigger here; you're opening manually
         />
         {/* <AddressForm /> */}

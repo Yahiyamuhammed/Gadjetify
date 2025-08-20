@@ -1,16 +1,20 @@
-import { createPaymentIntent } from "../helpers/paymentHelper.js";
+// import { createPaymentIntent } from "../helpers/paymentHelper.js";
 
-export const createPayment = async (req, res) => {
+// import { createPaymentIntent } from "../createPaymentIntent";
+const createPaymentIntent = require("../helpers/paymentHelper");
+
+
+exports.createPayment = async (req, res) => {
   try {
-    const { amount } = req.body; // in cents, e.g., 2000 = $20
+    const { amount } = req.body;
     if (!amount) {
-      return res.status(400).json({ message: "Amount is required" });
+      res.status(400).json({ message: "Amount is required" });
     }
 
     const clientSecret = await createPaymentIntent(amount);
 
-    return res.status(200).json({ clientSecret });
+    res.status(200).json({ clientSecret });
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
