@@ -15,6 +15,7 @@ import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import { usePlaceOrder } from "@/hooks/mutations/usePlaceOrder";
 import { useNavigate } from "react-router-dom";
 import { useStripePayment } from "@/hooks/mutations/useStripePayment";
+import StripeCheckoutForm from "@/components/user/checkout/StripeCheckoutForm";
 // import { Navigate } from "react-router-dom";
 
 export default function CheckoutPage() {
@@ -33,6 +34,8 @@ export default function CheckoutPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [stripeClientSecret, setStripeClientSecret] = useState(null);
+  const [pendingOrderPayload, setPendingOrderPayload] = useState(null);
 
   // const [addresse, setAddresses] = useState([]);
 
@@ -80,8 +83,8 @@ export default function CheckoutPage() {
   };
 
   const handleOrderSummaryData = (data) => {
-    console.log(paymentMethod)
-    return 
+    toast.success(paymentMethod);
+    // return
     paymentMethod;
     selectedAddressId;
     console.log(
@@ -102,16 +105,32 @@ export default function CheckoutPage() {
 
     console.log("Placing order with:", payload);
 
-    placeOrder(payload, {
-      onSuccess: (res) => {
-        toast.success("Order placed!", res);
-        navigate("/orderSuccess");
-      },
-      onError: (err) => {
-        toast.error(`error occuerd ${err}`);
-        console.error("Failed to place order", err);
-      },
-    });
+    if (paymentMethod === "cod") {
+      placeOrder(payload, {
+        onSuccess: (res) => {
+          toast.success("Order placed!", res);
+          navigate("/orderSuccess");
+        },
+        onError: (err) => {
+          toast.error(`error occuerd ${err}`);
+          console.error("Failed to place order", err);
+        },
+      });
+    } else if (paymentMethod === "Online Payment") {
+      // First create payment intent
+      createPaymentIntent(
+        { amount: payload.finalTotal * 100 }, // cents
+        {
+          onSuccess: (res) => {
+            const { clientSecret } = res;
+
+            // Render Stripe form dynamically
+            setStripeClientSecret(clientSecret);
+            setPendingOrderPayload(payload);
+          },
+        }
+      );
+    }
 
     //   console.log("Formatted order payload:", payload);
   };
@@ -140,11 +159,34 @@ export default function CheckoutPage() {
         {/* <AddressForm /> */}
         <PaymentMethod value={paymentMethod} onChange={setPaymentMethod} />
       </div>
+
       <div>
-        <OrderSummary
+        {/* <OrderSummary
           items={items.items}
           onPlaceOrder={handleOrderSummaryData}
-        />
+        /> */}
+        {stripeClientSecret ? (
+          <StripeCheckoutForm
+            clientSecret={stripeClientSecret}
+            onSuccess={() => {
+              // After successful Stripe payment → Place order
+              placeOrder(pendingOrderPayload, {
+                onSuccess: (res) => {
+                  toast.success("Order placed!", res);
+                  navigate("/orderSuccess");
+                },
+                onError: (err) => {
+                  toast.error(`error occurred ${err}`);
+                },
+              });
+            }}
+          />
+        ) : (
+          <OrderSummary
+            items={items.items}
+            onPlaceOrder={handleOrderSummaryData}
+          />
+        )}
       </div>
     </div>
   );
