@@ -16,6 +16,7 @@ import { usePlaceOrder } from "@/hooks/mutations/usePlaceOrder";
 import { useNavigate } from "react-router-dom";
 import { useStripePayment } from "@/hooks/mutations/useStripePayment";
 import StripeCheckoutForm from "@/components/user/checkout/StripeCheckoutForm";
+import StripeWrapper from "@/components/user/checkout/StripeWrapper";
 // import { Navigate } from "react-router-dom";
 
 export default function CheckoutPage() {
@@ -87,13 +88,13 @@ export default function CheckoutPage() {
     // return
     paymentMethod;
     selectedAddressId;
-    console.log(
-      "Data from OrderSummary:",
-      data,
-      paymentMethod,
-      selectedAddressId,
-      data.summary
-    );
+    // console.log(
+    //   "Data from OrderSummary:",
+    //   data,
+    //   paymentMethod,
+    //   selectedAddressId,
+    //   data.summary
+    // );
 
     const payload = {
       addressId: selectedAddressId,
@@ -103,7 +104,7 @@ export default function CheckoutPage() {
       summary: data.summary,
     };
 
-    console.log("Placing order with:", payload);
+    // console.log("Placing order with:", payload);
 
     if (paymentMethod === "cod") {
       placeOrder(payload, {
@@ -117,17 +118,23 @@ export default function CheckoutPage() {
         },
       });
     } else if (paymentMethod === "Online Payment") {
+      toast.success('this is inside online payment')
       // First create payment intent
       createPaymentIntent(
-        { amount: payload.finalTotal * 100 }, // cents
+        { amount: payload.finalTotal * 100 },
         {
           onSuccess: (res) => {
+            console.log(`this is client secret ${res}`)
             const { clientSecret } = res;
+            console.log(`this is client secret ${clientSecret}`)
 
             // Render Stripe form dynamically
             setStripeClientSecret(clientSecret);
             setPendingOrderPayload(payload);
           },
+          onError:(err)=>{
+            console.error(err)
+          }
         }
       );
     }
@@ -166,7 +173,7 @@ export default function CheckoutPage() {
           onPlaceOrder={handleOrderSummaryData}
         /> */}
         {stripeClientSecret ? (
-          <StripeCheckoutForm
+          <StripeWrapper
             clientSecret={stripeClientSecret}
             onSuccess={() => {
               // After successful Stripe payment → Place order

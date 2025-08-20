@@ -1,7 +1,7 @@
 // import { createPaymentIntent } from "../helpers/paymentHelper.js";
 
 // import { createPaymentIntent } from "../createPaymentIntent";
-const createPaymentIntent = require("../helpers/paymentHelper");
+const {createPaymentIntent} = require("../helpers/paymentHelper");
 
 
 exports.createPayment = async (req, res) => {
