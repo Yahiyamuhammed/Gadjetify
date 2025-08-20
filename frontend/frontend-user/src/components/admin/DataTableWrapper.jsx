@@ -9,6 +9,7 @@ const DataTableWrapper = ({
   onAdd,
   filterFn,
   addButton = "",
+  dropdownFilter,
 }) => {
   return (
     <div className="p-4">
@@ -21,6 +22,19 @@ const DataTableWrapper = ({
             onChange={(e) => filterFn(e.target.value)}
             className="max-w-xs"
           />
+          {dropdownFilter && (
+            <select
+              className="px-1 py-2 border border-gray-300 rounded-md dark:bg-darkBackground"
+              value={dropdownFilter.value}
+              onChange={(e) => dropdownFilter.onChange(e.target.value)}
+            >
+              {dropdownFilter.options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          )}
           {addButton && <Button onClick={onAdd}>{addButton}</Button>}
         </div>
       </div>

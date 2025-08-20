@@ -3,8 +3,8 @@ import { ChevronRight, Eye, Home } from "lucide-react";
 import { Link } from "react-router";
 import ProductAddForm from "../../components/admin/product/ProductAddForm.jsx";
 import SearchBar from "../../components/SearchBar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ProductList from "../../components/admin/product/ProductList.jsx";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import ProductList from "../../components/admin/product/ProductList.jsx";
 // import Button from "../../components/ui/Button";
 import Pagination from "../../components/common/Pagination.jsx";
 
@@ -34,7 +34,7 @@ const ProductManagement = () => {
 
   //   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 8;
-  const [categoryFilter, setCategoryFilter] = useState("");
+  // const [categoryFilter, setCategoryFilter] = useState("");
   const [serverError, setServerError] = useState("");
 
   const queryClient = useQueryClient();
@@ -135,24 +135,35 @@ const ProductManagement = () => {
   };
 
   const handleEditProduct = (formData) => {
-      if (!editingProduct) return;
-  
-      updateProduct(
-        { id: editingProduct._id, updatedData: formData },
-        {
-          onSuccess: () => {
-            toast.success("Product updated");
-            setIsModalFormOpen(false);
-            setEditingProduct(null);
-          },
-          onError: (err) => {
-            toast.error(
-              err?.response?.data?.message || "Failed to update product"
-            );
-          },
-        }
-      );
-    };
+    if (!editingProduct) return;
+
+    updateProduct(
+      { id: editingProduct._id, updatedData: formData },
+      {
+        onSuccess: () => {
+          toast.success("Product updated");
+          setIsModalFormOpen(false);
+          setEditingProduct(null);
+        },
+        onError: (err) => {
+          toast.error(
+            err?.response?.data?.message || "Failed to update product"
+          );
+        },
+      }
+    );
+  };
+
+  const productFilterConfig = {
+  value: filter,
+  onChange: setFilter,
+  options: [
+    { value: "null", label: "All Products" },
+    { value: "false", label: "Active Products" },
+    { value: "true", label: "Inactive Products" }
+  ]
+}
+
 
   return (
     <div className="p-4">
@@ -180,61 +191,20 @@ const ProductManagement = () => {
       <ProductAddForm
         isModalFormOpen={isModalFormOpen}
         onClose={() => setIsModalFormOpen(false)}
-        onSubmit={editingProduct?handleAddProduct:handleEditProduct}
+        onSubmit={editingProduct ? handleAddProduct : handleEditProduct}
         serverError={serverError}
         initialValues={editingProduct}
         mode={editingProduct ? "edit" : "add"}
       />
-
-      <div className="mb-5">
-        <SearchBar searchTerm={setSearchTerm} />
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-end mb-6 gap-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <select
-            className="px-1 py-2 border border-gray-300 rounded-md dark:bg-darkBackground"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="null">All Products</option>
-            <option value="false">Active Products</option>
-            <option value="true">Inactive Products</option>
-            {/* <option value="low stock">Low Stock</option> */}
-          </select>
-
-          {/* <select
-            className="px-1 py-2 border border-gray-300 rounded-md dark:bg-darkBackground"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-          >
-            <option value="">All</option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name}
-              </option>
-            ))}
-          </select> */}
-
-          <button
-            onClick={() => setIsModalFormOpen(true)}
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 flex items-center gap-2"
-          >
-            {/* <FontAwesomeIcon icon="fa-solid fa-plus" /> */}
-            Add Product
-          </button>
-        </div>
-      </div>
-
-      {/* Product List */}
-      {/* <ProductList products={products} icon="fa-solid fa-box" /> */}
-      {/* Product Table */}
       <DataTableWrapper
         title="Products"
         data={products}
         columns={getAdminProductColumns(handleStatusChange, handleEditClick)}
         filterFn={(val) => setSearchTerm(val.toLowerCase())}
+        addButton={"Add Product"}
+        onAdd={()=>setIsModalFormOpen(true)}
+          dropdownFilter={productFilterConfig}
+
       />
 
       {/* Pagination */}
@@ -246,20 +216,6 @@ const ProductManagement = () => {
         />
       </div>
 
-      {/* Loader (can be removed if no API) */}
-      {/* 
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-        <RotatingLines
-          visible={true}
-          height="50"
-          width="50"
-          color="grey"
-          strokeColor="#fff"
-          strokeWidth="2"
-          animationDuration="8"
-        />
-      </div>
-      */}
     </div>
   );
 };
