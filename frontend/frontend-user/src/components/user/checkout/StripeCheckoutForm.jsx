@@ -1,7 +1,8 @@
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js"
 import { useState, useImperativeHandle, forwardRef } from "react"
+import { Link } from "react-router-dom"
 
-const StripeCheckoutForm = forwardRef(({ onSuccess }, ref) => {
+const StripeCheckoutForm = forwardRef(({ onSuccess}, ref) => {
   const stripe = useStripe()
   const elements = useElements()
   const [loading, setLoading] = useState(false)
@@ -16,7 +17,7 @@ const StripeCheckoutForm = forwardRef(({ onSuccess }, ref) => {
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: window.location.origin + "/orderSuccess",
+        return_url: `${window.location.origin}/orderSuccess`,
       },
       redirect: "if_required",
     })

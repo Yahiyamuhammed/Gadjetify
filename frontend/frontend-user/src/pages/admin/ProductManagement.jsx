@@ -82,6 +82,7 @@ const ProductManagement = () => {
   };
 
   const handleAddProduct = async (formData) => {
+    toast.success('product is adding')
     setServerError("");
     mutate(formData, {
       onSuccess: (data) => {
@@ -191,7 +192,7 @@ const ProductManagement = () => {
       <ProductAddForm
         isModalFormOpen={isModalFormOpen}
         onClose={() => setIsModalFormOpen(false)}
-        onSubmit={editingProduct ? handleAddProduct : handleEditProduct}
+        onSubmit={!editingProduct ? handleAddProduct : handleEditProduct}
         serverError={serverError}
         initialValues={editingProduct}
         mode={editingProduct ? "edit" : "add"}

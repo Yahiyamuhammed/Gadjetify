@@ -85,6 +85,18 @@ export default function CheckoutPage() {
     }
   };
 
+  const handlePlaceOrder = (data) => {
+    placeOrder(data, {
+      onSuccess: (res) => {
+        toast.success("Order placed!", res);
+        navigate("/orderSuccess");
+      },
+      onError: (err) => {
+        toast.error(`error occuerd ${err}`);
+        console.error("Failed to place order", err);
+      },
+    });
+  };
   const handleOrderSummaryData = (data) => {
     toast.success(paymentMethod);
     // return
@@ -109,16 +121,17 @@ export default function CheckoutPage() {
     // console.log("Placing order with:", payload);
 
     if (paymentMethod === "cod") {
-      placeOrder(payload, {
-        onSuccess: (res) => {
-          toast.success("Order placed!", res);
-          navigate("/orderSuccess");
-        },
-        onError: (err) => {
-          toast.error(`error occuerd ${err}`);
-          console.error("Failed to place order", err);
-        },
-      });
+      handlePlaceOrder(payload);
+      // placeOrder(payload, {
+      //   onSuccess: (res) => {
+      //     toast.success("Order placed!", res);
+      //     navigate("/orderSuccess");
+      //   },
+      //   onError: (err) => {
+      //     toast.error(`error occuerd ${err}`);
+      //     console.error("Failed to place order", err);
+      //   },
+      // });
     } else if (paymentMethod === "Online Payment") {
       toast.success("this is inside online payment");
       // First create payment intent
@@ -182,16 +195,9 @@ export default function CheckoutPage() {
           clientSecret={stripeClientSecret}
           onSuccess={() => {
             // After successful Stripe payment → Place order
-            placeOrder(pendingOrderPayload, {
-              onSuccess: (res) => {
-                toast.success("Order placed!", res);
-                navigate("/orderSuccess");
-              },
-              onError: (err) => {
-                toast.error(`error occurred ${err}`);
-              },
-            });
+           handlePlaceOrder(pendingOrderPayload);
           }}
+          
         />
 
         <OrderSummary
