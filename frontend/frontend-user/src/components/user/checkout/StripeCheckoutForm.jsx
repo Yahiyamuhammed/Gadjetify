@@ -1,15 +1,17 @@
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js"
-import { useState } from "react"
+import { useState, useImperativeHandle, forwardRef } from "react"
 
-export default function StripeCheckoutForm({ onSuccess }) {
+const StripeCheckoutForm = forwardRef(({ onSuccess }, ref) => {
   const stripe = useStripe()
   const elements = useElements()
   const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(null)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!stripe || !elements) return
+  const handleSubmit = async () => {
+    if (!stripe || !elements) return false
+
     setLoading(true)
+    setErrorMessage(null)
 
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
@@ -20,19 +22,31 @@ export default function StripeCheckoutForm({ onSuccess }) {
     })
 
     if (error) {
-      console.error(error.message)
+      setErrorMessage(error.message)
+      setLoading(false)
+      return false
     } else if (paymentIntent?.status === "succeeded") {
       onSuccess()
+      setLoading(false)
+      return true
     }
+
     setLoading(false)
+    return false
   }
 
+  
+  useImperativeHandle(ref, () => ({
+    submit: handleSubmit,
+    loading,
+  }))
+
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="space-y-4">
       <PaymentElement />
-      <button type="submit" disabled={!stripe || loading}>
-        {loading ? "Processing..." : "Pay"}
-      </button>
-    </form>
+      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+    </div>
   )
-}
+})
+
+export default StripeCheckoutForm

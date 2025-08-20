@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useStripePayment } from "@/hooks/mutations/useStripePayment";
 import StripeCheckoutForm from "@/components/user/checkout/StripeCheckoutForm";
 import StripeWrapper from "@/components/user/checkout/StripeWrapper";
+import StripePaymentDialog from "@/components/user/checkout/StripeWrapper";
 // import { Navigate } from "react-router-dom";
 
 export default function CheckoutPage() {
@@ -37,6 +38,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [stripeClientSecret, setStripeClientSecret] = useState(null);
   const [pendingOrderPayload, setPendingOrderPayload] = useState(null);
+  const [openStripeDialog, setOpenStripeDialog] = useState(false);
 
   // const [addresse, setAddresses] = useState([]);
 
@@ -118,23 +120,24 @@ export default function CheckoutPage() {
         },
       });
     } else if (paymentMethod === "Online Payment") {
-      toast.success('this is inside online payment')
+      toast.success("this is inside online payment");
       // First create payment intent
       createPaymentIntent(
         { amount: payload.finalTotal * 100 },
         {
           onSuccess: (res) => {
-            console.log(`this is client secret ${res}`)
+            console.log(`this is client secret ${res}`);
             const { clientSecret } = res;
-            console.log(`this is client secret ${clientSecret}`)
+            console.log(`this is client secret ${clientSecret}`);
 
             // Render Stripe form dynamically
             setStripeClientSecret(clientSecret);
             setPendingOrderPayload(payload);
+            setOpenStripeDialog(true);
           },
-          onError:(err)=>{
-            console.error(err)
-          }
+          onError: (err) => {
+            console.error(err);
+          },
         }
       );
     }
@@ -172,28 +175,29 @@ export default function CheckoutPage() {
           items={items.items}
           onPlaceOrder={handleOrderSummaryData}
         /> */}
-        {stripeClientSecret ? (
-          <StripeWrapper
-            clientSecret={stripeClientSecret}
-            onSuccess={() => {
-              // After successful Stripe payment → Place order
-              placeOrder(pendingOrderPayload, {
-                onSuccess: (res) => {
-                  toast.success("Order placed!", res);
-                  navigate("/orderSuccess");
-                },
-                onError: (err) => {
-                  toast.error(`error occurred ${err}`);
-                },
-              });
-            }}
-          />
-        ) : (
-          <OrderSummary
-            items={items.items}
-            onPlaceOrder={handleOrderSummaryData}
-          />
-        )}
+
+        <StripePaymentDialog
+          open={openStripeDialog}
+          setOpen={setOpenStripeDialog}
+          clientSecret={stripeClientSecret}
+          onSuccess={() => {
+            // After successful Stripe payment → Place order
+            placeOrder(pendingOrderPayload, {
+              onSuccess: (res) => {
+                toast.success("Order placed!", res);
+                navigate("/orderSuccess");
+              },
+              onError: (err) => {
+                toast.error(`error occurred ${err}`);
+              },
+            });
+          }}
+        />
+
+        <OrderSummary
+          items={items.items}
+          onPlaceOrder={handleOrderSummaryData}
+        />
       </div>
     </div>
   );

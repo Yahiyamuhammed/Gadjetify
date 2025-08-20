@@ -12,7 +12,7 @@ const FormDialog = ({
   open,
   setOpen,
   formData,
-  triggerLabel,
+  submitLabel  = "Submit",
   onSubmit,
   children,
 }) => {
@@ -31,7 +31,7 @@ const FormDialog = ({
           </Button>
 
           <Button onClick={() => onSubmit({ formData: formData })}>
-            Submit
+            {submitLabel }
           </Button>
         </div>
       </DialogContent>
