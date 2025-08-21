@@ -82,7 +82,6 @@ const ProductManagement = () => {
   };
 
   const handleAddProduct = async (formData) => {
-    toast.success('product is adding')
     setServerError("");
     mutate(formData, {
       onSuccess: (data) => {

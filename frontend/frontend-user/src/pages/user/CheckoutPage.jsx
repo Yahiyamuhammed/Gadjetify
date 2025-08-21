@@ -99,16 +99,8 @@ export default function CheckoutPage() {
   };
   const handleOrderSummaryData = (data) => {
     toast.success(paymentMethod);
-    // return
     paymentMethod;
     selectedAddressId;
-    // console.log(
-    //   "Data from OrderSummary:",
-    //   data,
-    //   paymentMethod,
-    //   selectedAddressId,
-    //   data.summary
-    // );
 
     const payload = {
       addressId: selectedAddressId,
@@ -118,32 +110,14 @@ export default function CheckoutPage() {
       summary: data.summary,
     };
 
-    // console.log("Placing order with:", payload);
-
-    if (paymentMethod === "cod") {
-      handlePlaceOrder(payload);
-      // placeOrder(payload, {
-      //   onSuccess: (res) => {
-      //     toast.success("Order placed!", res);
-      //     navigate("/orderSuccess");
-      //   },
-      //   onError: (err) => {
-      //     toast.error(`error occuerd ${err}`);
-      //     console.error("Failed to place order", err);
-      //   },
-      // });
-    } else if (paymentMethod === "Online Payment") {
+    handlePlaceOrder(payload);
+    if (paymentMethod === "Online Payment") {
       toast.success("this is inside online payment");
-      // First create payment intent
       createPaymentIntent(
         { amount: payload.finalTotal * 100 },
         {
           onSuccess: (res) => {
-            console.log(`this is client secret ${res}`);
             const { clientSecret } = res;
-            console.log(`this is client secret ${clientSecret}`);
-
-            // Render Stripe form dynamically
             setStripeClientSecret(clientSecret);
             setPendingOrderPayload(payload);
             setOpenStripeDialog(true);
@@ -154,8 +128,6 @@ export default function CheckoutPage() {
         }
       );
     }
-
-    //   console.log("Formatted order payload:", payload);
   };
 
   return (
@@ -166,7 +138,6 @@ export default function CheckoutPage() {
           onAdd={handleAddAddress}
           onEdit={handleEditAddress}
           onSelect={handleSelectAddress}
-          //   selectedAddress
         />
 
         <EditAddressDialog
@@ -184,20 +155,13 @@ export default function CheckoutPage() {
       </div>
 
       <div>
-        {/* <OrderSummary
-          items={items.items}
-          onPlaceOrder={handleOrderSummaryData}
-        /> */}
-
         <StripePaymentDialog
           open={openStripeDialog}
           setOpen={setOpenStripeDialog}
           clientSecret={stripeClientSecret}
           onSuccess={() => {
-            // After successful Stripe payment → Place order
-           handlePlaceOrder(pendingOrderPayload);
+            handlePlaceOrder(pendingOrderPayload);
           }}
-          
         />
 
         <OrderSummary
