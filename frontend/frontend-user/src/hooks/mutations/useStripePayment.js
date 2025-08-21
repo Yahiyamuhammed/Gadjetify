@@ -9,19 +9,26 @@ export const useStripePayment = () => {
     },
   });
 };
+
 export const usePaymentSuccess = () => {
   return useMutation({
-    mutationFn: async ({ paymentId, orderId }) => {
-      const res = await api.post("/payment/success", { paymentId, orderId });
+    mutationFn: async ({ orderId, paymentIntentId }) => {
+      const res = await api.post("/payment/success", {
+        orderId,
+        paymentIntentId,
+      });
       return res.data;
     },
   });
 };
 
-export const usePaymentFailure = () => {
+export const usePaymentFailed = () => {
   return useMutation({
-    mutationFn: async ({ paymentId }) => {
-      const res = await api.post("/payment/failure", { paymentId });
+    mutationFn: async ({ orderId, paymentIntentId }) => {
+      const res = await api.post("/payment/failed", {
+        orderId,
+        paymentIntentId,
+      });
       return res.data;
     },
   });
@@ -29,8 +36,8 @@ export const usePaymentFailure = () => {
 
 export const useRetryPayment = () => {
   return useMutation({
-    mutationFn: async ({ amount }) => {
-      const res = await api.post("/payment/retry", { amount });
+    mutationFn: async ({ orderId }) => {
+      const res = await api.post("/payment/retry", { orderId });
       return res.data;
     },
   });

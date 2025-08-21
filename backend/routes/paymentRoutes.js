@@ -4,7 +4,7 @@ const { createPayment, paymentSuccess, retryPayment,paymentFailed } = require(".
 
 router.post("/payment", createPayment);
 router.post("/payment/success", paymentSuccess);
-router.post("/payment/failure", paymentFailed);
+router.post("/payment/failed", paymentFailed);
 router.post("/payment/retry", retryPayment);
 
 module.exports = router;
