@@ -22,6 +22,8 @@ const StripeCheckoutForm = forwardRef(({ onSuccess}, ref) => {
       redirect: "if_required",
     })
 
+    console.log(paymentIntent)
+
     if (error) {
       setErrorMessage(error.message)
       setLoading(false)
@@ -31,6 +33,7 @@ const StripeCheckoutForm = forwardRef(({ onSuccess}, ref) => {
       setLoading(false)
       return true
     }
+    
 
     setLoading(false)
     return false

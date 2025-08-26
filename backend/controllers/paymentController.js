@@ -17,7 +17,7 @@ exports.createPayment = async (req, res) => {
 
     const clientData = await createPaymentIntent(amount);
 
-    res.status(200).json( clientData );
+    res.status(200).json(clientData);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -26,8 +26,14 @@ exports.createPayment = async (req, res) => {
 exports.paymentSuccess = async (req, res) => {
   try {
     const { orderId, paymentIntentId } = req.body;
+    console.log(req.body,'thisi= is sthe id og payment')
     const result = await handlePaymentSuccess(orderId, paymentIntentId);
-    console.log(result ,'this is the payment succes')
+    console.log(result, "this is the payment succes");
+    if (!result) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
     return res
       .status(200)
       .json({ success: true, message: "Payment successful", data: result });
@@ -40,13 +46,11 @@ exports.paymentFailed = async (req, res) => {
   try {
     const { orderId, paymentIntentId } = req.body;
     const result = await handlePaymentFailure(orderId, paymentIntentId);
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Payment marked as failed",
-        data: result,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Payment marked as failed",
+      data: result,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -56,13 +60,11 @@ exports.retryPayment = async (req, res) => {
   try {
     const { orderId } = req.body;
     const result = await retryPayment(orderId);
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Retry payment initiated",
-        data: result,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Retry payment initiated",
+      data: result,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

@@ -7,7 +7,7 @@ export default function PaymentMethod({value, onChange }) {
     <Card className="mt-4">
       <CardContent className="pt-6">
         <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
-        <RadioGroup defaultValue="cod" value={value} onValueChange={onChange} className="space-y-4">
+        <RadioGroup defaultValue="Online Payment" value={value} onValueChange={onChange} className="space-y-4">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="cod" id="cod" />
             <Label htmlFor="od">Cash on Delivery</Label>

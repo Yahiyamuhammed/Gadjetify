@@ -46,7 +46,7 @@ export default function CheckoutPage() {
   const [paymentIntentId, setPaymentIntentId] = useState(null);
   const [pendingOrderPayload, setPendingOrderPayload] = useState(null);
   const [openStripeDialog, setOpenStripeDialog] = useState(false);
-  const [ceatedOrderId, setCreatedOrderId] = useState(null);
+  const [createdOrderId, setCreatedOrderId] = useState(null);
 
   // const [addresse, setAddresses] = useState([]);
 
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
   };
 
   const handleSelectAddress = (addressId) => {
-    console.log(addressId);
+    // console.log(addressId);
     setSelectedAddressId(addressId);
   };
 
@@ -96,12 +96,15 @@ export default function CheckoutPage() {
   const handlePlaceOrder = (data) => {
     placeOrder(data, {
       onSuccess: (res) => {
-        setCreatedOrderId(res.data._id);
+        console.log(res.orderId, "tyhis is the ordre id");
+        setCreatedOrderId(res.orderId);
+        console.log("this is the order id seting", createdOrderId);
         toast.success("Order created!");
         if (data.paymentMethod != "Online Payment") {
           toast.success("Order placed!", res);
           navigate("/orderSuccess");
         }
+        return res.orderId;
       },
       onError: (err) => {
         toast.error(`error occuerd ${err}`);
@@ -148,19 +151,32 @@ export default function CheckoutPage() {
   };
 
   const handlePaymentSuccess = () => {
-    handlePlaceOrder()
-    markSuccess(
-      { orderId: ceatedOrderId, paymentIntentId: paymentIntentId },
-      {
-        onSuccess: () => {
-          toast.success("Payment completed");
-        },
-        onError: (err) => {
-          toast.error("some error occured", err.message);
-        },
-      }
-    );
-  };
+  // First place the order after successful payment
+  placeOrder(pendingOrderPayload, {
+    onSuccess: (res) => {
+      console.log('Order placed after payment success:', res.orderId);
+      const orderIdFromResponse = res.orderId;
+      
+      // Now mark payment as successful with the actual order ID
+      markSuccess(
+        { orderId: orderIdFromResponse, paymentIntentId: paymentIntentId },
+        {
+          onSuccess: () => {
+            toast.success("Payment completed and order placed!");
+            navigate("/orderSuccess");
+          },
+          onError: (err) => {
+            toast.error("Payment confirmation failed: " + err.message);
+          },
+        }
+      );
+    },
+    onError: (err) => {
+      toast.error(`Failed to place order after payment: ${err}`);
+      console.error("Failed to place order", err);
+    },
+  });
+};
 
   return (
     <div className="checkout-page p-6 md:p-10 grid md:grid-cols-2 gap-10">
@@ -191,7 +207,7 @@ export default function CheckoutPage() {
           open={openStripeDialog}
           setOpen={setOpenStripeDialog}
           clientSecret={stripeClientSecret}
-          onSuccess={() =>{ handlePaymentSuccess()}}
+          onSuccess={() => handlePaymentSuccess(createdOrderId)}
         />
 
         <OrderSummary
