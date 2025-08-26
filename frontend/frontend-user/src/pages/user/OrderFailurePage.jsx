@@ -5,6 +5,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { AlertTriangle , CreditCardIcon, UserIcon } from "lucide-react"
 import { useParams } from "react-router-dom"
 
+
 const OrderFailurePage = () => {
     const { orderId } = useParams();
 
