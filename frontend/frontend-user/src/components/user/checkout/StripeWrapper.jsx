@@ -6,7 +6,7 @@ import StripeCheckoutForm from "./StripeCheckoutForm"
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
 
-export default function StripePaymentDialog({ open, setOpen, clientSecret, onSuccess }) {
+export default function StripePaymentDialog({ open, setOpen, clientSecret, onSuccess,onFailed }) {
   const formRef = useRef(null)
 
   if (!clientSecret) return null
@@ -26,10 +26,11 @@ export default function StripePaymentDialog({ open, setOpen, clientSecret, onSuc
           }
         }
       }}
+      onFailed 
       submitLabel="Pay"
     >
       <Elements stripe={stripePromise} options={{ clientSecret }}>
-        <StripeCheckoutForm ref={formRef} onSuccess={onSuccess} />
+        <StripeCheckoutForm ref={formRef} onSuccess={onSuccess} onFailed={onFailed}/>
       </Elements>
     </FormDialog>
   )

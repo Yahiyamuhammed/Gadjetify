@@ -60,7 +60,6 @@ export default function CheckoutPage() {
   };
 
   const handleSelectAddress = (addressId) => {
-    // console.log(addressId);
     setSelectedAddressId(addressId);
   };
 
@@ -96,9 +95,8 @@ export default function CheckoutPage() {
   const handlePlaceOrder = (data) => {
     placeOrder(data, {
       onSuccess: (res) => {
-        console.log(res.orderId, "tyhis is the ordre id");
         setCreatedOrderId(res.orderId);
-        console.log("this is the order id seting", createdOrderId);
+
         toast.success("Order created!");
         if (data.paymentMethod != "Online Payment") {
           toast.success("Order placed!", res);
@@ -130,17 +128,11 @@ export default function CheckoutPage() {
         { amount: payload.finalTotal * 100 },
         {
           onSuccess: (res) => {
-            console.log(" thi si sthe res of payment", res);
             const { client_secret: clientSecret, paymentIntentId } = res;
             setStripeClientSecret(clientSecret);
             setPaymentIntentId(paymentIntentId);
             setPendingOrderPayload(payload);
             setOpenStripeDialog(true);
-            console.log(
-              "setting striope to tru",
-              openStripeDialog,
-              stripeClientSecret
-            );
           },
           onError: (err) => {
             console.error(err);
@@ -151,32 +143,59 @@ export default function CheckoutPage() {
   };
 
   const handlePaymentSuccess = () => {
-  // First place the order after successful payment
-  placeOrder(pendingOrderPayload, {
-    onSuccess: (res) => {
-      console.log('Order placed after payment success:', res.orderId);
-      const orderIdFromResponse = res.orderId;
-      
-      // Now mark payment as successful with the actual order ID
-      markSuccess(
-        { orderId: orderIdFromResponse, paymentIntentId: paymentIntentId },
-        {
-          onSuccess: () => {
-            toast.success("Payment completed and order placed!");
-            navigate("/orderSuccess");
-          },
-          onError: (err) => {
-            toast.error("Payment confirmation failed: " + err.message);
-          },
-        }
-      );
-    },
-    onError: (err) => {
-      toast.error(`Failed to place order after payment: ${err}`);
-      console.error("Failed to place order", err);
-    },
-  });
-};
+    // First place the order after successful payment
+    placeOrder(pendingOrderPayload, {
+      onSuccess: (res) => {
+        const orderIdFromResponse = res.orderId;
+
+        // Now mark payment as successful with the actual order ID
+        markSuccess(
+          { orderId: orderIdFromResponse, paymentIntentId: paymentIntentId },
+          {
+            onSuccess: () => {
+              toast.success("Payment completed and order placed!");
+              navigate("/orderSuccess");
+            },
+            onError: (err) => {
+              toast.error("Payment confirmation failed: " + err.message);
+            },
+          }
+        );
+      },
+      onError: (err) => {
+        toast.error(`Failed to place order after payment: ${err}`);
+        console.error("Failed to place order", err);
+      },
+    });
+  };
+
+  const handlePaymentFailed = (error) => {
+    placeOrder(pendingOrderPayload, {
+      onSuccess: (res) => {
+        const orderIdFromResponse = res.orderId;
+
+        markFailed(
+          { orderId: orderIdFromResponse, paymentIntentId: paymentIntentId },
+          {
+            onSuccess: () => {
+              toast.error(
+                `Payment failed: ${error.message || "Unknown error"}`
+              );
+              // Optionally redirect or show retry option
+            },
+            onError: (err) => {
+              toast.error("Failed to record payment failure");
+              console.error(err);
+            },
+          }
+        );
+      },
+      onError: (err) => {
+        toast.error(`Failed to place order after payment: ${err}`);
+        console.error("Failed to place order", err);
+      },
+    });
+  };
 
   return (
     <div className="checkout-page p-6 md:p-10 grid md:grid-cols-2 gap-10">
@@ -208,6 +227,7 @@ export default function CheckoutPage() {
           setOpen={setOpenStripeDialog}
           clientSecret={stripeClientSecret}
           onSuccess={() => handlePaymentSuccess(createdOrderId)}
+          onFailed={handlePaymentFailed}
         />
 
         <OrderSummary
