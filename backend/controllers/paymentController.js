@@ -26,7 +26,7 @@ exports.createPayment = async (req, res) => {
 exports.paymentSuccess = async (req, res) => {
   try {
     const { orderId, paymentIntentId } = req.body;
-    console.log(req.body,'thisi= is sthe id og payment')
+    console.log(req.body, "thisi= is sthe id og payment");
     const result = await handlePaymentSuccess(orderId, paymentIntentId);
     console.log(result, "this is the payment succes");
     if (!result) {
@@ -59,12 +59,9 @@ exports.paymentFailed = async (req, res) => {
 exports.retryPayment = async (req, res) => {
   try {
     const { orderId } = req.body;
-    const result = await retryPayment(orderId);
-    return res.status(200).json({
-      success: true,
-      message: "Retry payment initiated",
-      data: result,
-    });
+    const result = await exports.retryPayment(orderId);
+
+    return res.status(result.status).json(result);
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

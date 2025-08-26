@@ -2,9 +2,12 @@ import React from "react"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-import { ExclamationTriangleIcon, CreditCardIcon, UserIcon } from "lucide-react"
+import { AlertTriangle , CreditCardIcon, UserIcon } from "lucide-react"
+import { useParams } from "react-router-dom"
 
 const OrderFailurePage = () => {
+    const { orderId } = useParams();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4 md:p-8">
       <Card className="w-full max-w-4xl overflow-hidden flex flex-col md:flex-row rounded-2xl shadow-xl">
@@ -43,7 +46,7 @@ const OrderFailurePage = () => {
         {/* Content Section */}
         <div className="w-full md:w-3/5 p-8 md:p-12 flex flex-col justify-center">
           <Alert variant="destructive" className="mb-4 flex items-center gap-2">
-            <ExclamationTriangleIcon className="h-5 w-5" />
+            <AlertTriangle  className="h-5 w-5" />
             <AlertTitle>PAYMENT FAILED</AlertTitle>
           </Alert>
 
@@ -106,7 +109,7 @@ const OrderFailurePage = () => {
       {/* Additional Info Section */}
       <div className="w-full max-w-4xl mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="p-6 flex items-start gap-4">
-          <ExclamationTriangleIcon className="h-6 w-6 text-red-500" />
+          <AlertTriangle  className="h-6 w-6 text-red-500" />
           <div>
             <CardTitle className="text-base">Payment Declined</CardTitle>
             <p className="text-gray-600 text-sm mt-1">

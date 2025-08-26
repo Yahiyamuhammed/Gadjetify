@@ -182,6 +182,7 @@ export default function CheckoutPage() {
                 `Payment failed: ${error.message || "Unknown error"}`
               );
               // Optionally redirect or show retry option
+              navigate(`/orderFailed/${orderIdFromResponse}`);
             },
             onError: (err) => {
               toast.error("Failed to record payment failure");

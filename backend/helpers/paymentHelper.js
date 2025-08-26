@@ -1,54 +1,77 @@
 const Order = require("../models/orderModel");
 const Stripe = require("stripe");
 
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 exports.createPaymentIntent = async (amount) => {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
-      currency: "usd", 
+      currency: "usd",
       automatic_payment_methods: { enabled: true },
     });
 
-    return {client_secret:paymentIntent.client_secret,paymentIntentId:paymentIntent.id};
+    return {
+      client_secret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
+    };
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
 exports.handlePaymentSuccess = async (orderId, paymentIntentId) => {
-  return await Order.findByIdAndUpdate(orderId, {
-    paymentStatus: "paid",
-    paymentIntentId,
-  }, { new: true });
+  return await Order.findByIdAndUpdate(
+    orderId,
+    {
+      paymentStatus: "paid",
+      paymentIntentId,
+    },
+    { new: true }
+  );
 };
 
 exports.handlePaymentFailure = async (orderId, paymentIntentId) => {
-  
-  return await Order.findByIdAndUpdate(orderId, {
-    paymentStatus: "failed",
-    paymentIntentId,
-    retryAvailableUntil: Date.now() + 15 * 60 * 1000 
-  }, { new: true });
+  return await Order.findByIdAndUpdate(
+    orderId,
+    {
+      paymentStatus: "failed",
+      paymentIntentId,
+      retryAvailableUntil: Date.now() + 15 * 60 * 1000,
+      status:'failed',
+    },
+    { new: true }
+  );
 };
 
 exports.retryPayment = async (orderId) => {
   const order = await Order.findById(orderId);
 
-  if (!order) throw new Error("Order not found");
-  if (Date.now() > order.retryAvailableUntil) throw new Error("Retry window expired");
+  if (!order) {
+    return { status: 404, message: "Order not found" };
+  }
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: order.totalAmount * 100,
-    currency: "usd",
-    metadata: { orderId },
-  });
+  if (Date.now() > order.retryAvailableUntil) {
+    return { status: 400, message: "Retry window expired" };
+  }
 
-  order.paymentIntentId = paymentIntent.id;
-  order.paymentStatus = "retrying";
-  await order.save();
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: order.totalAmount * 100,
+      currency: "usd",
+      metadata: { orderId },
+    });
 
-  return { clientSecret: paymentIntent.client_secret };
+    order.paymentIntentId = paymentIntent.id;
+    order.paymentStatus = "retrying";
+    await order.save();
+
+    return {
+      status: 200,
+      message: "Retry payment initiated",
+      data: { clientSecret: paymentIntent.client_secret },
+    };
+  } catch (err) {
+    return { status: 500, message: "Stripe error: " + err.message };
+  }
 };
