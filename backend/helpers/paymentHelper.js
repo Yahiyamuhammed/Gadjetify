@@ -12,7 +12,7 @@ exports.createPaymentIntent = async (amount) => {
       automatic_payment_methods: { enabled: true },
     });
 
-    return paymentIntent.client_secret;
+    return {client_secret:paymentIntent.client_secret,paymentIntentId:paymentIntent.id};
   } catch (err) {
     throw new Error(err.message);
   }

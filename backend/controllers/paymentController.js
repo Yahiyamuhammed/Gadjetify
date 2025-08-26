@@ -15,9 +15,9 @@ exports.createPayment = async (req, res) => {
       res.status(400).json({ message: "Amount is required" });
     }
 
-    const clientSecret = await createPaymentIntent(amount);
+    const clientData = await createPaymentIntent(amount);
 
-    res.status(200).json({ clientSecret });
+    res.status(200).json( clientData );
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -27,6 +27,7 @@ exports.paymentSuccess = async (req, res) => {
   try {
     const { orderId, paymentIntentId } = req.body;
     const result = await handlePaymentSuccess(orderId, paymentIntentId);
+    console.log(result ,'this is the payment succes')
     return res
       .status(200)
       .json({ success: true, message: "Payment successful", data: result });

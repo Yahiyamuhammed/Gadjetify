@@ -14,7 +14,11 @@ import toast from "react-hot-toast";
 import { useFetchCart } from "@/hooks/queries/useCartQuery";
 import { usePlaceOrder } from "@/hooks/mutations/usePlaceOrder";
 import { useNavigate } from "react-router-dom";
-import { useStripePayment } from "@/hooks/mutations/useStripePayment";
+import {
+  usePaymentFailed,
+  usePaymentSuccess,
+  useStripePayment,
+} from "@/hooks/mutations/useStripePayment";
 import StripeCheckoutForm from "@/components/user/checkout/StripeCheckoutForm";
 import StripeWrapper from "@/components/user/checkout/StripeWrapper";
 import StripePaymentDialog from "@/components/user/checkout/StripeWrapper";
@@ -31,14 +35,18 @@ export default function CheckoutPage() {
   const { mutate: editAddress, data: editedAddress } = useEditAddress();
   const { mutate: placeOrder, isPending } = usePlaceOrder();
   const { mutate: createPaymentIntent } = useStripePayment();
+  const { mutate: markSuccess } = usePaymentSuccess();
+  const { mutate: markFailed } = usePaymentFailed();
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [stripeClientSecret, setStripeClientSecret] = useState(null);
+  const [paymentIntentId, setPaymentIntentId] = useState(null);
   const [pendingOrderPayload, setPendingOrderPayload] = useState(null);
   const [openStripeDialog, setOpenStripeDialog] = useState(false);
+  const [ceatedOrderId, setCreatedOrderId] = useState(null);
 
   // const [addresse, setAddresses] = useState([]);
 
@@ -88,8 +96,12 @@ export default function CheckoutPage() {
   const handlePlaceOrder = (data) => {
     placeOrder(data, {
       onSuccess: (res) => {
-        toast.success("Order placed!", res);
-        navigate("/orderSuccess");
+        setCreatedOrderId(res.data._id);
+        toast.success("Order created!");
+        if (data.paymentMethod != "Online Payment") {
+          toast.success("Order placed!", res);
+          navigate("/orderSuccess");
+        }
       },
       onError: (err) => {
         toast.error(`error occuerd ${err}`);
@@ -98,7 +110,6 @@ export default function CheckoutPage() {
     });
   };
   const handleOrderSummaryData = (data) => {
-    toast.success(paymentMethod);
     paymentMethod;
     selectedAddressId;
 
@@ -109,18 +120,24 @@ export default function CheckoutPage() {
       items: data.items,
       summary: data.summary,
     };
-
-    handlePlaceOrder(payload);
-    if (paymentMethod === "Online Payment") {
-      toast.success("this is inside online payment");
+    if (paymentMethod === "cod") {
+      handlePlaceOrder(payload);
+    } else if (paymentMethod === "Online Payment") {
       createPaymentIntent(
         { amount: payload.finalTotal * 100 },
         {
           onSuccess: (res) => {
-            const { clientSecret } = res;
+            console.log(" thi si sthe res of payment", res);
+            const { client_secret: clientSecret, paymentIntentId } = res;
             setStripeClientSecret(clientSecret);
+            setPaymentIntentId(paymentIntentId);
             setPendingOrderPayload(payload);
             setOpenStripeDialog(true);
+            console.log(
+              "setting striope to tru",
+              openStripeDialog,
+              stripeClientSecret
+            );
           },
           onError: (err) => {
             console.error(err);
@@ -128,6 +145,21 @@ export default function CheckoutPage() {
         }
       );
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    handlePlaceOrder()
+    markSuccess(
+      { orderId: ceatedOrderId, paymentIntentId: paymentIntentId },
+      {
+        onSuccess: () => {
+          toast.success("Payment completed");
+        },
+        onError: (err) => {
+          toast.error("some error occured", err.message);
+        },
+      }
+    );
   };
 
   return (
@@ -159,9 +191,7 @@ export default function CheckoutPage() {
           open={openStripeDialog}
           setOpen={setOpenStripeDialog}
           clientSecret={stripeClientSecret}
-          onSuccess={() => {
-            handlePlaceOrder(pendingOrderPayload);
-          }}
+          onSuccess={() =>{ handlePaymentSuccess()}}
         />
 
         <OrderSummary
