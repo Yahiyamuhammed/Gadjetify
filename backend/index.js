@@ -27,6 +27,7 @@ const userBrandRoutes=require('./routes/userBrandRoutes')
 const userProductRoutes=require('./routes/userProductRoutes')
 const paymentRoutes=require('./routes/paymentRoutes')
 const adminCouponRoutes=require('./routes/adminCouponRoutes')
+const couponRoutes=require('./routes/couponRoutes')
 
 const allowedOrigins = [
   "http://localhost:5173",              // for local dev
@@ -72,6 +73,7 @@ app.use('/api',walletRoutes)
 app.use('/api',profileRoutes)
 app.use('/api',userBrandRoutes)
 app.use("/api", paymentRoutes);
+app.use("/api", couponRoutes);
 
 
 // MongoDB connection
