@@ -27,6 +27,7 @@ exports.handlePaymentSuccess = async (orderId, paymentIntentId) => {
       paymentStatus: "paid",
       paymentIntentId,
       status:'placed',
+      retryAvailableUntil:''
     },
     { new: true }
   );
