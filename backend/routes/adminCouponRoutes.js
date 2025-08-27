@@ -8,8 +8,8 @@ const {
 const router = express.Router();
 
 router.post("/coupons", createCoupon);
-router.patch("/admin/coupons/:couponId", updateCoupon);
-router.patch("/admin/coupons/:couponId/toggle", toggleCouponStatus);
+router.patch("/coupons/:couponId", updateCoupon);
+router.patch("/coupons/:couponId/toggle", toggleCouponStatus);
 router.get("/coupons", fetchCoupons);
 
 module.exports = router;
