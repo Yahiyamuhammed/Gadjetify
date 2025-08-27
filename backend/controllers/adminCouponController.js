@@ -1,14 +1,8 @@
-const {createCoupon,disableCoupon,fetchCoupons,toggleCouponStatus, updateCoupon} = require("../helpers/adminCouponHelper");
+const {createCoupon,fetchCoupons,toggleCouponStatus, updateCoupon} = require("../helpers/adminCouponHelper");
 
 // Create
 exports.createCoupon = async (req, res) => {
   const result = await createCoupon(req.body);
-  return res.status(result.statusCode).json(result);
-};
-
-// Disable
-exports.disableCoupon = async (req, res) => {
-  const result = await disableCoupon(req.params.couponId);
   return res.status(result.statusCode).json(result);
 };
 

@@ -1,13 +1,15 @@
 const express = require("express");
 const {
   createCoupon,
-  disableCoupon,
   fetchCoupons,
+  updateCoupon,
+  toggleCouponStatus,
 } = require("../controllers/adminCouponController");
 const router = express.Router();
 
 router.post("/coupons", createCoupon);
-router.delete("/coupons/:couponId", disableCoupon);
+router.patch("/admin/coupons/:couponId", updateCoupon);
+router.patch("/admin/coupons/:couponId/toggle", toggleCouponStatus);
 router.get("/coupons", fetchCoupons);
 
 module.exports = router;
