@@ -1,7 +1,7 @@
 const Coupon = require("../models/couponModel");
 
 // Create coupon
-const createCoupon = async (data) => {
+ exports.createCoupon = async (data) => {
   try {
     const existing = await Coupon.findOne({ code: data.code.toUpperCase() });
     if (existing) {
@@ -28,7 +28,7 @@ const createCoupon = async (data) => {
 };
 
 // Soft delete (disable)
-const disableCoupon = async (couponId) => {
+exports. disableCoupon = async (couponId) => {
   try {
     const coupon = await Coupon.findById(couponId);
     if (!coupon) {
@@ -45,7 +45,7 @@ const disableCoupon = async (couponId) => {
 };
 
 // Fetch coupons (with search + pagination)
-const fetchCoupons = async ({ page = 1, limit = 10, search = "" }) => {
+exports. fetchCoupons = async ({ page = 1, limit = 10, search = "" }) => {
   try {
     const query = {
       code: { $regex: search, $options: "i" },
@@ -70,10 +70,4 @@ const fetchCoupons = async ({ page = 1, limit = 10, search = "" }) => {
   } catch (error) {
     return { statusCode: 500, message: "Error fetching coupons", error };
   }
-};
-
-module.exports = {
-  createCoupon,
-  disableCoupon,
-  fetchCoupons,
 };
