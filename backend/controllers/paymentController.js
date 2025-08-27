@@ -59,10 +59,11 @@ exports.paymentFailed = async (req, res) => {
 exports.retryPayment = async (req, res) => {
   try {
     const { orderId } = req.body;
-    const result = await exports.retryPayment(orderId);
+    const result = await retryPayment(orderId);
 
     return res.status(result.status).json(result);
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ success: false, message: error.message });
   }
 };

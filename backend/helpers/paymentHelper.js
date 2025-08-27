@@ -26,6 +26,7 @@ exports.handlePaymentSuccess = async (orderId, paymentIntentId) => {
     {
       paymentStatus: "paid",
       paymentIntentId,
+      status:'placed',
     },
     { new: true }
   );
@@ -57,7 +58,7 @@ exports.retryPayment = async (orderId) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: order.totalAmount * 100,
+      amount: order.summary.subtotal * 100,
       currency: "usd",
       metadata: { orderId },
     });
@@ -69,7 +70,7 @@ exports.retryPayment = async (orderId) => {
     return {
       status: 200,
       message: "Retry payment initiated",
-      data: { clientSecret: paymentIntent.client_secret },
+      data: { clientSecret: paymentIntent.client_secret,paymentIntentId: paymentIntent.id },
     };
   } catch (err) {
     return { status: 500, message: "Stripe error: " + err.message };
