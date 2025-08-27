@@ -1,62 +1,38 @@
 const Coupon = require("../models/couponModel");
 
-const applyCoupon = async ({ couponCode, cartTotal }) => {
+const applyCouponHelper = async (code) => {
   try {
-    const coupon = await Coupon.findOne({
-      code: couponCode.toUpperCase(),
-      isActive: true,
-    });
+    const coupon = await Coupon.findOne({ code, isActive: true });
 
     if (!coupon) {
-      return { statusCode: 404, message: "Invalid or inactive coupon" };
-    }
-    if (coupon.expiryDate < new Date()) {
-      return { statusCode: 400, message: "Coupon has expired" };
-    }
-    if (cartTotal < coupon.minPurchase) {
-      return {
-        statusCode: 400,
-        message: `Minimum purchase of ${coupon.minPurchase} required`,
-      };
+      return { statusCode: 404, success: false, message: "Invalid or inactive coupon" };
     }
 
-    let discount = 0;
-    if (coupon.discountType === "percentage") {
-      discount = (cartTotal * coupon.discountValue) / 100;
-    } else {
-      discount = coupon.discountValue;
+    if (coupon.expiry < new Date()) {
+      return { statusCode: 400, success: false, message: "Coupon expired" };
     }
-
-    const finalTotal = Math.max(cartTotal - discount, 0);
 
     return {
       statusCode: 200,
-      message: "Coupon applied successfully",
-      data: {
-        discount,
-        finalTotal,
-      },
+      success: true,
+      message: "Coupon is valid",
+      coupon,
     };
-  } catch (error) {
-    return { statusCode: 500, message: "Error applying coupon", error };
+  } catch (err) {
+    return { statusCode: 500, success: false, message: "Something went wrong" };
   }
 };
 
-const removeCoupon = async ({ cartTotal }) => {
+const removeCouponHelper = async () => {
   try {
     return {
       statusCode: 200,
+      success: true,
       message: "Coupon removed successfully",
-      data: {
-        finalTotal: cartTotal,
-      },
     };
-  } catch (error) {
-    return { statusCode: 500, message: "Error removing coupon", error };
+  } catch (err) {
+    return { statusCode: 500, success: false, message: "Something went wrong" };
   }
 };
 
-module.exports = {
-  applyCoupon,
-  removeCoupon,
-};
+module.exports = { applyCouponHelper, removeCouponHelper };

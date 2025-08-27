@@ -126,6 +126,29 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
           </div>
         ))}
 
+{/* === Coupon Section === */}
+        <div className="space-y-3 pt-4">
+          {!appliedCoupon ? (
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter coupon code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+              />
+              <Button onClick={handleApplyCoupon}>Apply</Button>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center bg-green-50 p-2 rounded">
+              <span className="text-green-700 font-medium">
+                {appliedCoupon.code} applied ({appliedCoupon.discountPercent}% OFF)
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleRemoveCoupon}>
+                Remove
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* === Price Breakdown === */}
         <div className="space-y-3 pt-4 text-sm">
           <div className="flex justify-between">
@@ -154,6 +177,13 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
               </span>
             </div>
           )}
+           {couponDiscount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-gray-600">Coupon Discount</span>
+              <span className="text-green-600">-₹{couponDiscount.toFixed(2)}</span>
+            </div>
+          )}
+
 
           {totalDiscount > 0 && (
             <div className="flex justify-between border-t pt-2">
