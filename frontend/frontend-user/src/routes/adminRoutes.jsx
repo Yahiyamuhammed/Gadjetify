@@ -64,7 +64,7 @@ const AdminRoutes=()=>(
 
             </AdminLayout>
             }/>
-        <Route path="/manage-coupen" element={
+        <Route path="/manage-coupon" element={
             <AdminLayout>
                 <AdminCoupons />
 

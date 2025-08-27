@@ -1,19 +1,19 @@
 const {createCoupon,disableCoupon,fetchCoupons} = require("../helpers/adminCouponHelper");
 
 // Create
-const createCoupon = async (req, res) => {
+exports.createCoupon = async (req, res) => {
   const result = await createCoupon(req.body);
   return res.status(result.statusCode).json(result);
 };
 
 // Disable
-const disableCoupon = async (req, res) => {
+exports.disableCoupon = async (req, res) => {
   const result = await disableCoupon(req.params.couponId);
   return res.status(result.statusCode).json(result);
 };
 
 // Fetch
-const fetchCoupons = async (req, res) => {
+exports.fetchCoupons = async (req, res) => {
   const { page, limit, search } = req.query;
   const result = await fetchCoupons({
     page: parseInt(page) || 1,
@@ -21,10 +21,4 @@ const fetchCoupons = async (req, res) => {
     search: search || "",
   });
   return res.status(result.statusCode).json(result);
-};
-
-module.exports = {
-  createCoupon,
-  disableCoupon,
-  fetchCoupons,
 };

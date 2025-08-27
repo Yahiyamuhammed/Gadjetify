@@ -1,7 +1,7 @@
 const Coupon = require("../models/couponModel");
 
 // Create coupon
- exports.createCoupon = async (data) => {
+exports.createCoupon = async (data) => {
   try {
     const existing = await Coupon.findOne({ code: data.code.toUpperCase() });
     if (existing) {
@@ -27,25 +27,46 @@ const Coupon = require("../models/couponModel");
   }
 };
 
-// Soft delete (disable)
-exports. disableCoupon = async (couponId) => {
+exports.toggleCouponStatus = async (couponId) => {
   try {
     const coupon = await Coupon.findById(couponId);
     if (!coupon) {
       return { statusCode: 404, message: "Coupon not found" };
     }
-
-    coupon.isActive = false;
+    coupon.isActive = !coupon.isActive;
     await coupon.save();
-
-    return { statusCode: 200, message: "Coupon disabled successfully" };
+    return {
+      statusCode: 200,
+      message: `Coupon ${
+        coupon.isActive ? "activated" : "disabled"
+      } successfully`,
+      data: coupon,
+    };
   } catch (error) {
-    return { statusCode: 500, message: "Error disabling coupon", error };
+    return { statusCode: 500, message: "Error toggling coupon status", error };
+  }
+};
+
+exports.updateCoupon = async (couponId, data) => {
+  try {
+    const coupon = await Coupon.findByIdAndUpdate(couponId, data, {
+      new: true,
+    });
+    if (!coupon) {
+      return { statusCode: 404, message: "Coupon not found" };
+    }
+    return {
+      statusCode: 200,
+      message: "Coupon updated successfully",
+      data: coupon,
+    };
+  } catch (error) {
+    return { statusCode: 500, message: "Error updating coupon", error };
   }
 };
 
 // Fetch coupons (with search + pagination)
-exports. fetchCoupons = async ({ page = 1, limit = 10, search = "" }) => {
+exports.fetchCoupons = async ({ page = 1, limit = 10, search = "" }) => {
   try {
     const query = {
       code: { $regex: search, $options: "i" },
