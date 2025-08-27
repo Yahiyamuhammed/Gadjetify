@@ -10,10 +10,19 @@ export const useCreateCoupon = () => {
   });
 };
 
-export const useDisableCoupon = () => {
+export const useUpdateCategory = () => {
   return useMutation({
-    mutationFn: async (couponId) => {
-      const res = await api.delete(`/admin/coupons/${couponId}`);
+    mutationFn: async ({ id, data }) => {
+      const res = await api.put(`/category/${id}`, data);
+      return res.data;
+    },
+  });
+};
+
+export const useToggleCategory = () => {
+  return useMutation({
+    mutationFn: async (id) => {
+      const res = await api.patch(`/category/toggle/${id}`);
       return res.data;
     },
   });
