@@ -6,8 +6,8 @@ const {
 } = require("../controllers/adminCouponController");
 const router = express.Router();
 
-router.post("/admin/coupons", createCoupon);
-router.delete("/admin/coupons/:couponId", disableCoupon);
-router.get("/admin/coupons", fetchCoupons);
+router.post("/coupons", createCoupon);
+router.delete("/coupons/:couponId", disableCoupon);
+router.get("/coupons", fetchCoupons);
 
 module.exports = router;
