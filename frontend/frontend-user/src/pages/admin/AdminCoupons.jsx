@@ -2,7 +2,11 @@ import { useState } from "react";
 import DataTableWrapper from "@/components/admin/DataTableWrapper";
 import { Pagination } from "@/components/ui/pagination";
 import { useAdminFetchCoupons } from "@/hooks/queries/useAdminCouponQueries";
-import { useCreateCoupon, useUpdateCoupon, useToggleCoupon } from "@/hooks/mutations/useAdminCouponMutations";
+import {
+  useCreateCoupon,
+  useUpdateCoupon,
+  useToggleCoupon,
+} from "@/hooks/mutations/useAdminCouponMutations";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCouponColumns } from "@/components/admin/coupon/CouponColumns";
@@ -12,13 +16,11 @@ import CouponFormFields from "@/components/admin/coupon/CouponFormFields";
 export default function AdminCoupons() {
   const queryClient = useQueryClient();
 
-  // Dialog + Edit state
   const [showDialog, setShowDialog] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
 
-  // Form state
-  const [form, setForm] = useState({
+  const [defaultValues, setDefaultValues] = useState({
     code: "",
     discountType: "percentage",
     discountValue: "",
@@ -41,7 +43,6 @@ export default function AdminCoupons() {
     setSearch(value.toLowerCase());
   };
 
-  // Toggle
   const handleToggle = (couponId) => {
     toggleCoupon(couponId, {
       onSuccess: () => {
@@ -54,25 +55,23 @@ export default function AdminCoupons() {
     });
   };
 
-  // Edit
   const handleEdit = (coupon) => {
-    setForm({
+    setDefaultValues({
       code: coupon.code,
       discountType: coupon.discountType,
       discountValue: coupon.discountValue,
       minPurchase: coupon.minPurchase,
-      expiryDate: coupon.expiryDate?.split("T")[0], // keep date input compatible
+      expiryDate: coupon.expiryDate?.split("T")[0],
     });
     setEditId(coupon._id);
     setEditMode(true);
     setShowDialog(true);
   };
 
-  // Submit (create or edit)
-  const handleSubmit = () => {
+  const handleFormSubmit = (formData) => {
     if (editMode) {
       updateCoupon(
-        { id: editId, data: form },
+        { id: editId, data: formData },
         {
           onSuccess: () => {
             toast.success("Coupon updated");
@@ -85,7 +84,7 @@ export default function AdminCoupons() {
         }
       );
     } else {
-      createCoupon(form, {
+      createCoupon(formData, {
         onSuccess: () => {
           toast.success("Coupon created");
           queryClient.invalidateQueries({ queryKey: ["admin-coupons"] });
@@ -98,8 +97,15 @@ export default function AdminCoupons() {
     }
   };
 
+  const handleDialogSubmit = () => {
+    const submitButton = document.getElementById("hidden-submit");
+    if (submitButton) {
+      submitButton.click();
+    }
+  };
+
   const resetForm = () => {
-    setForm({
+    setDefaultValues({
       code: "",
       discountType: "percentage",
       discountValue: "",
@@ -109,6 +115,18 @@ export default function AdminCoupons() {
     setEditId(null);
     setEditMode(false);
     setShowDialog(false);
+  };
+
+  const handleAddNew = () => {
+    setDefaultValues({
+      code: "",
+      discountType: "percentage",
+      discountValue: "",
+      minPurchase: "",
+      expiryDate: "",
+    });
+    setEditMode(false);
+    setShowDialog(true);
   };
 
   return (
@@ -122,7 +140,7 @@ export default function AdminCoupons() {
         })}
         filterFn={handleSearch}
         addButton="Add Coupon"
-        onAdd={() => setShowDialog(true)}
+        onAdd={handleAddNew}
       />
 
       <Pagination
@@ -135,10 +153,12 @@ export default function AdminCoupons() {
         open={showDialog}
         setOpen={setShowDialog}
         title={editMode ? "Edit Coupon" : "Add Coupon"}
-        onSubmit={handleSubmit}
-        formData={form}
+        onSubmit={handleDialogSubmit}
       >
-        <CouponFormFields formData={form} setFormData={setForm} errors={""} />
+        <CouponFormFields
+          onSubmit={handleFormSubmit}
+          defaultValues={defaultValues}
+        />
       </FormDialog>
     </>
   );
