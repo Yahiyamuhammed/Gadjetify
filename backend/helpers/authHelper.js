@@ -3,9 +3,15 @@ const generateOTP = require("../utils/generateOTP");
 const sendMail = require("../utils/sendMail");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const generateReferralCode = require("../utils/generateReferralCode ");
 
-
-exports.signupUser = async ({ email, name, password, mobileNo }) => {
+exports.signupUser = async ({
+  email,
+  name,
+  password,
+  mobileNo,
+  referredBy,
+}) => {
   const existing = await User.findOne({ email });
 
   if (existing) {
@@ -25,6 +31,16 @@ exports.signupUser = async ({ email, name, password, mobileNo }) => {
   const otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const referralCode = generateReferralCode(name);
+
+  let referrer = null;
+  if (referredBy) {
+    referrer = await User.findOne({ referralCode: referredBy });
+    if (!referrer) {
+      return { status: 400, data: { message: "Invalid referral code" } };
+    }
+  }
+
   const user = new User({
     email,
     name,
@@ -33,6 +49,8 @@ exports.signupUser = async ({ email, name, password, mobileNo }) => {
     otp,
     otpExpiresAt,
     authType: "local",
+    referralCode,
+    referredBy: referredBy || null,
   });
 
   await user.save();
@@ -60,6 +78,35 @@ exports.verifyUserOtp = async ({ email, otp }) => {
   user.isVerified = true;
   user.otp = undefined;
   user.otpExpiresAt = undefined;
+  if (user.referredBy) {
+    const referrer = await User.findOne({ referralCode: user.referredBy });
+    if (referrer) {
+      const bonus = 1000;
+
+      // Create wallet transaction for referrer
+      await WalletTransaction.create({
+        userId: referrer._id,
+        amount: bonus,
+        type: "credit",
+        description: `Referral bonus for inviting ${user.email}`,
+      });
+
+      // Update referrer wallet
+      await User.findByIdAndUpdate(referrer._id, { $inc: { wallet: bonus } });
+
+      // Create wallet transaction for new user
+      await WalletTransaction.create({
+        userId: user._id,
+        amount: bonus,
+        type: "credit",
+        description: `Referral bonus for signing up with code ${user.referredBy}`,
+      });
+
+      // Update new user wallet
+      user.wallet += bonus;
+    }
+  }
+
   await user.save();
 
   const token = jwt.sign(
@@ -168,7 +215,7 @@ exports.googleAuthHandler = async ({ access_token }) => {
   let user = await User.findOne({ googleId: sub });
   if (user) {
     if (user.isBlocked)
-    return { status: 401, data: { message: "Your account is blocked" } };
+      return { status: 401, data: { message: "Your account is blocked" } };
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
