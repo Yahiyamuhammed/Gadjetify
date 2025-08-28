@@ -47,6 +47,13 @@ const SignUp = () => {
       type: "password",
       required: true,
     },
+    {
+    name: "referredBy",
+    label: "Referral Code (optional)",
+    placeholder: "Enter referral code if you have one",
+    type: "text",
+    required: false,
+  },
   ];
 
   const extraLinks = [
@@ -57,10 +64,10 @@ const SignUp = () => {
     },
   ];
 
-  const handleSignup = async ({ name, email, password }) => {
+  const handleSignup = async ({ name, email, password ,referredBy}) => {
     try {
       setError(""); // reset error
-      const res = await api.post("/auth/signup", { name, email, password });
+      const res = await api.post("/auth/signup", { name, email, password,referredBy });
 
       // On success: redirect or go to OTP
       //   navigate("/login");

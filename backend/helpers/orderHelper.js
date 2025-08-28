@@ -92,7 +92,7 @@ exports.placeOrder = async ({
   }
 
   const address = await Address.findById(addressId).lean();
-  console.log(address);
+  
   if (!address) {
     return { status: 404, message: "Address not found" };
   }
