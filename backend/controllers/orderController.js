@@ -86,12 +86,13 @@ exports.requestReturn = async (req, res) => {
 exports.cancelOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const userId = req.user._id; // assuming you use auth middleware
+    const userId = req.user._id; 
 
     const response = await cancelOrderHelper(orderId, userId);
 
     res.status(response.status).json(response);
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       status: 500,
       message: "Internal server error",
