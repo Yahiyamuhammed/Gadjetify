@@ -85,6 +85,9 @@ const OrderDetail = ({ orderId, onBack }) => {
 };
 
 
+  const IMAGE_BASE_URL = "http://localhost:5000/products/";
+
+
   if (!orderId) return <div> no Id returned </div>;
   const queryClient = useQueryClient();
 
@@ -248,7 +251,7 @@ const OrderDetail = ({ orderId, onBack }) => {
                 className="flex gap-4 border p-4 rounded-lg bg-gray-50 items-center"
               >
                 <img
-                  src={item.image[0]}
+                  src={`${IMAGE_BASE_URL}${item.image}`}
                   className="w-20 h-20 rounded object-cover"
                   alt={item.productName}
                 />
