@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema(
     googleId: { type: String, default: null },
     wallet: { type: Number, default: 0 },
     pendingEmail: { type: String, unique: true },
+    referralCode: { type: String, unique: true },
+    referredBy: { type: String, default: null },
   },
   { timestamps: true }
 );

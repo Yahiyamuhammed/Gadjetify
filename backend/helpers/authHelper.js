@@ -3,7 +3,7 @@ const generateOTP = require("../utils/generateOTP");
 const sendMail = require("../utils/sendMail");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { jwtDecode } = require("jwt-decode");
+
 
 exports.signupUser = async ({ email, name, password, mobileNo }) => {
   const existing = await User.findOne({ email });

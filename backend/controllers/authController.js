@@ -34,7 +34,7 @@ exports.verifyOtp = async (req, res) => {
         message: result.data.message,
         user: result.data.user,
       });
-    // res.status(result.status).json(result.data);
+    
   } catch (err) {
     res
       .status(500)
