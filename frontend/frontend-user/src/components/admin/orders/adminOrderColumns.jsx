@@ -13,6 +13,11 @@ export const getAdminOrderColumns = (onStatusChange, onViewDetails, onApproveRet
     cell: ({ row }) => `₹${row.original.totalAmount}`,
   },
   {
+    accessorKey: "totalAmount",
+    header: "Payment mode",
+    cell: ({ row }) => `${row.original.paymentMethod}`,
+  },
+  {
     accessorKey: "date",
     header: "Date",
     cell: ({ row }) => new Date(row.original.date).toLocaleDateString(),

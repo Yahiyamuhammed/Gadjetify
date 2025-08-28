@@ -86,8 +86,9 @@ exports.updateOrderStatusHelper = async ({ orderId, status }) => {
   order.status = status;
 
   // optionally: update timestamps
-  if (status === "delivered") {
+  if (status === "Delivered") {
     order.deliveredAt = new Date();
+    order.paymentStatus='paid'
   }
   if (status === "cancelled") {
     order.cancelledAt = new Date();
