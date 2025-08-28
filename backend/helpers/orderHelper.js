@@ -4,6 +4,8 @@ const Variant = require("../models/variantModel");
 const Brand = require("../models/brandModel");
 const Address = require("../models/addressModal");
 const Cart = require("../models/cartModel");
+const WalletTransaction = require("../models/walletTransactionModel");
+const User = require("../models/userModal");
 
 exports.getUserOrders = async (userId) => {
   const orders = await Order.find({ userId })
@@ -203,13 +205,30 @@ exports.cancelOrderHelper = async (orderId, userId) => {
   // Update order status
   order.status = "Cancelled";
 
-  // Restore stock
   for (const item of order.items) {
-    await Product.findByIdAndUpdate(item.productId, {
+    await Variant.findByIdAndUpdate(item.variantId, {
       $inc: { stock: item.quantity },
     });
   }
 
+  // Refund to wallet if paid
+  if (order.paymentStatus === "paid") {
+    const refundAmount = order.summary.total;
+
+    // Create wallet transaction
+    await WalletTransaction.create({
+      userId: order.userId,
+      amount: refundAmount,
+      type: "credit",
+      description: `Refund for cancelled order ${order._id}`,
+      relatedOrderId: order._id,
+    });
+
+    // Update user wallet
+    await User.findByIdAndUpdate(order.userId, {
+      $inc: { wallet: refundAmount },
+    });
+  }
   await order.save();
 
   return { status: 200, message: "Order cancelled successfully", data: order };
