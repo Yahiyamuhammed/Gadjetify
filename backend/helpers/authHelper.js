@@ -4,6 +4,8 @@ const sendMail = require("../utils/sendMail");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const generateReferralCode = require("../utils/generateReferralCode ");
+const WalletTransaction = require("../models/walletTransactionModel");
+
 
 exports.signupUser = async ({
   email,
@@ -13,6 +15,13 @@ exports.signupUser = async ({
   referredBy,
 }) => {
   const existing = await User.findOne({ email });
+  let referrer = null;
+  if (referredBy) {
+    referrer = await User.findOne({ referralCode: referredBy });
+    if (!referrer) {
+      return { status: 400, data: { message: "Invalid referral code" } };
+    }
+  }
 
   if (existing) {
     if (existing.authType === "google") {
@@ -33,13 +42,6 @@ exports.signupUser = async ({
 
   const referralCode = generateReferralCode(name);
 
-  let referrer = null;
-  if (referredBy) {
-    referrer = await User.findOne({ referralCode: referredBy });
-    if (!referrer) {
-      return { status: 400, data: { message: "Invalid referral code" } };
-    }
-  }
 
   const user = new User({
     email,
