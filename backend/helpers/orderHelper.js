@@ -203,9 +203,9 @@ exports.cancelOrderHelper = async (orderId, userId) => {
   // Update order status
   order.status = "Cancelled";
 
-  // Restore stock
+  
   for (const item of order.items) {
-    await Product.findByIdAndUpdate(item.productId, {
+    await Variant.findByIdAndUpdate(item.variantId, {
       $inc: { stock: item.quantity },
     });
   }
