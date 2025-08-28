@@ -57,7 +57,7 @@ exports.generateSalesReport = async ({ startDate, endDate, period, page, limit }
               createdAt: 1,
               finalTotal: 1,
               "summary.totalDiscount": 1,
-              "summary.customDiscount": 1,
+              "summary.couponDiscount": 1,
             },
           },
         ],

@@ -25,7 +25,6 @@ import jsPDF from "jspdf";
 // import "jspdf-autotable";
 import autoTable from "jspdf-autotable";
 
-
 export default function SalesReportPage() {
   const [period, setPeriod] = useState("day");
   const [startDate, setStartDate] = useState("");
@@ -39,6 +38,8 @@ export default function SalesReportPage() {
     page,
     limit: 10,
   });
+
+  console.log(data)
 
   const summary = data?.summary || {};
   const orders = data?.orders || [];
@@ -54,7 +55,7 @@ export default function SalesReportPage() {
         Status: order.status,
         FinalTotal: order.finalTotal,
         Discount: order.summary?.totalDiscount || 0,
-        CouponDiscount: order.summary?.customDiscount || 0,
+        CouponDiscount: order.summary?.couponDiscount || 0,
       }))
     );
 
@@ -65,28 +66,40 @@ export default function SalesReportPage() {
 
   // PDF download
   const handleDownloadPDF = () => {
-  if (!orders.length) return;
+    if (!orders.length) return;
 
-  const doc = new jsPDF();
-  doc.text("Sales Report", 14, 15);
+    const doc = new jsPDF();
+    doc.text("Sales Report", 14, 15);
 
-  const tableData = orders.map((order) => [
-    order._id,
-    new Date(order.createdAt).toLocaleDateString(),
-    order.status,
-    "₹" + order.finalTotal,
-    "₹" + (order.summary?.totalDiscount || 0),
-    "₹" + (order.summary?.customDiscount || 0),
-  ]);
+    console.log(orders)
+    
 
-  autoTable(doc, {
-    head: [["Order ID", "Date", "Status", "Final Total", "Discount", "Coupon Discount"]],
-    body: tableData,
-    startY: 25,
-  });
+    const tableData = orders.map((order) => [
+      order._id,
+      new Date(order.createdAt).toLocaleDateString(),
+      order.status,
+      order.finalTotal,
+      order.summary?.totalDiscount || 0,
+      order.summary?.couponDiscount || 0,
+    ]);
 
-  doc.save("sales_report.pdf");
-};
+    autoTable(doc, {
+      head: [
+        [
+          "Order ID",
+          "Date",
+          "Status",
+          "Final Total",
+          "Discount",
+          "Coupon Discount",
+        ],
+      ],
+      body: tableData,
+      startY: 25,
+    });
+
+    doc.save("sales_report.pdf");
+  };
 
   return (
     <div className="p-6 space-y-6">
