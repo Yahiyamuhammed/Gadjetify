@@ -157,6 +157,7 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
           customDiscount,
           totalDiscount,
           shipping,
+          couponDiscount,
           tax,
           total,
         },

@@ -57,6 +57,7 @@ const summarySnapshotSchema = new mongoose.Schema({
   totalOfferDiscount: Number,
   customDiscount: Number,
   totalDiscount: Number,
+  couponDiscount: Number,
   shipping: Number,
   tax: Number,
   total: Number,

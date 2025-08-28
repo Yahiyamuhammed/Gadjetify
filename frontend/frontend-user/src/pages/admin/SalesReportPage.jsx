@@ -2,11 +2,29 @@ import { useState } from "react";
 // import { useSalesReport } from "@/mutations/useSalesReport";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Loader2, Download } from "lucide-react";
 import { useSalesReport } from "@/hooks/queries/useReportQueries";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+// import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
+
 
 export default function SalesReportPage() {
   const [period, setPeriod] = useState("day");
@@ -25,15 +43,68 @@ export default function SalesReportPage() {
   const summary = data?.summary || {};
   const orders = data?.orders || [];
 
+  // Excel download
+  const handleDownloadExcel = () => {
+    if (!orders.length) return;
+
+    const worksheet = XLSX.utils.json_to_sheet(
+      orders.map((order) => ({
+        OrderID: order._id,
+        Date: new Date(order.createdAt).toLocaleDateString(),
+        Status: order.status,
+        FinalTotal: order.finalTotal,
+        Discount: order.summary?.totalDiscount || 0,
+        CouponDiscount: order.summary?.customDiscount || 0,
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "SalesReport");
+    XLSX.writeFile(workbook, "sales_report.xlsx");
+  };
+
+  // PDF download
+  const handleDownloadPDF = () => {
+  if (!orders.length) return;
+
+  const doc = new jsPDF();
+  doc.text("Sales Report", 14, 15);
+
+  const tableData = orders.map((order) => [
+    order._id,
+    new Date(order.createdAt).toLocaleDateString(),
+    order.status,
+    "₹" + order.finalTotal,
+    "₹" + (order.summary?.totalDiscount || 0),
+    "₹" + (order.summary?.customDiscount || 0),
+  ]);
+
+  autoTable(doc, {
+    head: [["Order ID", "Date", "Status", "Final Total", "Discount", "Coupon Discount"]],
+    body: tableData,
+    startY: 25,
+  });
+
+  doc.save("sales_report.pdf");
+};
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Sales Report</h1>
-        <Button variant="outline" className="flex items-center gap-2">
+        {/* <Button variant="outline" className="flex items-center gap-2">
           <Download className="w-4 h-4" />
           Download Report
-        </Button>
+        </Button> */}
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleDownloadExcel}>
+            Download Excel
+          </Button>
+          <Button variant="outline" onClick={handleDownloadPDF}>
+            Download PDF
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -41,7 +112,8 @@ export default function SalesReportPage() {
         <CardHeader>
           <CardTitle>Filters</CardTitle>
         </CardHeader>
-        <CardContent className="grid md:grid-cols-4 gap-4">
+        <CardContent className="grid md:grid-cols-4 gap-4 items-end">
+          {/* Period Selector */}
           <Select onValueChange={(val) => setPeriod(val)} defaultValue={period}>
             <SelectTrigger>
               <SelectValue placeholder="Select period" />
@@ -55,10 +127,28 @@ export default function SalesReportPage() {
             </SelectContent>
           </Select>
 
+          {/* Show only if Custom */}
           {period === "custom" && (
             <>
-              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setStartDate("");
+                  setEndDate("");
+                }}
+              >
+                Reset Date
+              </Button>
             </>
           )}
         </CardContent>
@@ -71,7 +161,11 @@ export default function SalesReportPage() {
             <CardTitle>Total Orders</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
-            {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : summary.totalOrders}
+            {isLoading ? (
+              <Loader2 className="animate-spin w-5 h-5" />
+            ) : (
+              summary.totalOrders
+            )}
           </CardContent>
         </Card>
 
@@ -80,7 +174,11 @@ export default function SalesReportPage() {
             <CardTitle>Total Sales Amount</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
-            {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : `₹${summary.totalAmount || 0}`}
+            {isLoading ? (
+              <Loader2 className="animate-spin w-5 h-5" />
+            ) : (
+              `₹${summary.totalAmount || 0}`
+            )}
           </CardContent>
         </Card>
 
@@ -89,7 +187,11 @@ export default function SalesReportPage() {
             <CardTitle>Total Discount</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
-            {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : `₹${summary.totalDiscount || 0}`}
+            {isLoading ? (
+              <Loader2 className="animate-spin w-5 h-5" />
+            ) : (
+              `₹${summary.totalDiscount || 0}`
+            )}
           </CardContent>
         </Card>
       </div>
@@ -120,15 +222,22 @@ export default function SalesReportPage() {
                   orders.map((order) => (
                     <TableRow key={order._id}>
                       <TableCell>{order._id}</TableCell>
-                      <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </TableCell>
                       <TableCell>{order.status}</TableCell>
                       <TableCell>₹{order.finalTotal}</TableCell>
-                      <TableCell>₹{order.summary?.totalDiscount || 0}</TableCell>
+                      <TableCell>
+                        ₹{order.summary?.totalDiscount || 0}
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
+                    <TableCell
+                      colSpan={5}
+                      className="text-center py-4 text-muted-foreground"
+                    >
                       No orders found
                     </TableCell>
                   </TableRow>
