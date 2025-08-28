@@ -2,10 +2,11 @@ const { applyCouponHelper, removeCouponHelper } = require("../helpers/couponHelp
 
 const applyCoupon = async (req, res) => {
   try {
-    const { code, cart } = req.body; // cart contains {total: number}
-    const response = await applyCouponHelper(cart, code);
+    const { code} = req.body; 
+    const response = await applyCouponHelper( code);
     return res.status(response.statusCode).json(response);
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

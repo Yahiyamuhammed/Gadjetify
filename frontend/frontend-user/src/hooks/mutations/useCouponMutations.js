@@ -3,8 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 
 export const useApplyCoupon = () => {
   return useMutation({
-    mutationFn: async ({ code, cart }) => {
-      const res = await api.post("/coupon/apply", { code, cart });
+    mutationFn: async ({ code}) => {
+      const res = await api.post("/coupon/apply", { code});
       return res.data;
     },
   });

@@ -5,7 +5,7 @@ const {
 } = require("../controllers/couponController");
 const router = express.Router();
 
-router.post("/apply", applyCoupon);
-router.post("/remove", removeCoupon);
+router.post("/coupon/apply", applyCoupon);
+router.post("/coupon/remove", removeCoupon);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const Coupon = require("../models/couponModel");
 
 const applyCouponHelper = async (code) => {
   try {
-    const coupon = await Coupon.findOne({ code, isActive: true });
+    const coupon = await Coupon.findOne({code: code, isActive: true });
 
     if (!coupon) {
       return { statusCode: 404, success: false, message: "Invalid or inactive coupon" };
