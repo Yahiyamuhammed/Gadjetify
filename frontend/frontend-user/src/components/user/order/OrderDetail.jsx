@@ -11,8 +11,80 @@ import {
 } from "@/hooks/mutations/usePlaceOrder";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import jsPDF from "jspdf";
+// import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
+
 
 const OrderDetail = ({ orderId, onBack }) => {
+  const handleDownloadOrderPDF = () => {
+  if (!OrderDetail) return;
+
+  const doc = new jsPDF();
+
+  // Title
+  doc.setFontSize(16);
+  doc.text(`Order #${OrderDetail.orderId}`, 14, 20);
+  doc.setFontSize(12);
+  doc.text(
+    `Placed on: ${format(new Date(OrderDetail.createdAt), "dd/MM/yyyy")}`,
+    14,
+    28
+  );
+  doc.text(`Status: ${OrderDetail.status}`, 14, 36);
+
+  // Customer Info
+  doc.text("Customer Information:", 14, 50);
+  doc.text(`Name: ${OrderDetail.addressSnapshot.name}`, 14, 58);
+  doc.text(`Phone: ${OrderDetail.addressSnapshot.phone}`, 14, 66);
+  doc.text(
+    `Address: ${OrderDetail.addressSnapshot.address}, ${OrderDetail.addressSnapshot.district}`,
+    14,
+    74
+  );
+
+  // Order Items Table
+  const tableData = OrderDetail.items.map((item, index) => [
+    index + 1,
+    item.productName,
+    `${item.ram || ""} ${item.storage || ""}`,
+    item.quantity,
+    `₹${item.price}`,
+    `₹${item.price * item.quantity}`,
+  ]);
+
+  autoTable(doc, {
+    startY: 90,
+    head: [["#", "Product", "Variant", "Qty", "Price", "Total"]],
+    body: tableData,
+  });
+
+  // Summary
+  let finalY = doc.lastAutoTable.finalY + 10;
+  doc.text("Order Summary:", 14, finalY);
+
+  doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 14, finalY + 8);
+  doc.text(`Shipping: ₹${OrderDetail.summary.shipping}`, 14, finalY + 16);
+  doc.text(`Tax: ₹${OrderDetail.summary.tax}`, 14, finalY + 24);
+  doc.text(
+    `Discount: -₹${OrderDetail.summary.totalDiscount}`,
+    14,
+    finalY + 32
+  );
+  doc.text(
+    `Coupon Discount: -₹${OrderDetail.summary.couponDiscount || 0}`,
+    14,
+    finalY + 40
+  );
+
+  doc.setFont("helvetica", "bold");
+  doc.text(`Total: ₹${OrderDetail.summary.total}`, 14, finalY + 55);
+
+  // Save PDF
+  doc.save(`Order_${OrderDetail.orderId}.pdf`);
+};
+
+
   if (!orderId) return <div> no Id returned </div>;
   const queryClient = useQueryClient();
 
@@ -226,11 +298,16 @@ const OrderDetail = ({ orderId, onBack }) => {
           <Button variant="secondary" onClick={onBack}>
             Back to Orders
           </Button>
-          {OrderDetail.status.toLowerCase() === "placed" && (
-            <Button onClick={() => handleCancelOrder()} variant="destructive">
-              Cancel Order
+          <div className="flex gap-2">
+            <Button onClick={handleDownloadOrderPDF} variant="outline">
+              Download Order
             </Button>
-          )}
+            {OrderDetail.status.toLowerCase() === "placed" && (
+              <Button onClick={() => handleCancelOrder()} variant="destructive">
+                Cancel Order
+              </Button>
+            )}
+          </div>
         </div>
       </Card>
       <FormDialog
