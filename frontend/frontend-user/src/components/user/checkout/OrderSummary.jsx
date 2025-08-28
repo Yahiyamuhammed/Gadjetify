@@ -1,9 +1,23 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import {
+  useApplyCoupon,
+  useRemoveCoupon,
+} from "@/hooks/mutations/useCouponMutations";
+import { Input } from "@/components/ui/input";
+import toast from "react-hot-toast";
 
 export default function OrderSummary({ items = [], onPlaceOrder }) {
-  console.log(items,'these are the items');
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  // const [couponDiscount, setCouponDiscount] = useState(0);
+
+  const { mutate: applyCoupon } = useApplyCoupon();
+  const { mutate: removeCoupon } = useRemoveCoupon();
+  const removeCouponMutation = useRemoveCoupon();
+
   const formattedItems = items.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -21,9 +35,8 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
       offerPercentage,
       offerDiscount,
       customDiscount: 0,
-      brand:item.productId.brand._id,
-      variantId:item.variantId._id
-      
+      brand: item.productId.brand._id,
+      variantId: item.variantId._id,
     };
   });
 
@@ -39,12 +52,76 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
     (sum, item) => sum + item.customDiscount,
     0
   );
+  const couponDiscount = appliedCoupon
+    ? (subtotal * appliedCoupon.discountPercent) / 100
+    : 0;
+
   const totalDiscount = totalOfferDiscount + customDiscount;
   const shipping = subtotal > 1000 ? 0 : 49.99;
   const tax = subtotal * 0.08;
-  const total = subtotal - totalDiscount + shipping + tax;
+  // const total = subtotal - totalDiscount + shipping + tax;
+  const total = subtotal - totalDiscount - couponDiscount + shipping + tax;
+
   const totalOfferPercentage =
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
+
+  const handleApplyCoupon = async () => {
+    applyCoupon(
+      { code: couponCode },
+      {
+        onSuccess: (data) => {
+          if (data.coupon.minPurchase && subtotal < data.coupon.minPurchase) {
+            // discount = 0;
+            toast.error(`Doesn't qualify for minimum purchase`);
+          } else {
+            toast.success("coupon applied");
+            setAppliedCoupon({
+              code: data.coupon.code,
+              discountPercent: data.coupon.discountValue,
+            });
+          }
+        },
+        onError: (err) => {
+          toast.error(err.response.data.message || "cannot apply coupon");
+        },
+      }
+    );
+    // try {
+    //   const res = await applyCouponMutation.mutateAsync({ code: couponCode });
+
+    //   if (res.success) {
+    //     setAppliedCoupon(res.coupon);
+
+    //     // Calculate coupon discount
+    //     let discount =
+    //       (subtotal - totalOfferDiscount) * (res.coupon.discount / 100);
+    //     if (res.coupon.maxDiscount) {
+    //       discount = Math.min(discount, res.coupon.maxDiscount);
+    //     }
+
+    //     if (res.coupon.minPurchase && subtotal < res.coupon.minPurchase) {
+    //       discount = 0; // Doesn't qualify for minimum purchase
+    //     }
+
+    //     setCouponDiscount(discount);
+    //   } else {
+    //     toast.error(res.message || "Coupon could not be applied");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    // }
+  };
+
+  const handleRemoveCoupon = async () => {
+    try {
+      await removeCouponMutation.mutateAsync();
+      setAppliedCoupon(null);
+      // setCouponDiscount(0);
+      setCouponCode("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handlePlaceOrder = () => {
     const formatOrderItems = (items = []) => {
@@ -71,19 +148,19 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
 
     // Call parent function
     if (onPlaceOrder) {
-    //   onPlaceOrder(formatOrderItems(items));
-    onPlaceOrder({
-      items: formattedItems,
-      summary: {
-        subtotal,
-        totalOfferDiscount,
-        customDiscount,
-        totalDiscount,
-        shipping,
-        tax,
-        total,
-      },
-    });
+      //   onPlaceOrder(formatOrderItems(items));
+      onPlaceOrder({
+        items: formattedItems,
+        summary: {
+          subtotal,
+          totalOfferDiscount,
+          customDiscount,
+          totalDiscount,
+          shipping,
+          tax,
+          total,
+        },
+      });
     }
   };
 
@@ -126,6 +203,30 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
           </div>
         ))}
 
+        {/* === Coupon Section === */}
+        <div className="space-y-3 pt-4">
+          {!appliedCoupon ? (
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter coupon code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+              />
+              <Button onClick={handleApplyCoupon}>Apply</Button>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center bg-green-50 p-2 rounded">
+              <span className="text-green-700 font-medium">
+                {appliedCoupon.code} applied ({appliedCoupon.discountPercent}%
+                OFF)
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleRemoveCoupon}>
+                Remove
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* === Price Breakdown === */}
         <div className="space-y-3 pt-4 text-sm">
           <div className="flex justify-between">
@@ -154,12 +255,29 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
               </span>
             </div>
           )}
+          {couponDiscount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-gray-600">Coupon Discount</span>
+              <span className="text-green-600">
+                -₹{couponDiscount.toFixed(2)}
+              </span>
+            </div>
+          )}
 
-          {totalDiscount > 0 && (
+          {/* {totalDiscount > 0 && (
             <div className="flex justify-between border-t pt-2">
               <span className="text-gray-800 font-medium">Total Savings</span>
               <span className="text-green-600 font-medium">
                 -₹{totalDiscount.toFixed(2)}
+              </span>
+            </div>
+          )} */}
+
+          {totalDiscount + couponDiscount > 0 && (
+            <div className="flex justify-between border-t pt-2">
+              <span className="text-gray-800 font-medium">Total Savings</span>
+              <span className="text-green-600 font-medium">
+                -₹{(totalDiscount + couponDiscount).toFixed(2)}
               </span>
             </div>
           )}

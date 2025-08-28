@@ -36,7 +36,7 @@ const OrderSuccessPage = () => {
 
         <CardFooter className="flex flex-col gap-4 pb-10">
           <Button asChild className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 rounded-xl">
-            <Link to="/">View Order Details</Link>
+            <Link to="/orders">View Order Details</Link>
           </Button>
           <Button
             asChild

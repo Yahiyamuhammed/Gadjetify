@@ -38,28 +38,28 @@ exports.getOrderById = async (userId, orderId) => {
   if (!order) {
     return { status: 404, message: "Order not found" };
   }
-const simplifiedOrder = {
-      orderId: order._id,
-      status: order.status,
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-      paymentMethod: order.paymentMethod,
-      paymentStatus: order.paymentStatus,
-      addressSnapshot: order.addressSnapshot,
-      summary: order.summary,
-      items: order.items.map(item => ({
-        productName: item.productName,
-        image: item.image || null,
-        ram: item.ram,
-        storage: item.storage,
-        price: item.price,
-        quantity: item.quantity,
-        itemId:item._id,
-        returnStatus:item?.returnStatus,
-      })),
-    };
+  const simplifiedOrder = {
+    orderId: order._id,
+    status: order.status,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
+    paymentMethod: order.paymentMethod,
+    paymentStatus: order.paymentStatus,
+    addressSnapshot: order.addressSnapshot,
+    summary: order.summary,
+    items: order.items.map((item) => ({
+      productName: item.productName,
+      image: item.image || null,
+      ram: item.ram,
+      storage: item.storage,
+      price: item.price,
+      quantity: item.quantity,
+      itemId: item._id,
+      returnStatus: item?.returnStatus,
+    })),
+  };
 
-  console.log(order)
+  console.log(order);
   return {
     status: 200,
     message: "Order details fetched successfully",
@@ -144,7 +144,7 @@ exports.placeOrder = async ({
       landmark: address.landmark,
     },
     paymentMethod,
-    paymentStatus: paymentMethod === "COD" ? "pending" : "completed",
+    paymentStatus: "pending",
     items: itemSnapshots,
     finalTotal,
     summary,
@@ -159,10 +159,10 @@ exports.placeOrder = async ({
   return {
     status: 201,
     message: "Order placed successfully",
-    data: newOrder,
+    // data: newOrder,
+    orderId: newOrder._id,
   };
 };
-
 
 exports.requestReturnHelper = async ({ userId, orderId, itemId, reason }) => {
   const order = await Order.findOne({ _id: orderId, userId });
@@ -172,10 +172,10 @@ exports.requestReturnHelper = async ({ userId, orderId, itemId, reason }) => {
   const item = order.items.id(itemId);
   if (!item) return { status: 404, message: "Item not found" };
 
-  if (item.returnStatus !== 'not_requested')
+  if (item.returnStatus !== "not_requested")
     return { status: 400, message: "Return already requested or processed" };
 
-  item.returnStatus = 'requested';
+  item.returnStatus = "requested";
   item.returnReason = reason;
   item.returnRequestedAt = new Date();
 
@@ -188,20 +188,20 @@ exports.cancelOrderHelper = async (orderId, userId) => {
   const order = await Order.findOne({ _id: orderId, userId });
 
   if (!order) {
-    return { status: 404, message: 'Order not found' };
+    return { status: 404, message: "Order not found" };
   }
 
-  if (order.status === 'Delivered') {
-    return { status: 400, message: 'Cannot cancel a delivered order' };
+  if (order.status === "Delivered") {
+    return { status: 400, message: "Cannot cancel a delivered order" };
   }
 
   // Check if already cancelled
-  if (order.status === 'Cancelled') {
-    return { status: 400, message: 'Order already cancelled' };
+  if (order.status === "Cancelled") {
+    return { status: 400, message: "Order already cancelled" };
   }
 
   // Update order status
-  order.status = 'Cancelled';
+  order.status = "Cancelled";
 
   // Restore stock
   for (const item of order.items) {
@@ -212,5 +212,5 @@ exports.cancelOrderHelper = async (orderId, userId) => {
 
   await order.save();
 
-  return { status: 200, message: 'Order cancelled successfully', data: order };
+  return { status: 200, message: "Order cancelled successfully", data: order };
 };

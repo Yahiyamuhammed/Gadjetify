@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 export default function AddressList({
   addresses = [],
-  onSelect = () => {},
+  onSelect,
   onAdd = () => {},
   onEdit = (address) => {},
 }) {
@@ -14,10 +14,8 @@ export default function AddressList({
   const [selectedAddressId, setSelectedAddressId] = useState(
     primaryAddress?._id
   );
-
-  console.log('sdjf;laksdjf')
+console.log(selectedAddressId)
   useEffect(() => {
-    // If addresses change, re-set primary
     if (primaryAddress?._id) {
       setSelectedAddressId(primaryAddress._id);
       onSelect(primaryAddress._id)

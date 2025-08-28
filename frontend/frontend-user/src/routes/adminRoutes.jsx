@@ -7,6 +7,7 @@ import UserManagement from "../pages/admin/UserManagement";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import VariantList from "@/pages/admin/VarientManagement";
 import AdminOrders from "@/pages/admin/OrderManagement";
+import AdminCoupons from "@/pages/admin/AdminCoupons";
 // import { Sidebar } from "lucide-react";
 
 const AdminLayout = ({ children }) => {
@@ -60,6 +61,12 @@ const AdminRoutes=()=>(
         <Route path="/manage-orders" element={
             <AdminLayout>
                 <AdminOrders />
+
+            </AdminLayout>
+            }/>
+        <Route path="/manage-coupon" element={
+            <AdminLayout>
+                <AdminCoupons />
 
             </AdminLayout>
             }/>

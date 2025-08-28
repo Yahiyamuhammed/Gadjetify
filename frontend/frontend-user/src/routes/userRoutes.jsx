@@ -13,6 +13,7 @@ import CheckoutPage from "@/pages/user/CheckoutPage.jsx";
 import OrderSuccessPage from "@/pages/user/OrderSuccessPage.jsx";
 import Orders from "@/pages/user/Orders.jsx";
 import WalletPage from "@/pages/user/WalletPage.jsx";
+import OrderFailurePage from "@/pages/user/OrderFailurePage.jsx";
 // import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
@@ -83,6 +84,11 @@ const UserRoutes=()=>(
     <Route path="/orderSuccess" element={
         <MainLayout>
             <OrderSuccessPage />
+        </MainLayout>
+        } />
+    <Route path="/orderFailed/:orderId" element={
+        <MainLayout>
+            <OrderFailurePage />
         </MainLayout>
         } />
     <Route path="/orders" element={

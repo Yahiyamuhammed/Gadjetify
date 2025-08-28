@@ -58,28 +58,17 @@ exports.addToCart = async (userId, { productId, variantId }) => {
 };
 
 
-// exports.getCart = async (userId) => {
-//   const cart = await Cart.findOne({ userId })
-//     .populate({
-//       path: "items.productId",
-//       select: "name brand model images offerPercentage"
-//     })
-//     .populate("items.variantId");
-
-//   return cart || { userId, items: [] };
-// };
-
 exports.getCart = async (userId) => {
   const cart = await Cart.findOne({ userId })
     .populate({
       path: "items.productId",
       select: "name brand model images offerPercentage isListed",
       populate: {
-        path: "brand", // This is the nested population
-        select: "name isDeleted" // Select brand fields you want to return
+        path: "brand", 
+        select: "name isDeleted" 
       }
     })
-    .populate("items.variantId"); // Assuming variantId is already a reference
+    .populate("items.variantId");
 
   return cart || { userId, items: [] };
 };
