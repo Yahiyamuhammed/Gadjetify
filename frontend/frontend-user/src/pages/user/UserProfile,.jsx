@@ -1,30 +1,25 @@
 import AddressTab from "@/components/user/AddressTab";
-import ProfileCard from "@/components/user/ProfileCard";
+import ProfileCard from "@/components/user/profile/ProfileCard";
 import SidebarLayout from "@/components/user/ProfileDetails";
 import { useAuthUser } from "@/hooks/useAuthUser";
 
-const UserProfile=()=>{
-    // const { data: user } = useAuthUser();
+const UserProfile = () => {
+  // const { data: user } = useAuthUser();
 
-    // console.log(user)
-  
-    const usesr = {
-        name: 'Amanda Harvey',
-        username: 'iam_amanda',
-        avatarUrl: 'https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...'
-      };
+  // console.log(user)
 
+  return (
+    <div className="p-4">
+      <ProfileCard
+        user={{
+          avatarUrl:
+            "https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...",
+        }}
+      />
+      {/* <SidebarLayout /> */}
+      <AddressTab />
+    </div>
+  );
+};
 
-    return (
-        <div className="p-4">
-          <ProfileCard user={{avatarUrl: 'https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...'}} />
-          {/* <SidebarLayout /> */}
-          <AddressTab />
-        </div>
-      );
-
-  }
-
-
-export default UserProfile
-  
+export default UserProfile;
