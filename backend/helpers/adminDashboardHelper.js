@@ -44,6 +44,7 @@ exports.getSummaryData = async () => {
   const formatResult = (value, change, upMsg, downMsg) => ({
     value,
     change: `${change.percent.toFixed(1)}%`,
+    trend: change.trend,
     description: change.trend === "up" ? upMsg : downMsg
   });
 
