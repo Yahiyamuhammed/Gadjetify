@@ -5,7 +5,7 @@ const { verifyUserOtp } = require("./authHelper");
 
 
 exports.getProfile = async (userId) => {
-  const user = await User.findById(userId).select("name email");
+  const user = await User.findById(userId).select("name email referralCode");
   if (!user) {
     return { status: 404, message: "User not found" };
   }
@@ -27,6 +27,7 @@ exports.updateProfile = async (userId, name, email) => {
 
   if (email && email !== user.email) {
     emailChanged = true;
+    
     user.pendingEmail = email;
 
     user.otp = generateOTP();

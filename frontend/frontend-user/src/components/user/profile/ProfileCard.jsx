@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import toast from "react-hot-toast";
-import FormDialog from "../common/FormDialog";
+import FormDialog from "../../common/FormDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -10,8 +10,8 @@ import {
   useUpdateProfile,
   useVerifyEmailOtp,
 } from "@/hooks/mutations/useUpdateProfile";
-import EditProfileFormFields from "./profile/EditProfileFormFields";
-import { InputOTPForm } from "../common/InputOtp";
+import EditProfileFormFields from "./EditProfileFormFields";
+import { InputOTPForm } from "../../common/InputOtp";
 import { useFetchUserDetail } from "@/hooks/queries/useProfileQueries";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -21,7 +21,6 @@ const ProfileCard = () => {
   const { data: userDetail } = useFetchUserDetail();
   const useQuery = useQueryClient();
 
-  console.log(userDetail);
 
   const [open, setOpen] = useState(false);
   const [openOtp, setOpenOtp] = useState(false);
@@ -130,6 +129,9 @@ const ProfileCard = () => {
           </h1>
           <p className="text-sm text-gray-500 dark:text-neutral-400">
             {userDetail?.email}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-neutral-400">
+            referral code: {userDetail?.referralCode}
           </p>
         </div>
       </div>
