@@ -6,7 +6,7 @@ export const useFetchSummaryData = () => {
     queryKey: ["summary"],
     queryFn: async () => {
       const res = await api.get("/admin/dashboard/summary");
-      return res.data.data;
+      return res.data;
     },
   });
 };
