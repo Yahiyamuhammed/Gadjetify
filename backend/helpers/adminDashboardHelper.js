@@ -55,3 +55,50 @@ exports.getSummaryData = async () => {
     refunds: formatResult(currentRefunds, calcChange(currentRefunds, previousRefunds), "Refunds increased", "Refunds decreased")
   };
 };
+
+
+exports.getSalesReportHelper = async ({ startDate, endDate, period }) => {
+  const matchStage = {
+    createdAt: {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    },
+    status: { $in: ["Delivered", "Shipped", "Processing"] }, 
+    paymentStatus: "paid"
+  };
+
+  // Group format based on period
+  let groupId = null;
+  if (period === "day") {
+    groupId = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+  } else if (period === "month") {
+    groupId = { $dateToString: { format: "%Y-%m", date: "$createdAt" } };
+  } else if (period === "year") {
+    groupId = { $dateToString: { format: "%Y", date: "$createdAt" } };
+  } else {
+    // default daily
+    groupId = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+  }
+
+  const report = await Order.aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: groupId,
+        orders: { $sum: 1 },
+        revenue: { $sum: "$finalTotal" }
+      }
+    },
+    { $sort: { _id: 1 } },
+    {
+      $project: {
+        _id: 0,
+        date: "$_id",
+        orders: 1,
+        revenue: 1
+      }
+    }
+  ]);
+
+  return report;
+};
