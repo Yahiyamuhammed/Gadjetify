@@ -1,4 +1,4 @@
-const Order = require("../models/Order");
+const Order = require("../models/orderModel");
 
 exports.getSummaryData = async () => {
   try {
