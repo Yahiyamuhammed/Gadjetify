@@ -8,9 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
-export function SummaryCard({ title, data, footerNote }) {
+export function SummaryCard({ title, data, footerNote, loading }) {
   const TrendIcon = data?.trend === "up" ? IconTrendingUp : IconTrendingDown;
+
+  if (loading) {
+    return (
+      <Card className="@container/card flex items-center justify-center">
+        <Spinner />
+      </Card>
+    );
+  }
 
   return (
     <Card className="@container/card">
