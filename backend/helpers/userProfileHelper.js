@@ -26,6 +26,10 @@ exports.updateProfile = async (userId, name, email) => {
   }
 
   if (email && email !== user.email) {
+     const existingUser = await User.findOne({ email: email });
+    if (existingUser && existingUser._id.toString() !== userId.toString()) {
+      return { status: 400, message: "Email is already in use" };
+    }
     emailChanged = true;
     
     user.pendingEmail = email;
