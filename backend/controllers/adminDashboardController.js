@@ -15,7 +15,9 @@ exports.getSummary = async (req, res) => {
 
 exports.getSalesReport = async (req, res) => {
   try {
+    console.log(req.query)
     const { startDate, endDate, period } = req.query;
+    console.log(startDate, endDate, period)
     if (!startDate || !endDate) {
       return res
         .status(400)

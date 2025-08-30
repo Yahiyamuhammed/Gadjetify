@@ -109,7 +109,7 @@ exports.getSalesReportHelper = async ({ startDate, endDate, period }) => {
       $gte: new Date(startDate),
       $lte: new Date(endDate),
     },
-    status: { $in: ["Delivered", "Shipped", "Processing"] },
+    // status: "Delivered" ,
     paymentStatus: "paid",
   };
 

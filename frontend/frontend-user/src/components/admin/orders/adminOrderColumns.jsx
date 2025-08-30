@@ -13,7 +13,7 @@ export const getAdminOrderColumns = (onStatusChange, onViewDetails, onApproveRet
     cell: ({ row }) => `₹${row.original.totalAmount}`,
   },
   {
-    accessorKey: "totalAmount",
+    accessorKey: "Payment mode",
     header: "Payment mode",
     cell: ({ row }) => `${row.original.paymentMethod}`,
   },
