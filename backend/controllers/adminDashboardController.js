@@ -34,7 +34,7 @@ exports.getSalesReport = async (req, res) => {
   }
 };
 
-exports.topProducts = async (req, res) => {
+exports.getTopProducts = async (req, res) => {
   try {
     const data = await getTopSellingProducts();
     return res.status(200).json({ success: true, data });
