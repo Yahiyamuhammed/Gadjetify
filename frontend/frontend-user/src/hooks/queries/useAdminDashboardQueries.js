@@ -32,3 +32,12 @@ export const useFetchTopProducts = () => {
     },
   });
 };
+export const useFetchTopBrand = () => {
+  return useQuery({
+    queryKey: ["topBrand"],
+    queryFn: async () => {
+      const res = await api.get("/admin/dashboard/bestsellers/brands");
+      return res.data.data;
+    },
+  });
+};
