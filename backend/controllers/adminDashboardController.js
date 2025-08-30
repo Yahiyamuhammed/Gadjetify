@@ -42,3 +42,13 @@ exports.getTopProducts = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.fetchTopBrands = async (req, res) => {
+  try {
+    const brands = await getTopBrands();
+    res.status(200).json({ success: true, data: brands });
+  } catch (error) {
+    console.error("Error fetching top brands:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
