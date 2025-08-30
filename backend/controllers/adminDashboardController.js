@@ -2,9 +2,10 @@ const {
   getSummaryData,
   getSalesReportHelper,
   getTopSellingProducts,
+  getTopBrands,
 } = require("../helpers/adminDashboardHelper");
 
-exports.getSummary = async (req, res) => {
+exports.fetchSummary = async (req, res) => {
   try {
     const data = await getSummaryData();
     return res.status(200).json(data);
@@ -14,7 +15,7 @@ exports.getSummary = async (req, res) => {
   }
 };
 
-exports.getSalesReport = async (req, res) => {
+exports.fetchSalesReport = async (req, res) => {
   try {
     const { startDate, endDate, period } = req.query;
     if (!startDate || !endDate) {
@@ -34,7 +35,7 @@ exports.getSalesReport = async (req, res) => {
   }
 };
 
-exports.getTopProducts = async (req, res) => {
+exports.fetchTopProducts = async (req, res) => {
   try {
     const data = await getTopSellingProducts();
     return res.status(200).json({ success: true, data });
