@@ -1,6 +1,7 @@
 const {
   getSummaryData,
   getSalesReportHelper,
+  getTopSellingProducts,
 } = require("../helpers/adminDashboardHelper");
 
 exports.getSummary = async (req, res) => {
