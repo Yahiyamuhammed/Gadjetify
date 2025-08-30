@@ -148,7 +148,7 @@ exports.getSalesReportHelper = async ({ startDate, endDate, period }) => {
 
   return report;
 };
-const Order = require("../models/Order");
+
 
 exports.getTopSellingProducts = async () => {
   try {
