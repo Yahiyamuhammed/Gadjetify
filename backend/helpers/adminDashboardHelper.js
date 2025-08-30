@@ -148,3 +148,74 @@ exports.getSalesReportHelper = async ({ startDate, endDate, period }) => {
 
   return report;
 };
+const Order = require("../models/Order");
+
+exports.getTopSellingProducts = async () => {
+  try {
+    const pipeline = [
+      // Step 1: Break items into separate documents
+      { $unwind: "$items" },
+
+      // Step 2: Exclude cancelled orders and returned products
+      {
+        $match: {
+          status: { $ne: "Cancelled" },
+          "items.returnStatus": { $ne: "returned" }
+        }
+      },
+
+      // Step 3: Group sales by product + variant
+      {
+        $group: {
+          _id: {
+            productId: "$items.productId",
+            productName: "$items.productName",
+            brandName: "$items.brandName",
+            variantId: "$items.variantId",
+            ram: "$items.ram",
+            storage: "$items.storage"
+          },
+          unitsSold: { $sum: "$items.quantity" },
+          revenue: { $sum: { $multiply: ["$items.quantity", "$items.price"] } }
+        }
+      },
+
+      // Step 4: Lookup variant stock
+      {
+        $lookup: {
+          from: "variants",
+          localField: "_id.variantId",
+          foreignField: "_id",
+          as: "variantDetails"
+        }
+      },
+      { $unwind: { path: "$variantDetails", preserveNullAndEmptyArrays: true } },
+
+      // Step 5: Reshape output
+      {
+        $project: {
+          _id: 0,
+          product: "$_id.productName",
+          variant: {
+            $concat: [
+              { $toString: "$_id.storage" }, "GB ",
+              { $toString: "$_id.ram" }, "GB RAM"
+            ]
+          },
+          brand: "$_id.brandName",
+          unitsSold: 1,
+          revenue: 1,
+          stockLeft: "$variantDetails.stock"
+        }
+      },
+
+      // Step 6: Sort & Limit
+      { $sort: { unitsSold: -1 } },
+      { $limit: 10 }
+    ];
+
+    return await Order.aggregate(pipeline);
+  } catch (err) {
+    throw new Error("Error fetching top selling products: " + err.message);
+  }
+};
