@@ -219,3 +219,33 @@ exports.getTopSellingProducts = async () => {
     throw new Error("Error fetching top selling products: " + err.message);
   }
 };
+
+exports.getTopBrands=async(limit = 10) =>{
+  const topBrands = await Order.aggregate([
+    { $match: { status: "Delivered" } }, 
+    { $unwind: "$items" },
+    {
+      $group: {
+        _id: "$items.brandId",
+        brandName: { $first: "$items.brandName" },
+        unitsSold: { $sum: "$items.quantity" },
+        revenue: { $sum: { $multiply: ["$items.quantity", "$items.price"] } },
+        productSet: { $addToSet: "$items.productId" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        brandId: "$_id",
+        brandName: 1,
+        unitsSold: 1,
+        revenue: 1,
+        numberOfProducts: { $size: "$productSet" },
+      },
+    },
+    { $sort: { unitsSold: -1 } },
+    { $limit: limit },
+  ]);
+
+  return topBrands;
+}

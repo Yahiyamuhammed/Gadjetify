@@ -321,6 +321,34 @@ function DraggableRow({ row }) {
     </TableRow>
   );
 }
+const productColumns = [
+  {
+    accessorKey: "product",
+    header: "Product",
+  },
+  {
+    accessorKey: "variant",
+    header: "Variant",
+  },
+  {
+    accessorKey: "brand",
+    header: "Brand",
+  },
+  {
+    accessorKey: "unitsSold",
+    header: "Units Sold",
+  },
+  {
+    accessorKey: "revenue",
+    header: "Revenue",
+    cell: ({ row }) => `₹${row.getValue("revenue").toLocaleString()}`, // formatted
+  },
+  {
+    accessorKey: "stockLeft",
+    header: "Stock Left",
+    cell: ({ row }) => row.getValue("stockLeft") ?? "N/A", 
+  },
+];
 
 export function DataTable() {
   // const [data, setData] = React.useState(() => initialData);
@@ -348,34 +376,6 @@ export function DataTable() {
     [data]
   );
 
-  const productColumns = [
-    {
-      accessorKey: "product",
-      header: "Product",
-    },
-    {
-      accessorKey: "variant",
-      header: "Variant",
-    },
-    {
-      accessorKey: "brand",
-      header: "Brand",
-    },
-    {
-      accessorKey: "unitsSold",
-      header: "Units Sold",
-    },
-    {
-      accessorKey: "revenue",
-      header: "Revenue",
-      cell: ({ row }) => `₹${row.getValue("revenue").toLocaleString()}`, // formatted
-    },
-    {
-      accessorKey: "stockLeft",
-      header: "Stock Left",
-      cell: ({ row }) => row.getValue("stockLeft") ?? "N/A", 
-    },
-  ];
 
   const table = useReactTable({
     data,
