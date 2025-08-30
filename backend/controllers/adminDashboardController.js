@@ -15,9 +15,7 @@ exports.getSummary = async (req, res) => {
 
 exports.getSalesReport = async (req, res) => {
   try {
-    console.log(req.query)
     const { startDate, endDate, period } = req.query;
-    console.log(startDate, endDate, period)
     if (!startDate || !endDate) {
       return res
         .status(400)
@@ -32,5 +30,14 @@ exports.getSalesReport = async (req, res) => {
   } catch (err) {
     console.error("Sales Report Error:", err);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.topProducts = async (req, res) => {
+  try {
+    const data = await getTopSellingProducts();
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
