@@ -6,19 +6,10 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import data from "@/components/data.json";
-import {
-  useFetchSalesReport,
-  useFetchSummaryData,
-} from "@/hooks/queries/useAdminDashboardQueries";
+import { useFetchSummaryData } from "@/hooks/queries/useAdminDashboardQueries";
 
 export default function AdminDashboard() {
   const { data: summary, isLoading: summaryIsLoading } = useFetchSummaryData();
-  // const { data: sales } = useFetchSalesReport({
-  //   startDate: "2024-06-01",
-  //   endDate: "2025-08-30",
-  //   period: "day",
-  // });
-  // console.log(sales);
   return (
     <SidebarProvider
       style={{
