@@ -63,13 +63,13 @@ const getDateRange = (timeRange) => {
 };
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile();
-  const [timeRange, setTimeRange] = React.useState("90d");
-  const [starting, setStart] = useState(getDateRange("90d"));
+  const [timeRange, setTimeRange] = React.useState("30d");
+  const [starting, setStart] = useState(getDateRange("30d"));
   const { data: sales } = useFetchSalesReport({
     ...starting,
   });
 
-  console.log(sales);
+  
   useEffect(() => {
     if (isMobile) {
       setTimeRange("7d");
