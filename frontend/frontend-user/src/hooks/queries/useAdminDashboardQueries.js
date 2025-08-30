@@ -23,3 +23,12 @@ export const useFetchSalesReport = ({ startDate, endDate, period, page, limit })
     enabled: !!startDate && !!endDate,
   });
 };
+export const useFetchTopProducts = () => {
+  return useQuery({
+    queryKey: ["topProducts"],
+    queryFn: async () => {
+      const res = await api.get("/admin/dashboard/bestsellers/products");
+      return res.data.data;
+    },
+  });
+};
