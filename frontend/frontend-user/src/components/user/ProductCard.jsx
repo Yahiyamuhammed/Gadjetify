@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { useToggleWishlist } from "@/hooks/mutations/useWishListMutations";
 import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
 import { useAddToCart } from "@/hooks/mutations/useCartMutations";
+import { Badge } from "@/components/ui/badge";
 
 const ProductCard = ({ product = [], refetch }) => {
   const navigate = useNavigate();
@@ -45,7 +46,9 @@ const ProductCard = ({ product = [], refetch }) => {
           else toast.success("wishlist removed");
         },
         onError: (err) => {
-          toast.error(` ${err.response.data.message}` || `failed to update ${err.message}`);
+          toast.error(
+            ` ${err.response.data.message}` || `failed to update ${err.message}`
+          );
         },
       }
     );
@@ -65,7 +68,8 @@ const ProductCard = ({ product = [], refetch }) => {
         onError: (err) => {
           if (err?.status === 409)
             toast.error(`Maximum quantity (3) reached for this item in cart`);
-          else toast.error(` ${err.response.data.message}` || `an error occured}`);
+          else
+            toast.error(` ${err.response.data.message}` || `an error occured}`);
         },
       }
     );
@@ -163,6 +167,22 @@ const ProductCard = ({ product = [], refetch }) => {
               </span>
             </div>
           </div>
+          {product?.defaultVariant && (
+            <div className="flex items-center gap-2 mb-3">
+              <Badge
+                variant="secondary"
+                className="bg-blue-500 text-white dark:bg-blue-600"
+              >
+                {product.defaultVariant.ram}GB RAM
+              </Badge>
+              <Badge
+                variant="secondary"
+                className="bg-blue-500 text-white dark:bg-blue-600"
+              >
+                {product.defaultVariant.storage}GB Storage
+              </Badge>
+            </div>
+          )}
 
           {/* Description - Fixed height ensures consistent spacing */}
           <div className="min-h-[40px] mb-2">
