@@ -6,10 +6,12 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import data from "@/components/data.json";
-import { useFetchSummaryData } from "@/hooks/queries/useAdminDashboardQueries";
+import { useFetchSummaryData, useFetchTopBrand } from "@/hooks/queries/useAdminDashboardQueries";
 
 export default function AdminDashboard() {
   const { data: summary, isLoading: summaryIsLoading } = useFetchSummaryData();
+  const {data}=useFetchTopBrand()
+  console.log(data)
   return (
     <SidebarProvider
       style={{

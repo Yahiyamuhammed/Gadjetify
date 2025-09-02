@@ -90,7 +90,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useFetchTopProducts } from "@/hooks/queries/useAdminDashboardQueries";
+import {
+  useFetchTopBrand,
+  useFetchTopProducts,
+} from "@/hooks/queries/useAdminDashboardQueries";
 
 export const schema = z.object({
   id: z.number(),
@@ -346,7 +349,7 @@ const productColumns = [
   {
     accessorKey: "stockLeft",
     header: "Stock Left",
-    cell: ({ row }) => row.getValue("stockLeft") ?? "N/A", 
+    cell: ({ row }) => row.getValue("stockLeft") ?? "N/A",
   },
 ];
 
@@ -368,6 +371,8 @@ export function DataTable() {
   );
 
   const { data: products, isLoading, isError } = useFetchTopProducts();
+  const { data: brands } = useFetchTopBrand();
+
   console.log(products);
   const data = products || [];
   // const dataIds = React.useMemo(() => data?.map(({ id }) => id) || [], [data]);
@@ -375,7 +380,6 @@ export function DataTable() {
     () => data.map((row) => `${row.product}-${row.variant}-${row.brand}`),
     [data]
   );
-
 
   const table = useReactTable({
     data,
@@ -431,14 +435,18 @@ export function DataTable() {
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Best Selling Products">Best Selling Products</SelectItem>
+            <SelectItem value="Best Selling Products">
+              Best Selling Products
+            </SelectItem>
             <SelectItem value="past-performance">Past Performance</SelectItem>
             <SelectItem value="key-personnel">Key Personnel</SelectItem>
             <SelectItem value="focus-documents">Focus Documents</SelectItem>
           </SelectContent>
         </Select>
         <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-          <TabsTrigger value="Best Selling Products">Best Selling Products</TabsTrigger>
+          <TabsTrigger value="Best Selling Products">
+            Best Selling Products
+          </TabsTrigger>
           <TabsTrigger value="past-performance">
             Past Performance <Badge variant="secondary">3</Badge>
           </TabsTrigger>
