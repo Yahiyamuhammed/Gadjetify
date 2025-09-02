@@ -40,8 +40,11 @@ const ProductCard = ({ product = [], refetch }) => {
     toggleWishlist(
       { productId, variantId },
       {
-        onSuccess: () => {
-          toast.success("wishlist added");
+        onSuccess: (res) => {
+          if(res.wishlist)
+            toast.success("wishlist added");
+          else
+            toast.success('wishlist removed')
         },
         onError: (err) => {
           toast.error(`failed to update ${err.message}`);

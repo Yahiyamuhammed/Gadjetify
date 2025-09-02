@@ -1,3 +1,4 @@
+const { fetchSalesReport } = require("../controllers/adminDashboardController");
 const Wishlist = require("../models/wishListModel");
 
 
@@ -30,6 +31,7 @@ exports.getWishlist = async (userId) => {
 
 exports.toggleWishlistItem = async (userId, productId, variantId) => {
   let wishlist = await Wishlist.findOne({ user: userId });
+  let addItem=true
 
   if (!wishlist) {
     wishlist = new Wishlist({ user: userId, items: [] });
@@ -42,13 +44,14 @@ exports.toggleWishlistItem = async (userId, productId, variantId) => {
   );
 
   if (index !== -1) {
-    wishlist.items.splice(index, 1); // remove if exists
+    wishlist.items.splice(index, 1);
+    addItem=false
   } else {
     wishlist.items.push({ product: productId, variant: variantId });
   }
 
   await wishlist.save();
-  return wishlist.items;
+  return addItem;
 };
 
 exports.removeFromWishlist = async (userId, productId, variantId) => {
