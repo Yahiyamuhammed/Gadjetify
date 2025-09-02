@@ -17,7 +17,8 @@ exports.getUserOrders = async (userId) => {
     .select("-__v");
 
   const simplifiedOrders = orders.map((order) => ({
-    orderId: order._id,
+    orderDbId: order._id,
+    orderId: order.orderId,
     status: order.status,
     date: order.createdAt,
     items: order.items.map((item) => ({
@@ -44,7 +45,7 @@ exports.getOrderById = async (userId, orderId) => {
     return { status: 404, message: "Order not found" };
   }
   const simplifiedOrder = {
-    orderDbId:order._id,
+    orderDbId: order._id,
     orderId: order.orderId,
     status: order.status,
     createdAt: order.createdAt,
@@ -134,8 +135,8 @@ exports.placeOrder = async ({
 
     await Variant.findByIdAndUpdate(variantId, { $inc: { stock: -quantity } });
   }
-  const orderId= generateOrderId()
-  console.log(orderId)
+  const orderId = generateOrderId();
+  console.log(orderId);
 
   const newOrder = await Order.create({
     orderId,
