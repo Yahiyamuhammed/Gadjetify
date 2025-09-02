@@ -38,7 +38,7 @@ exports.addToCart = async (userId, { productId, variantId }) => {
       await cart.save();
       return {
         status: 409,
-        message: `Maximum quantity (${MAX_QUANTITY}) reached for this item`,
+        message: `Maximum quantity (${MAX_QUANTITY}) reached for this item in the cart`,
       };
     }
 
