@@ -4,7 +4,11 @@ export const productColumns = [
   { accessorKey: "brand", header: "Brand" },
   { accessorKey: "unitsSold", header: "Units Sold" },
   { accessorKey: "revenue", header: "Revenue" },
-  { accessorKey: "stockLeft", header: "Stock Left" },
+  {
+    accessorKey: "stockLeft",
+    header: "Stock Left",
+    cell: ({ row }) => row.getValue("stockLeft") ?? "N/A",
+  },
 ];
 
 export const brandColumns = [
