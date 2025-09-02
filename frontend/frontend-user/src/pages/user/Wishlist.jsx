@@ -8,10 +8,9 @@ import { useClearWishlist } from '@/hooks/mutations/useWishListMutations';
 
 const WishlistScreen = () => {
 
-    const {data:products,isLoading,isError}=useFetchWishlist()
+    const {data:products,isLoading,isError,error}=useFetchWishlist()
     const {mutate:clearWishlist}=useClearWishlist()
 
-    console.log(products)
 
   const [wishlistItems, setWishlistItems] = useState([])
 //     // {
@@ -39,10 +38,12 @@ const WishlistScreen = () => {
   };
 
   const emptyWishlist = () => {
-    toast.success('clicked clear wishlist')
-    clearWishlist({
+    clearWishlist({},{
         onSuccess:()=>{
             toast.success('wishlist cleared')
+        },
+        onError:(err)=>{
+          toast.error(` ${err.response.data.message}` || 'an error occured')
         }
     })
     // setWishlistItems([]);
@@ -72,8 +73,8 @@ const WishlistScreen = () => {
                   ))
                 ) : isLoading ? (
                   <p>Loading products...</p>
-                ) : isError ? (
-                  <p className="text-red-500">Error: {error.message}</p>
+                ) : error ? (
+                  <p className="text-red-500">Error: {error.response.data.message}</p>
                 ) : (
                   <p>No products found.</p>
                 )}

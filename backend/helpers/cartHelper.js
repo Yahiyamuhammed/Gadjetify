@@ -5,6 +5,7 @@ const Wishlist = require("../models/wishListModel");
 
 exports.addToCart = async (userId, { productId, variantId }) => {
   const MAX_QUANTITY = 3;
+  let increaseQuantity=1
 
   const product = await Product.findById(productId);
   if (!product || product.isBlocked || !product.isListed) {
@@ -37,12 +38,13 @@ exports.addToCart = async (userId, { productId, variantId }) => {
       await cart.save();
       return {
         status: 409,
-        message: `Maximum quantity (${MAX_QUANTITY}) reached for this item`,
+        message: `Maximum quantity (${MAX_QUANTITY}) reached for this item in the cart`,
       };
     }
 
     const newQuantity = Math.min(currentQuantity + 1, variant.stock, MAX_QUANTITY);
     cart.items[itemIndex].quantity = newQuantity;
+    increaseQuantity=newQuantity
 
   } else {
     cart.items.push({ productId, variantId, quantity: 1 });
@@ -54,7 +56,7 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   );
 
   await cart.save();
-  return { status: 200, message: "Item added to cart" };
+  return { status: 200, message: "Item added to cart" ,quantity:increaseQuantity};
 };
 
 

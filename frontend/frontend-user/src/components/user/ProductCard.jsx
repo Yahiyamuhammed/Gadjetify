@@ -40,11 +40,12 @@ const ProductCard = ({ product = [], refetch }) => {
     toggleWishlist(
       { productId, variantId },
       {
-        onSuccess: () => {
-          toast.success("wishlist added");
+        onSuccess: (res) => {
+          if (res.wishlist) toast.success("wishlist added");
+          else toast.success("wishlist removed");
         },
         onError: (err) => {
-          toast.error(`failed to update ${err.message}`);
+          toast.error(` ${err.response.data.message}` || `failed to update ${err.message}`);
         },
       }
     );
@@ -54,13 +55,17 @@ const ProductCard = ({ product = [], refetch }) => {
     addToCart(
       { productId, variantId },
       {
-        onSuccess: () => {
-          toast.success("item added to cart");
+        onSuccess: (res) => {
+          if (res.quantity > 1) {
+            toast.success(`Item quantity increased to ${res.quantity}`);
+          } else {
+            toast.success("Item added to cart");
+          }
         },
         onError: (err) => {
-           if (err?.status === 409) toast.error(`Maximum quantity (3) reached for this item in cart`)
-            else
-          toast.error(`an error occured ${err}`);
+          if (err?.status === 409)
+            toast.error(`Maximum quantity (3) reached for this item in cart`);
+          else toast.error(` ${err.response.data.message}` || `an error occured}`);
         },
       }
     );

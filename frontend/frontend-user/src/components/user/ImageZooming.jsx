@@ -8,7 +8,7 @@ const ImageZoom = ({ mainImage, product, onFavClick, selectedVariant }) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
-  const { data: wishlistItems=[] } = useFetchWishlist();
+  const { data: wishlistItems = [] } = useFetchWishlist();
   const { mutate: toggleWishlist } = useToggleWishlist();
 
   const isInWishlist = wishlistItems.some(
@@ -36,8 +36,9 @@ const ImageZoom = ({ mainImage, product, onFavClick, selectedVariant }) => {
     toggleWishlist(
       { productId, variantId },
       {
-        onSuccess: () => {
-          toast.success("wishlist added");
+        onSuccess: (res) => {
+          if (res.wishlist) toast.success("wishlist added");
+          else toast.success("wishlist removed");
         },
         onError: (err) => {
           toast.error(`failed to update ${err.message}`);
