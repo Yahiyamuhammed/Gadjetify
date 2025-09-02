@@ -124,3 +124,8 @@ exports.removeFromCart = async (userId, { variantId }) => {
   );
   return { message: "Item removed" };
 };
+
+exports.getCartItemCount = async (userId) => {
+  const cart = await Cart.findOne({ userId: userId });
+  return cart ? cart.items.reduce((acc, item) => acc + 1, 0) : 0;
+};

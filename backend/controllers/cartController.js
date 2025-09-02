@@ -1,9 +1,17 @@
 // import * as cartHelper from "../helpers/cartHelper.js";
-const {addToCart,getCart,updateQuantity,removeFromCart} =require('../helpers/cartHelper')
+const {
+  addToCart,
+  getCart,
+  updateQuantity,
+  removeFromCart,
+  getCartItemCount,
+} = require("../helpers/cartHelper");
 exports.addToCart = async (req, res) => {
   try {
     const response = await addToCart(req.user._id, req.body);
-    res.status(response.status).json({ message: response.message ,quantity:response.quantity});
+    res
+      .status(response.status)
+      .json({ message: response.message, quantity: response.quantity });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -33,5 +41,15 @@ exports.removeFromCart = async (req, res) => {
     res.json(response);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+};
+
+exports.getCartCount = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+    const count = await getCartItemCount(userId);
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching cart count", error });
   }
 };
