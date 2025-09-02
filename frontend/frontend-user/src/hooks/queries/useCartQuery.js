@@ -8,6 +8,15 @@ export const useFetchCart = () => {
       const res = await api.get("/cart")
       return res.data
     },
-    // staleTime: 5 * 60 * 1000, // optional: 5 minutes
   })
 }
+
+export const useFetchCartCount = () => {
+  return useQuery({
+    queryKey: ["cartCount"],
+    queryFn: async () => {
+      const res = await axios.get("/cart/count");
+      return res.data.count;
+    },
+  });
+};
