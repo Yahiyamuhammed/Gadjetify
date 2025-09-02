@@ -57,9 +57,13 @@ const ProductCard = ({ product = [], refetch }) => {
     addToCart(
       { productId, variantId },
       {
-        onSuccess: () => {
-          toast.success("item added to cart");
-        },
+        onSuccess: (res) => {
+          console.log(res)
+if (res.quantity > 1) {
+    toast.success(`Item quantity increased to ${res.quantity}`);
+  } else {
+    toast.success("Item added to cart");
+  }        },
         onError: (err) => {
            if (err?.status === 409) toast.error(`Maximum quantity (3) reached for this item in cart`)
             else

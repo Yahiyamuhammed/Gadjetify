@@ -3,7 +3,7 @@ const {addToCart,getCart,updateQuantity,removeFromCart} =require('../helpers/car
 exports.addToCart = async (req, res) => {
   try {
     const response = await addToCart(req.user._id, req.body);
-    res.status(response.status).json({ message: response.message });
+    res.status(response.status).json({ message: response.message ,quantity:response.quantity});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
