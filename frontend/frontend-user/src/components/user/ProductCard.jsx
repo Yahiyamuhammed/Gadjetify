@@ -45,7 +45,7 @@ const ProductCard = ({ product = [], refetch }) => {
           else toast.success("wishlist removed");
         },
         onError: (err) => {
-          toast.error(`failed to update ${err.message}`);
+          toast.error(` ${err.response.data.message}` || `failed to update ${err.message}`);
         },
       }
     );
@@ -65,7 +65,7 @@ const ProductCard = ({ product = [], refetch }) => {
         onError: (err) => {
           if (err?.status === 409)
             toast.error(`Maximum quantity (3) reached for this item in cart`);
-          else toast.error(`an error occured ${err}`);
+          else toast.error(` ${err.response.data.message}` || `an error occured}`);
         },
       }
     );
