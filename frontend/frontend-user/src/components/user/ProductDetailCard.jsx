@@ -23,18 +23,16 @@ import {
 import { useAddToCart } from "@/hooks/mutations/useCartMutations";
 import toast from "react-hot-toast";
 
-// Replace with your backend URL
-const backendUrl = "http://localhost:5000";
-
 const ProductDetailsCard = ({ product }) => {
   const { mutate: addToCart } = useAddToCart();
 
   const navigate = useNavigate();
   const [mainImage, setMainImage] = useState(noImage);
-
+  // console.log(product?.images[0].url)
   useEffect(() => {
     if (product?.images?.[0]) {
-      setMainImage(`${backendUrl}/products/${product.images[0]}`);
+      setMainImage(product.images[0].url);
+      // console.log(mainImage)
     }
   }, [product]);
 
@@ -44,7 +42,6 @@ const ProductDetailsCard = ({ product }) => {
 
   // console.log(selectedVariant.stock);
 
-  
   const handleAddToCart = (variantId, productId) => {
     addToCart(
       { productId, variantId },
@@ -58,7 +55,6 @@ const ProductDetailsCard = ({ product }) => {
       }
     );
   };
-
 
   const finalPrice = () => {
     const totalDiscount =
@@ -116,18 +112,16 @@ const ProductDetailsCard = ({ product }) => {
                   {product.images.map((filename, index) => (
                     <button
                       key={index}
-                      onClick={() =>
-                        setMainImage(`${backendUrl}/products/${filename}`)
-                      }
+                      onClick={() => setMainImage(filename.url)}
                       className={`relative aspect-square rounded-lg overflow-hidden
                         ${
-                          mainImage === `${backendUrl}/products/${filename}`
+                          mainImage === filename.url
                             ? "ring-2 ring-indigo-500"
                             : "ring-1 ring-gray-200 dark:ring-gray-700"
                         } hover:ring-2 hover:ring-indigo-400 transition-all`}
                     >
                       <img
-                        src={`${backendUrl}/products/${filename}`}
+                        src={filename.url}
                         alt={`thumb-${index}`}
                         className="object-cover w-full h-full"
                       />
@@ -225,24 +219,26 @@ const ProductDetailsCard = ({ product }) => {
                 {/* Stock Status */}
                 <p
                   className={`text-lg font-medium ${
-                    (selectedVariant.stock ) === 0
+                    selectedVariant.stock === 0
                       ? "text-red-600"
-                      : (selectedVariant.stock ) > 20
+                      : selectedVariant.stock > 20
                       ? "text-green-600"
                       : "text-yellow-600"
                   }`}
                 >
-                  {(selectedVariant.stock ) === 0
+                  {selectedVariant.stock === 0
                     ? "Out of Stock"
-                    : (selectedVariant.stock ) > 20
+                    : selectedVariant.stock > 20
                     ? "In Stock"
-                    : `Only ${selectedVariant.stock } left`}
+                    : `Only ${selectedVariant.stock} left`}
                 </p>
 
                 {/* Add to Cart */}
                 <div className="grid grid-cols-2 gap-4">
                   <AddCartButton
-                    onClick={()=>{handleAddToCart(selectedVariant._id,product._id)}}
+                    onClick={() => {
+                      handleAddToCart(selectedVariant._id, product._id);
+                    }}
                     productId={product._id}
                     disabled={selectedVariant.stock === 0 || product.isDeleted}
                     className="w-full px-6 py-3 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
