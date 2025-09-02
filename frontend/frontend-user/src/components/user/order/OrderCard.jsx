@@ -16,7 +16,7 @@ const OrderCard = ({ order, navigate }) => {
               Date: {new Date(order.date).toLocaleDateString()}
             </p>
           </div>
-          <Button onClick={() => navigate(order.orderId)}>View</Button>
+          <Button onClick={() => navigate(order.orderDbId)}>View</Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
