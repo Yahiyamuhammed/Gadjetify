@@ -23,7 +23,6 @@ const ProductAddForm = ({
   const [existingImages, setExistingImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const backendUrl = "http://localhost:5000";
 
   
   useEffect(() => {
