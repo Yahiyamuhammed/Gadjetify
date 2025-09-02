@@ -14,7 +14,7 @@ import ProfileDropdown from "./user/ProfileDropdown";
 import { useFetchCartCount } from "@/hooks/queries/useCartQuery";
 import { Badge } from "@/components/ui/badge";
 
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Heart } from "lucide-react";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,7 +26,7 @@ const Navbar = () => {
   const { mutate: logouMutate, isError, isSuccess } = useLogoutMutation();
 
   const { data: user } = useAuthUser();
-  const {data:cartCount}=useFetchCartCount()
+  const { data: cartCount } = useFetchCartCount();
 
   // console.log("this is the user in navbar", !!user);
 
@@ -87,26 +87,29 @@ const Navbar = () => {
       <ul className="hidden lg:flex items-center gap-8 text-sm font-medium absolute left-1/2 -translate-x-1/2">
         {navLinks.map((link) => (
           <li key={link.name}>
-           {link.name === "Cart" ? (
-        <Link to={link.path} className="relative flex items-center">
-          <ShoppingCart className="w-5 h-5" />
-          {cartCount > 0 && (
-                   <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
-
-              {cartCount}
-            </Badge>
-          )}
-        </Link>
-      ) : (
-        <Link
-          to={link.path}
-          className={`hover:text-blue-600 transition-colors duration-300 ${
-            isActive(link.path) ? "text-black font-bold" : ""
-          }`}
-        >
-          {link.name}
-        </Link>
-      )}
+            {link.name === "Cart" ? (
+              <Link to={link.path} className="relative flex items-center">
+                <ShoppingCart className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <Badge className="h-5 min-w-5 rounded-full px-1 mb-5 font-mono tabular-nums">
+                    {cartCount}
+                  </Badge>
+                )}
+              </Link>
+            ) : link.name === "Wishlist" ? (
+              <Link to={link.path} className="relative flex items-center">
+                <Heart className="w-5 h-5" />
+              </Link>
+            ) : (
+              <Link
+                to={link.path}
+                className={`hover:text-blue-600 transition-colors duration-300 ${
+                  isActive(link.path) ? "text-black font-bold" : ""
+                }`}
+              >
+                {link.name}
+              </Link>
+            )}
           </li>
         ))}
       </ul>
