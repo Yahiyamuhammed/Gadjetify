@@ -14,7 +14,7 @@ export const getAdminProductColumns = (onStatusChange, onEdit) => [
     cell: ({ row }) => {
       const imgArr = row.original.images;
       const imageUrl = imgArr?.[0]
-        ? `http://localhost:5000/products/${imgArr[0]}`
+        ? imgArr[0].url
         : noImage;
       return (
         <img

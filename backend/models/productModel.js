@@ -1,18 +1,29 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: String,
-  // brand: String,
-  brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' },
-  model: String,
-  returnPolicy: String,
-  codAvailable: { type: Boolean, default: true },
-  warranty: String,
-  offerPercentage: { type: Number, default: 0 },
-  images: [String], // filenames or URLs
-  isListed: { type: Boolean, default: true },
-  isDeleted: { type: Boolean, default: false }
-}, { timestamps: true }); // adds createdAt and updatedAt
+const productSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    description: String,
+    // brand: String,
+    brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand" },
+    model: String,
+    returnPolicy: String,
+    codAvailable: { type: Boolean, default: true },
+    warranty: String,
+    offerPercentage: { type: Number, default: 0 },
+    // images: [String], // filenames or URLs
+    images: [
+      {
+        url: String,
+        public_id: String,
+        _id: false,
+      },
+    ],
 
-module.exports = mongoose.model('Product', productSchema);
+    isListed: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+); // adds createdAt and updatedAt
+
+module.exports = mongoose.model("Product", productSchema);

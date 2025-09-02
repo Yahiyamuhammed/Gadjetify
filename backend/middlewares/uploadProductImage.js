@@ -1,7 +1,7 @@
 const multer = require("multer");
-const sharp = require("sharp");
-const fs = require("fs");
-const path = require("path");
+const cloudinary = require("../config/cloudinary");
+const streamifier = require("streamifier");
+
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -14,37 +14,42 @@ const upload = multer({
   },
 });
 const resizeAndSaveImages = async (req, res, next) => {
-  console.log("this is inside upload", req.files.length );
- const isEdit = req.method === "PUT";
+  const isEdit = req.method === "PUT";
 
   try {
-    
-   if (!isEdit && (!req.files || req.files.length < 3)) {
+    if (!isEdit && (!req.files || req.files.length < 3)) {
       return res.status(400).json({ message: "Minimum 3 images required" });
     }
 
-    const productDir = path.join(__dirname, "../public/products");
-    if (!fs.existsSync(productDir))
-      fs.mkdirSync(productDir, { recursive: true });
+    const uploadToCloudinary = (fileBuffer) => {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "shopping_cart/products" }, // folder in Cloudinary
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+      });
+    };
 
-    const imageNames = [];
-
+    const uploadedImages = [];
     for (let i = 0; i < req.files.length; i++) {
-      const filename = `product-${Date.now()}-${i}.png`;
-      const filepath = path.join(productDir, filename);
-
-      await fs.promises.writeFile(filepath, req.files[i].buffer);
-
-      imageNames.push(filename);
+      const result = await uploadToCloudinary(req.files[i].buffer);
+      uploadedImages.push({
+        url: result.secure_url,
+        public_id: result.public_id,
+      });
     }
 
-    req.body.images = imageNames;
+    req.body.images = uploadedImages; // store URLs + public_ids in DB
     next();
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     res
       .status(500)
-      .json({ message: "Image processing failed", error: err.message });
+      .json({ message: "Image upload failed", error: err.message });
   }
 };
 

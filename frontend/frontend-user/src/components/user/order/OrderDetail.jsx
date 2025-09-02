@@ -251,7 +251,7 @@ const OrderDetail = ({ orderId, onBack }) => {
                 className="flex gap-4 border p-4 rounded-lg bg-gray-50 items-center"
               >
                 <img
-                  src={`${IMAGE_BASE_URL}${item.image}`}
+                  src={item.image}
                   className="w-20 h-20 rounded object-cover"
                   alt={item.productName}
                 />

@@ -125,7 +125,7 @@ exports.placeOrder = async ({
       price: variant.price,
       quantity,
       offerPercentage: product.offerPercentage,
-      image: product.images[0] || "",
+      image: product.images[0].url || "",
     });
 
     await Variant.findByIdAndUpdate(variantId, { $inc: { stock: -quantity } });
