@@ -41,10 +41,8 @@ const ProductCard = ({ product = [], refetch }) => {
       { productId, variantId },
       {
         onSuccess: (res) => {
-          if(res.wishlist)
-            toast.success("wishlist added");
-          else
-            toast.success('wishlist removed')
+          if (res.wishlist) toast.success("wishlist added");
+          else toast.success("wishlist removed");
         },
         onError: (err) => {
           toast.error(`failed to update ${err.message}`);
@@ -58,16 +56,16 @@ const ProductCard = ({ product = [], refetch }) => {
       { productId, variantId },
       {
         onSuccess: (res) => {
-          console.log(res)
-if (res.quantity > 1) {
-    toast.success(`Item quantity increased to ${res.quantity}`);
-  } else {
-    toast.success("Item added to cart");
-  }        },
+          if (res.quantity > 1) {
+            toast.success(`Item quantity increased to ${res.quantity}`);
+          } else {
+            toast.success("Item added to cart");
+          }
+        },
         onError: (err) => {
-           if (err?.status === 409) toast.error(`Maximum quantity (3) reached for this item in cart`)
-            else
-          toast.error(`an error occured ${err}`);
+          if (err?.status === 409)
+            toast.error(`Maximum quantity (3) reached for this item in cart`);
+          else toast.error(`an error occured ${err}`);
         },
       }
     );

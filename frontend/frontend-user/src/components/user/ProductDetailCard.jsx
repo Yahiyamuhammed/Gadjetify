@@ -46,8 +46,12 @@ const ProductDetailsCard = ({ product }) => {
     addToCart(
       { productId, variantId },
       {
-        onSuccess: () => {
-          toast.success("item added to cart");
+        onSuccess: (res) => {
+          if (res.quantity > 1) {
+            toast.success(`Item quantity increased to ${res.quantity}`);
+          } else {
+            toast.success("Item added to cart");
+          }
         },
         onError: (err) => {
           toast.error(`an error occured ${err}`);
