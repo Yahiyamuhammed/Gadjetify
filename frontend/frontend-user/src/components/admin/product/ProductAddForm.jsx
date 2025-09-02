@@ -187,7 +187,7 @@ const ProductAddForm = ({
                     return (
                       <div key={index} className="relative group">
                         <img
-                          src={`${backendUrl}/products/${img}`}
+                          src={img.url}
                           alt={`Product ${index + 1}`}
                           className="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
                         />
