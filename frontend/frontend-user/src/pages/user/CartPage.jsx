@@ -18,7 +18,6 @@ const CartPage = () => {
 
   const navigate = useNavigate();
 
-
   //   console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
@@ -143,9 +142,7 @@ const CartPage = () => {
       );
       return;
     }
-      navigate("/checkout");
-
-  
+    navigate("/checkout");
   };
 
   if (cartItems?.length === 0) {
@@ -226,7 +223,7 @@ const CartPage = () => {
                   >
                     <div className="md:col-span-5 flex items-center mb-4 md:mb-0">
                       <img
-                        src={`${IMAGE_BASE_URL}${item.image}`}
+                        src={item.image.url}
                         alt={item.name}
                         className="h-24 w-24 object-contain rounded-lg"
                       />
@@ -240,9 +237,6 @@ const CartPage = () => {
                           </span>
                           <span className="bg-gray-100 px-2 py-1 text-xs rounded-md">
                             {item.storage} Storage
-                          </span>
-                          <span className="bg-gray-100 px-2 py-1 text-xs rounded-md">
-                            {item.color}
                           </span>
                         </div>
                         <button
