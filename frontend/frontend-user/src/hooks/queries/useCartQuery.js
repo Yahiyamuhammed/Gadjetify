@@ -15,7 +15,7 @@ export const useFetchCartCount = () => {
   return useQuery({
     queryKey: ["cartCount"],
     queryFn: async () => {
-      const res = await axios.get("/cart/count");
+      const res = await api.get("/cart/count");
       return res.data.count;
     },
   });
