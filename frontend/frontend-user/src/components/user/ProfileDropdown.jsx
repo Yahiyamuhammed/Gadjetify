@@ -75,26 +75,6 @@ export default function ProfileDropdown({ onSignOut }) {
             </Link>
           </li>
           <li>
-            <Link
-              to="/cart"
-              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-              onClick={() => setIsOpen(false)}
-            >
-              <TbShoppingCart className="text-lg" />
-              Cart
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/wishlist"
-              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-              onClick={() => setIsOpen(false)}
-            >
-              <TbHeart className="text-lg" />
-              Wishlist
-            </Link>
-          </li>
-          <li>
             <a
               href="#"
               className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
