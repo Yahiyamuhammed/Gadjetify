@@ -29,6 +29,7 @@ const paymentRoutes=require('./routes/paymentRoutes')
 const adminCouponRoutes=require('./routes/adminCouponRoutes')
 const couponRoutes=require('./routes/couponRoutes')
 const adminReportRoutes=require('./routes/adminReportRoutes')
+const adminDashboardRoutes=require('./routes/adminDashboardRoutes')
 
 const allowedOrigins = [
   "http://localhost:5173",              // for local dev
@@ -65,6 +66,7 @@ app.use('/api/admin', adminVarientRoutes);
 app.use('/api/admin', adminOrderRoutes);
 app.use('/api/admin', adminCouponRoutes);
 app.use('/api/admin', adminReportRoutes);
+app.use('/api/admin', adminDashboardRoutes);
 
 app.use('/api',userAddressRoutes)
 app.use('/api',userProductRoutes)
