@@ -104,7 +104,7 @@ const ProductCard = ({ product = [], refetch }) => {
           <img
             src={
               product?.images?.[0]
-                ? `http://localhost:5000/products/${product.images[0]}`
+                ? `${product.images[0].url}`
                 : "/api/placeholder/320/288"
             }
             alt={product?.name || "Product"}
