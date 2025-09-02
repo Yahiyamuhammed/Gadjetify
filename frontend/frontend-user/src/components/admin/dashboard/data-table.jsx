@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  flexRender,
+  
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -15,7 +15,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -117,10 +117,6 @@ export function DataTable() {
                 ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">Add Section</span>
-          </Button>
         </div>
       </div>
 
