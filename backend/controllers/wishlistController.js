@@ -36,7 +36,7 @@ exports.clearWishlist = async (req, res) => {
   try {
     const userId = req.user._id;
     await clearWishlist(userId);
-    res.json({ message: 'Wishlist cleared' });
+    res.status(200).json({ message: 'Wishlist cleared' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to clear wishlist' });
   }

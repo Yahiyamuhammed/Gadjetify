@@ -75,6 +75,6 @@ exports.clearWishlist = async (userId) => {
   const wishlist = await Wishlist.findOne({ user: userId });
   if (wishlist) {
     wishlist.items = [];
-    await wishlist.save();
+    // await wishlist.save();
   }
 };
