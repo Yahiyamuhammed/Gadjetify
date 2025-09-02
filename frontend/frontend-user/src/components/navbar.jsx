@@ -19,8 +19,6 @@ const Navbar = () => {
   const toggleRef = useRef();
   const navigate = useNavigate();
 
- 
-
   const { mutate: logouMutate, isError, isSuccess } = useLogoutMutation();
 
   const { data: user } = useAuthUser();
@@ -32,8 +30,12 @@ const Navbar = () => {
     { name: "PRODUCTS", path: "/products" },
     { name: "CONTACT", path: "" },
     { name: "ABOUT US", path: "" },
-    { name: "Wishlist", path: "/wishlist" },
-    { name: "Cart", path: "/cart" },
+    ...(user
+      ? [
+          { name: "Wishlist", path: "/wishlist" },
+          { name: "Cart", path: "/cart" },
+        ]
+      : []),
   ];
 
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -102,11 +104,11 @@ const Navbar = () => {
           //   SIGN OUT
           // </button>
           <ProfileDropdown
-        userName="Jane Doe"
-        userRole="Editor"
-        avatarSrc="https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png" 
-        onSignOut={handleLogout}
-      />
+            userName="Jane Doe"
+            userRole="Editor"
+            avatarSrc="https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png"
+            onSignOut={handleLogout}
+          />
         ) : (
           <>
             <Link to="/login">
@@ -134,8 +136,6 @@ const Navbar = () => {
           </>
         )}
       </div>
-
-       
 
       {/* Mobile Menu Toggle */}
       <div ref={toggleRef} className="lg:hidden text-gray-700">
