@@ -6,6 +6,9 @@ const Address = require("../models/addressModal");
 const Cart = require("../models/cartModel");
 const WalletTransaction = require("../models/walletTransactionModel");
 const User = require("../models/userModal");
+const { nanoid } = require("nanoid");
+
+const generateOrderId = () => `ORD-${nanoid(8).toUpperCase()}`;
 
 exports.getUserOrders = async (userId) => {
   const orders = await Order.find({ userId })
@@ -41,7 +44,8 @@ exports.getOrderById = async (userId, orderId) => {
     return { status: 404, message: "Order not found" };
   }
   const simplifiedOrder = {
-    orderId: order._id,
+    orderDbId:order._id,
+    orderId: order.orderId,
     status: order.status,
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,
@@ -92,7 +96,7 @@ exports.placeOrder = async ({
   }
 
   const address = await Address.findById(addressId).lean();
-  
+
   if (!address) {
     return { status: 404, message: "Address not found" };
   }
@@ -130,8 +134,11 @@ exports.placeOrder = async ({
 
     await Variant.findByIdAndUpdate(variantId, { $inc: { stock: -quantity } });
   }
+  const orderId= generateOrderId()
+  console.log(orderId)
 
   const newOrder = await Order.create({
+    orderId,
     userId,
     addressId,
     addressSnapshot: {
