@@ -118,12 +118,12 @@ export default function AdminOrders() {
       />
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-lg w-full">
           <DialogHeader>
             <DialogTitle>Order Details</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-96 overflow-y-auto">
               {selectedOrder.products.map((product) => (
                 <div key={product._id} className="border p-2 rounded">
                   <div>Name: {product.name}</div>
@@ -134,7 +134,6 @@ export default function AdminOrders() {
                     product.returnStatus === "requested" && (
                       <>
                         <div>Return Reason: {product.returnReason}</div>
-
                         <Button
                           variant="outline"
                           onClick={() =>
