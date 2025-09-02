@@ -32,6 +32,8 @@ const Navbar = () => {
     { name: "PRODUCTS", path: "/products" },
     { name: "CONTACT", path: "" },
     { name: "ABOUT US", path: "" },
+    { name: "Wishlist", path: "/wishlist" },
+    { name: "Cart", path: "/cart" },
   ];
 
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
