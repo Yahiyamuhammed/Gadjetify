@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -12,90 +12,15 @@ import {
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import jsPDF from "jspdf";
-// import "jspdf-autotable";
 import autoTable from "jspdf-autotable";
 
-
 const OrderDetail = ({ orderId, onBack }) => {
-  const handleDownloadOrderPDF = () => {
-  if (!OrderDetail) return;
-
-  const doc = new jsPDF();
-
-  // Title
-  doc.setFontSize(16);
-  doc.text(`Order #${OrderDetail.orderId}`, 14, 20);
-  doc.setFontSize(12);
-  doc.text(
-    `Placed on: ${format(new Date(OrderDetail.createdAt), "dd/MM/yyyy")}`,
-    14,
-    28
-  );
-  doc.text(`Status: ${OrderDetail.status}`, 14, 36);
-
-  // Customer Info
-  doc.text("Customer Information:", 14, 50);
-  doc.text(`Name: ${OrderDetail.addressSnapshot.name}`, 14, 58);
-  doc.text(`Phone: ${OrderDetail.addressSnapshot.phone}`, 14, 66);
-  doc.text(
-    `Address: ${OrderDetail.addressSnapshot.address}, ${OrderDetail.addressSnapshot.district}`,
-    14,
-    74
-  );
-
-  // Order Items Table
-  const tableData = OrderDetail.items.map((item, index) => [
-    index + 1,
-    item.productName,
-    `${item.ram || ""} ${item.storage || ""}`,
-    item.quantity,
-    `₹${item.price}`,
-    `₹${item.price * item.quantity}`,
-  ]);
-
-  autoTable(doc, {
-    startY: 90,
-    head: [["#", "Product", "Variant", "Qty", "Price", "Total"]],
-    body: tableData,
-  });
-
-  // Summary
-  let finalY = doc.lastAutoTable.finalY + 10;
-  doc.text("Order Summary:", 14, finalY);
-
-  doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 14, finalY + 8);
-  doc.text(`Shipping: ₹${OrderDetail.summary.shipping}`, 14, finalY + 16);
-  doc.text(`Tax: ₹${OrderDetail.summary.tax}`, 14, finalY + 24);
-  doc.text(
-    `Discount: -₹${OrderDetail.summary.totalDiscount}`,
-    14,
-    finalY + 32
-  );
-  doc.text(
-    `Coupon Discount: -₹${OrderDetail.summary.couponDiscount || 0}`,
-    14,
-    finalY + 40
-  );
-
-  doc.setFont("helvetica", "bold");
-  doc.text(`Total: ₹${OrderDetail.summary.total}`, 14, finalY + 55);
-
-  // Save PDF
-  doc.save(`Order_${OrderDetail.orderId}.pdf`);
-};
-
-
-  const IMAGE_BASE_URL = "http://localhost:5000/products/";
-
-
-  if (!orderId) return <div> no Id returned </div>;
   const queryClient = useQueryClient();
-
   const [openReturnDialog, setOpenReturnDialog] = useState(false);
   const [returnProduct, setReturnProduct] = useState(null);
   const [returnReason, setReturnReason] = useState("");
 
-  const { mutate: requestReturn, isError: requestError } = useRequestReturn();
+  const { mutate: requestReturn } = useRequestReturn();
   const { mutate: cancelOrder } = useCancelOrder();
 
   const {
@@ -104,11 +29,8 @@ const OrderDetail = ({ orderId, onBack }) => {
     isError,
   } = useOrderDetails({ orderId });
 
-  if (isLoading || !OrderDetail) return <div>Loading...</div>;
-  if (isError) return <div>Failed to load order details</div>;
-  // if (requestError) return <div>Failed to load order details</div>;
-
-  // console.log(OrderDetail);
+  if (isLoading) return <div>Loading...</div>;
+  if (isError || !OrderDetail) return <div>Failed to load order details</div>;
 
   const subtotal = OrderDetail?.items?.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -120,21 +42,18 @@ const OrderDetail = ({ orderId, onBack }) => {
       { orderId },
       {
         onSuccess: () => {
-          toast.success("order cancelled");
+          toast.success("Order cancelled");
           queryClient.invalidateQueries(["orders", orderId]);
         },
         onError: (err) => {
-          toast.error(err.response.data.message || err.message);
+          toast.error(err?.response?.data?.message || err.message);
         },
       }
     );
   };
 
-  const handleSubmit = () => {
-    console.log("Returning:", returnProduct);
-    console.log("Reason:", returnReason);
-
-    if (returnReason.trim()?.length < 6) {
+  const handleReturnSubmit = () => {
+    if (!returnReason || returnReason.trim().length < 6) {
       toast.error("Please provide a valid reason for the return.");
       return;
     }
@@ -148,7 +67,7 @@ const OrderDetail = ({ orderId, onBack }) => {
       {
         onSuccess: () => {
           toast.success("Return Requested");
-          queryClient.invalidateQueries(["orders", OrderDetail?.orderId]);
+          queryClient.invalidateQueries(["orders", orderId]);
           setOpenReturnDialog(false);
           setReturnReason("");
           setReturnProduct(null);
@@ -163,17 +82,76 @@ const OrderDetail = ({ orderId, onBack }) => {
     );
   };
 
+  const handleDownloadOrderPDF = () => {
+    if (!OrderDetail) return;
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text(`Order #${OrderDetail.orderId}`, 14, 20);
+    doc.setFontSize(12);
+    doc.text(
+      `Placed on: ${format(new Date(OrderDetail.createdAt), "dd/MM/yyyy")}`,
+      14,
+      28
+    );
+    doc.text(`Status: ${OrderDetail.status}`, 14, 36);
+
+    doc.text("Customer Information:", 14, 50);
+    doc.text(`Name: ${OrderDetail.addressSnapshot.name}`, 14, 58);
+    doc.text(`Phone: ${OrderDetail.addressSnapshot.phone}`, 14, 66);
+    doc.text(
+      `Address: ${OrderDetail.addressSnapshot.address}, ${OrderDetail.addressSnapshot.locality}, ${OrderDetail.addressSnapshot.district}, ${OrderDetail.addressSnapshot.state} - ${OrderDetail.addressSnapshot.pincode}`,
+      14,
+      74
+    );
+
+    const tableData = OrderDetail.items.map((item, index) => [
+      index + 1,
+      item.productName,
+      item.ram && item.storage ? `${item.ram}GB / ${item.storage}GB` : "-",
+      item.quantity,
+      `₹${item.price}`,
+      `₹${item.price * item.quantity}`,
+    ]);
+
+    autoTable(doc, {
+      startY: 90,
+      head: [["#", "Product", "Variant", "Qty", "Price", "Total"]],
+      body: tableData,
+    });
+
+    let finalY = doc.lastAutoTable.finalY + 10;
+    doc.text("Order Summary:", 14, finalY);
+    doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 14, finalY + 8);
+    doc.text(`Shipping: ₹${OrderDetail.summary.shipping}`, 14, finalY + 16);
+    doc.text(`Tax: ₹${OrderDetail.summary.tax}`, 14, finalY + 24);
+    doc.text(
+      `Total Discount: -₹${OrderDetail.summary.totalDiscount}`,
+      14,
+      finalY + 32
+    );
+    doc.text(
+      `Coupon Discount: -₹${OrderDetail.summary.couponDiscount || 0}`,
+      14,
+      finalY + 40
+    );
+    doc.setFont("helvetica", "bold");
+    doc.text(`Total: ₹${OrderDetail.summary.total}`, 14, finalY + 55);
+
+    doc.save(`Order_${OrderDetail.orderId}.pdf`);
+  };
+
   return (
     <>
       <Card className="w-full max-w-4xl mx-auto">
-        {/* Header Section */}
+        {/* Header */}
         <div className="p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
-              Order #{OrderDetail?.orderId}
+              Order #{OrderDetail.orderId}
             </h1>
             <p className="text-gray-600 mt-1">
-              Placed on {format(new Date(OrderDetail?.createdAt), "dd/MM/yyyy")}
+              Placed on {format(new Date(OrderDetail.createdAt), "dd/MM/yyyy")}
             </p>
           </div>
           <Badge variant="outline" className="capitalize mt-2 sm:mt-0">
@@ -183,7 +161,7 @@ const OrderDetail = ({ orderId, onBack }) => {
 
         {/* Customer Info & Summary */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8 border-b">
-          {/* Customer Information */}
+          {/* Customer Info */}
           <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
               Customer Information
@@ -197,13 +175,26 @@ const OrderDetail = ({ orderId, onBack }) => {
                 <span className="font-medium text-gray-600">Phone:</span>{" "}
                 {OrderDetail.addressSnapshot.phone}
               </p>
-              <div>
-                <p className="font-medium text-gray-600">Shipping Address</p>
-                <p className="text-gray-900">
-                  {OrderDetail.addressSnapshot.address} ,{" "}
-                  {OrderDetail.addressSnapshot.district}
-                </p>
-              </div>
+              <p className="font-medium text-gray-600">Shipping Address:</p>
+              <p className="text-gray-900">
+                {OrderDetail.addressSnapshot.address},{" "}
+                {OrderDetail.addressSnapshot.locality},{" "}
+                {OrderDetail.addressSnapshot.district},{" "}
+                {OrderDetail.addressSnapshot.state} -{" "}
+                {OrderDetail.addressSnapshot.pincode}
+              </p>
+              <p>
+                <span className="font-medium text-gray-600">
+                  Payment Method:
+                </span>{" "}
+                {OrderDetail.paymentMethod.toUpperCase()}
+              </p>
+              <p>
+                <span className="font-medium text-gray-600">
+                  Payment Status:
+                </span>{" "}
+                {OrderDetail.paymentStatus.toUpperCase()}
+              </p>
             </div>
           </div>
 
@@ -231,6 +222,12 @@ const OrderDetail = ({ orderId, onBack }) => {
                   - ₹{OrderDetail.summary.totalDiscount}
                 </p>
               </div>
+              <div className="flex justify-between">
+                <p className="text-gray-600">Coupon Discount</p>
+                <p className="text-gray-900">
+                  - ₹{OrderDetail.summary.couponDiscount || 0}
+                </p>
+              </div>
               <div className="flex justify-between pt-3 border-t font-medium">
                 <p className="text-gray-900">Total</p>
                 <p className="text-gray-900">
@@ -241,59 +238,60 @@ const OrderDetail = ({ orderId, onBack }) => {
           </div>
         </div>
 
-        {/* Order Items */}
+        {/* Items */}
         <CardContent className="space-y-4">
-          {OrderDetail.items.map((item, index) => {
-            console.log(item);
-            return (
-              <div
-                key={index}
-                className="flex gap-4 border p-4 rounded-lg bg-gray-50 items-center"
-              >
-                <img
-                  src={item.image}
-                  className="w-20 h-20 rounded object-cover"
-                  alt={item.productName}
-                />
-                <div className="flex-1">
-                  <p className="font-medium text-lg">{item.productName}</p>
+          {OrderDetail.items.map((item) => (
+            <div
+              key={item.itemId}
+              className="flex gap-4 border p-4 rounded-lg bg-gray-50 items-center"
+            >
+              <img
+                src={item.image}
+                alt={item.productName}
+                className="w-20 h-20 rounded object-cover"
+              />
+              <div className="flex-1">
+                <p className="font-medium text-lg">{item.productName}</p>
 
-                  {item.ram && item.storage && (
-                    <p className="text-md text-gray-600">
-                      {item.ram} GB / {item.storage} GB
-                    </p>
-                  )}
-
-                  <p className="text-md text-gray-600">
-                    Quantity: {item.quantity}
-                  </p>
-
-                  <p className="text-md font-semibold text-blue-600">
-                    Price: ₹{item.price}
-                  </p>
-                </div>
-
-                {OrderDetail.status.toLowerCase() !==
-                "delivered" ? null : item.returnStatus === "not_requested" ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setReturnProduct(item);
-                      setReturnReason("");
-                      setOpenReturnDialog(true);
-                    }}
-                  >
-                    Return
-                  </Button>
-                ) : (
-                  <span className="text-sm text-gray-600 capitalize">
-                    {item.returnStatus.replace("_", " ")}
-                  </span>
+                {item.ram && item.storage && (
+                  <div className="flex gap-2 mt-1">
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 shadow-sm">
+                      {item.ram}GB RAM
+                    </span>
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 shadow-sm">
+                      {item.storage}GB Storage
+                    </span>
+                  </div>
                 )}
+
+                <p className="text-sm text-gray-600 mt-1">
+                  Quantity: {item.quantity}
+                </p>
+                <p className="text-md font-semibold text-blue-600">
+                  Price: ₹{item.price}
+                </p>
               </div>
-            );
-          })}
+
+              {OrderDetail.status.toLowerCase() === "delivered" &&
+              item.returnStatus === "not_requested" ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setReturnProduct(item);
+                    setReturnReason("");
+                    setOpenReturnDialog(true);
+                  }}
+                >
+                  Return
+                </Button>
+              ) : (
+                <span className="text-sm text-gray-600 capitalize">
+                  {item.returnStatus.replace("_", " ")}
+                </span>
+              )}
+            </div>
+          ))}
         </CardContent>
 
         {/* Actions */}
@@ -302,25 +300,24 @@ const OrderDetail = ({ orderId, onBack }) => {
             Back to Orders
           </Button>
           <div className="flex gap-2">
-            <Button onClick={handleDownloadOrderPDF} variant="outline">
+            <Button variant="outline" onClick={handleDownloadOrderPDF}>
               Download Order
             </Button>
             {OrderDetail.status.toLowerCase() === "placed" && (
-              <Button onClick={() => handleCancelOrder()} variant="destructive">
+              <Button variant="destructive" onClick={handleCancelOrder}>
                 Cancel Order
               </Button>
             )}
           </div>
         </div>
       </Card>
+
       <FormDialog
         open={openReturnDialog}
         setOpen={setOpenReturnDialog}
         title={`Return: ${returnProduct?.productName}`}
-        onSubmit={() => {
-          handleSubmit();
-        }}
-        formData={{}} // if not used, pass empty object
+        onSubmit={handleReturnSubmit}
+        formData={{}}
       >
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">

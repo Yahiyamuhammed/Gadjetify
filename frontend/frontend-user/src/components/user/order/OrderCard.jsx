@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const OrderCard = ({ order, navigate }) => {
-    const IMAGE_BASE_URL = "http://localhost:5000/products/";
+    // console.log(order)
 
   return (
     <Card>
