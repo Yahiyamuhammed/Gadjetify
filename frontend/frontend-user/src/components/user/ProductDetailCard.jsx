@@ -54,7 +54,6 @@ const ProductDetailsCard = ({ product }) => {
           }
         },
         onError: (err) => {
-          console.log(err)
           toast.error(` ${err.response.data.message}` || `an error occured `);
         },
       }
