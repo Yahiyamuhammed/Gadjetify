@@ -23,7 +23,7 @@ const OrderCard = ({ order, navigate }) => {
         {order.items.slice(0, 2).map((item, idx) => (
           <div key={idx} className="flex items-center gap-4">
             <img
-              src={`${IMAGE_BASE_URL}${item.image}`}
+              src={item.image}
               className="h-16 w-16 rounded object-cover"
               alt="Product"
             />
