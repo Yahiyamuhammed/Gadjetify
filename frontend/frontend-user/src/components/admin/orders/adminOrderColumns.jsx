@@ -33,7 +33,7 @@ export const getAdminOrderColumns = (onStatusChange, onViewDetails, onApproveRet
             <Button variant="outline">{order.status}</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {["Pending", "Shipped", "Delivered", "Cancelled"].map((status) => (
+            {["Placed", "Shipped", "Delivered", "Cancelled"].map((status) => (
               <DropdownMenuItem key={status} onClick={() => onStatusChange(order._id, status)}>
                 {status}
               </DropdownMenuItem>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,21 +13,50 @@ import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import StripePaymentDialog from "../checkout/StripeWrapper";
+import {
+  usePaymentSuccess,
+  useRetryPayment,
+} from "@/hooks/mutations/useStripePayment";
 
 const OrderDetail = ({ orderId, onBack }) => {
   const queryClient = useQueryClient();
   const [openReturnDialog, setOpenReturnDialog] = useState(false);
   const [returnProduct, setReturnProduct] = useState(null);
   const [returnReason, setReturnReason] = useState("");
+  const [openStripeDialog, setOpenStripeDialog] = useState(false);
+  const [stripeClientSecret, setStripeClientSecret] = useState(null);
+  const [paymentIntentId, setPaymentIntentId] = useState(null);
 
   const { mutate: requestReturn } = useRequestReturn();
   const { mutate: cancelOrder } = useCancelOrder();
+
+  const { mutate: retryPayment } = useRetryPayment();
+  const { mutate: markSuccess } = usePaymentSuccess();
 
   const {
     data: OrderDetail,
     isLoading,
     isError,
   } = useOrderDetails({ orderId });
+
+  useEffect(() => {
+    if (!OrderDetail) return;
+
+    if (
+      isPaymentIssue &&
+      !isRetryAvailable &&
+      OrderDetail.status !== "Cancelled"
+    ) {
+      handleCancelOrder(true);
+    }
+  }, [OrderDetail]);
+
+  const isPaymentIssue = ["failed", "retrying"].includes(
+    OrderDetail?.paymentStatus?.toLowerCase()
+  );
+  const isRetryAvailable =
+    new Date() <= new Date(OrderDetail?.retryAvailiable || 0);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError || !OrderDetail) return <div>Failed to load order details</div>;
@@ -37,12 +66,16 @@ const OrderDetail = ({ orderId, onBack }) => {
     0
   );
 
-  const handleCancelOrder = () => {
+  const handleCancelOrder = (expired ) => {
     cancelOrder(
       { orderId },
       {
         onSuccess: () => {
-          toast.success("Order cancelled");
+          if (expired) {
+            toast.error(
+              "Payment failed and retry window expired. Order cancelled."
+            );
+          } else toast.success("Order cancelled");
           queryClient.invalidateQueries(["orders", orderId]);
         },
         onError: (err) => {
@@ -147,6 +180,46 @@ const OrderDetail = ({ orderId, onBack }) => {
     delivered: "bg-green-100 text-green-700 border-green-300",
     cancelled: "bg-red-100 text-red-700 border-red-300",
     pending: "bg-yellow-100 text-yellow-800 border-yellow-300",
+  };
+
+  const handleRetry = () => {
+    retryPayment(
+      { orderId },
+      {
+        onSuccess: (res) => {
+          setStripeClientSecret(res.data.clientSecret);
+          setPaymentIntentId(res.data.paymentIntentId);
+
+          setOpenStripeDialog(true);
+        },
+        onError: (err) => {
+          console.log(err);
+          toast.error(err.response.data.message || "some error occured");
+        },
+      }
+    );
+  };
+
+  const handlePaymentSuccess = () => {
+    // markSuccess call here
+    console.log("Payment successful for order:", orderId);
+    markSuccess(
+      { orderId, paymentIntentId: paymentIntentId },
+      {
+        onSuccess: () => {
+          toast.success("Payment completed and order placed!");
+          navigate("/orderSuccess");
+        },
+        onError: (err) => {
+          toast.error("Payment confirmation failed: " + err.message);
+        },
+      }
+    );
+  };
+
+  const handlePaymentFailed = (error) => {
+    // markFailed call here
+    toast.error(error.message || "Payment failed again:");
   };
 
   return (
@@ -317,8 +390,13 @@ const OrderDetail = ({ orderId, onBack }) => {
               Download Order
             </Button>
             {OrderDetail.status.toLowerCase() === "placed" && (
-              <Button variant="destructive" onClick={handleCancelOrder}>
+              <Button variant="destructive" onClick={()=>handleCancelOrder(false)}>
                 Cancel Order
+              </Button>
+            )}
+            {isPaymentIssue && isRetryAvailable && (
+              <Button variant="default" onClick={handleRetry}>
+                Retry Payment
               </Button>
             )}
           </div>
@@ -344,6 +422,13 @@ const OrderDetail = ({ orderId, onBack }) => {
           />
         </div>
       </FormDialog>
+      <StripePaymentDialog
+        open={openStripeDialog}
+        setOpen={setOpenStripeDialog}
+        clientSecret={stripeClientSecret}
+        onSuccess={handlePaymentSuccess}
+        onFailed={handlePaymentFailed}
+      />
     </>
   );
 };
