@@ -10,6 +10,8 @@ const DataTableWrapper = ({
   filterFn,
   addButton = "",
   dropdownFilter,
+  pagination,
+  onPageChange,
 }) => {
   return (
     <div className="p-4">
@@ -39,7 +41,12 @@ const DataTableWrapper = ({
         </div>
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <DataTable
+        columns={columns}
+        data={data}
+        pagination={pagination}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };
