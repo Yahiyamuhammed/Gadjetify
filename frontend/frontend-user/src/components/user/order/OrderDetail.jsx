@@ -66,7 +66,7 @@ const OrderDetail = ({ orderId, onBack }) => {
     0
   );
 
-  const handleCancelOrder = (expired = false) => {
+  const handleCancelOrder = (expired ) => {
     cancelOrder(
       { orderId },
       {
@@ -390,7 +390,7 @@ const OrderDetail = ({ orderId, onBack }) => {
               Download Order
             </Button>
             {OrderDetail.status.toLowerCase() === "placed" && (
-              <Button variant="destructive" onClick={handleCancelOrder}>
+              <Button variant="destructive" onClick={()=>handleCancelOrder(false)}>
                 Cancel Order
               </Button>
             )}
