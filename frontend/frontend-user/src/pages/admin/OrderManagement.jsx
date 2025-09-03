@@ -74,8 +74,8 @@ export default function AdminOrders() {
         },
       }
     );
-    // Integrate with mutation to approve return
-    console.log("Approve return", orderId, itemId);
+    
+    
   };
 
   const transformedOrders = orders.map((order) => ({
