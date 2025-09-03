@@ -5,7 +5,7 @@ const VariantFormFields = ({ formData, setFormData }) => {
   const handleChange = (e) => {
     const { name, value, type } = e.target;
 
-    const newValue = type === "number" ? parseInt(value) || null : value;
+    const newValue = type === "number" ? parseInt(value) || 0 : value;
 
     setFormData({ ...formData, [name]: newValue });
   };
