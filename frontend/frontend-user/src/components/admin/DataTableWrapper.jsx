@@ -10,8 +10,8 @@ const DataTableWrapper = ({
   filterFn,
   addButton = "",
   dropdownFilter,
-  pagination,
-  onPageChange,
+  pagination ={ page: 1, pages: 1 },
+  onPageChange =()=>{},
 }) => {
   return (
     <div className="p-4">
