@@ -74,8 +74,6 @@ export default function AdminOrders() {
         },
       }
     );
-    
-    
   };
 
   const transformedOrders = orders.map((order) => ({
@@ -109,6 +107,8 @@ export default function AdminOrders() {
         )}
         filterFn={handleSearch}
         addButton=""
+        pagination={pagination}
+        onPageChange={(newPage) => setPage(newPage)}
       />
 
       <Pagination
