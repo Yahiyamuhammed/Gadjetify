@@ -32,8 +32,11 @@ exports.deleteVariant = async (req, res) => {
 
 exports.getVariants = async (req, res) => {
   try {
-    const { productId } = req.query;
-    const variants = await getVariants(productId);
+    const { productId,page,limit,search } = req.query;
+        // const { page,limit } = req.body;
+
+    console.log(page,limit)
+    const variants = await getVariants({productId,page,limit,search});
     res.status(200).json(variants);
   } catch (err) {
     console.error("Error fetching variants:", err);

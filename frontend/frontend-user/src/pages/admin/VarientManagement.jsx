@@ -20,7 +20,6 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
   const { mutate: addVariant, error: adderror } = useAddVarient();
   const { mutate: editVariant, error: editError } = useEditVarient();
   const { mutate: deleteVarient } = useDeleteVarient();
-  const { data: variants, isError, error } = useFetchVarients();
 
   //   const [variants, setVariants] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -33,8 +32,21 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     _id: "",
   });
   const [editMode, setEditMode] = useState(false); // track if we're editing
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  console.log(page);
 
-  //   console.log('this sis the data',variants)
+  const {
+    data: variants,
+    isError,
+    error,
+    isLoading: varientsLoading,
+  } = useFetchVarients({ page, limit: 10, search });
+
+  // if (varientsLoading) return "loading";
+
+  const pagination = variants?.pagination || { page: 1, pages: 1 };
+  console.log("this sis the data", variants);
 
   const handleEdit = ({ formData, variant }) => {
     const productId = variant.productId?._id;
@@ -50,6 +62,10 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     });
     setEditMode(true);
     setOpenDialog(true);
+  };
+  const handleSearch = (value) => {
+    console.log(value);
+    setSearch(value.toLowerCase());
   };
 
   const handleEditSubmit = (formData) => {
@@ -72,12 +88,11 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
 
     const newVariant = { ...formData };
 
-    
     if (!newVariant._id) {
       delete newVariant._id;
     }
 
-    console.log(newVariant,'new varient')
+    console.log(newVariant, "new varient");
 
     addVariant(newVariant, {
       onSuccess: () => {
@@ -110,9 +125,12 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
           onEdit: handleEdit,
           onDelete: handleDelete,
         })}
-        data={variants ?? []}
+        data={variants?.data ?? []}
         onAdd={() => setOpenDialog(true)}
         addButton="Add Variant"
+        pagination={pagination}
+        onPageChange={(newPage) =>{console.log(newPage); setPage(newPage)}}
+        filterFn={handleSearch}
       />
       <FormDialog
         open={openDialog}
