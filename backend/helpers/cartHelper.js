@@ -5,7 +5,7 @@ const Wishlist = require("../models/wishListModel");
 
 exports.addToCart = async (userId, { productId, variantId }) => {
   const MAX_QUANTITY = 3;
-  let increaseQuantity=1
+  let increaseQuantity = 1;
 
   const product = await Product.findById(productId);
   if (!product || product.isBlocked || !product.isListed) {
@@ -17,9 +17,10 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   }
 
   const variant = await Variant.findById(variantId);
-  if (!variant || variant.isDeleted || variant.stock < 1) {
+  if (!variant || variant.isDeleted) {
     return { status: 400, message: "Variant not available" };
   }
+
 
   let cart = await Cart.findOne({ userId });
   if (!cart) {
@@ -31,10 +32,10 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   );
 
   if (itemIndex > -1) {
-      const currentQuantity = cart.items[itemIndex].quantity;
+    const currentQuantity = cart.items[itemIndex].quantity;
 
-      if (currentQuantity >= MAX_QUANTITY) {
-         cart.items[itemIndex].quantity = MAX_QUANTITY;
+    if (currentQuantity >= MAX_QUANTITY) {
+      cart.items[itemIndex].quantity = MAX_QUANTITY;
       await cart.save();
       return {
         status: 409,
@@ -42,10 +43,13 @@ exports.addToCart = async (userId, { productId, variantId }) => {
       };
     }
 
-    const newQuantity = Math.min(currentQuantity + 1, variant.stock, MAX_QUANTITY);
+    const newQuantity = Math.min(
+      currentQuantity + 1,
+      variant.stock,
+      MAX_QUANTITY
+    );
     cart.items[itemIndex].quantity = newQuantity;
-    increaseQuantity=newQuantity
-
+    increaseQuantity = newQuantity;
   } else {
     cart.items.push({ productId, variantId, quantity: 1 });
   }
@@ -56,9 +60,12 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   );
 
   await cart.save();
-  return { status: 200, message: "Item added to cart" ,quantity:increaseQuantity};
+  return {
+    status: 200,
+    message: "Item added to cart",
+    quantity: increaseQuantity,
+  };
 };
-
 
 exports.getCart = async (userId) => {
   const cart = await Cart.findOne({ userId })
@@ -66,15 +73,14 @@ exports.getCart = async (userId) => {
       path: "items.productId",
       select: "name brand model images offerPercentage isListed",
       populate: {
-        path: "brand", 
-        select: "name isDeleted" 
-      }
+        path: "brand",
+        select: "name isDeleted",
+      },
     })
     .populate("items.variantId");
 
   return cart || { userId, items: [] };
 };
-
 
 exports.updateQuantity = async (userId, { variantId, quantity }) => {
   const MAX_QUANTITY = 3;
