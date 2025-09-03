@@ -20,7 +20,8 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   if (!variant || variant.isDeleted) {
     return { status: 400, message: "Variant not available" };
   }
-
+  if (variant.stock < 1)
+    return { status: 400, message: "The selected variant is out of stock" };
 
   let cart = await Cart.findOne({ userId });
   if (!cart) {
