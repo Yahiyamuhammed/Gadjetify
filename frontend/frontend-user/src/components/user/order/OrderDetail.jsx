@@ -14,30 +14,33 @@ import { useQueryClient } from "@tanstack/react-query";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import StripePaymentDialog from "../checkout/StripeWrapper";
-import { usePaymentSuccess, useRetryPayment } from "@/hooks/mutations/useStripePayment";
+import {
+  usePaymentSuccess,
+  useRetryPayment,
+} from "@/hooks/mutations/useStripePayment";
 
 const OrderDetail = ({ orderId, onBack }) => {
   const queryClient = useQueryClient();
   const [openReturnDialog, setOpenReturnDialog] = useState(false);
   const [returnProduct, setReturnProduct] = useState(null);
   const [returnReason, setReturnReason] = useState("");
-    const [openStripeDialog, setOpenStripeDialog] = useState(false);
-    const [stripeClientSecret, setStripeClientSecret] = useState(null);
-    const [paymentIntentId, setPaymentIntentId] = useState(null);
-  
+  const [openStripeDialog, setOpenStripeDialog] = useState(false);
+  const [stripeClientSecret, setStripeClientSecret] = useState(null);
+  const [paymentIntentId, setPaymentIntentId] = useState(null);
 
   const { mutate: requestReturn } = useRequestReturn();
   const { mutate: cancelOrder } = useCancelOrder();
-  
-    const { mutate: retryPayment } = useRetryPayment();
-    const { mutate: markSuccess } = usePaymentSuccess();
-  
+
+  const { mutate: retryPayment } = useRetryPayment();
+  const { mutate: markSuccess } = usePaymentSuccess();
 
   const {
     data: OrderDetail,
     isLoading,
     isError,
   } = useOrderDetails({ orderId });
+
+  console.log(OrderDetail)
 
   if (isLoading) return <div>Loading...</div>;
   if (isError || !OrderDetail) return <div>Failed to load order details</div>;
@@ -160,45 +163,44 @@ const OrderDetail = ({ orderId, onBack }) => {
   };
 
   const handleRetry = () => {
-      retryPayment(
-        { orderId },
-        {
-          onSuccess: (res) => {
-            setStripeClientSecret(res.data.clientSecret);
-            setPaymentIntentId(res.data.paymentIntentId);
-  
-            setOpenStripeDialog(true);
-          },
-          onError: (err) => {
-            console.log(err);
-            toast.error(err.response.data.message || "some error occured");
-          },
-        }
-      );
-    };
-  
-    const handlePaymentSuccess = () => {
-      // markSuccess call here
-      console.log("Payment successful for order:", orderId);
-      markSuccess(
-        { orderId, paymentIntentId: paymentIntentId },
-        {
-          onSuccess: () => {
-            toast.success("Payment completed and order placed!");
-            navigate("/orderSuccess");
-          },
-          onError: (err) => {
-            toast.error("Payment confirmation failed: " + err.message);
-          },
-        }
-      );
-    };
-  
-    const handlePaymentFailed = (error) => {
-      // markFailed call here
-      console.error("Payment failed again:", error);
-    };
-  
+    retryPayment(
+      { orderId },
+      {
+        onSuccess: (res) => {
+          setStripeClientSecret(res.data.clientSecret);
+          setPaymentIntentId(res.data.paymentIntentId);
+
+          setOpenStripeDialog(true);
+        },
+        onError: (err) => {
+          console.log(err);
+          toast.error(err.response.data.message || "some error occured");
+        },
+      }
+    );
+  };
+
+  const handlePaymentSuccess = () => {
+    // markSuccess call here
+    console.log("Payment successful for order:", orderId);
+    markSuccess(
+      { orderId, paymentIntentId: paymentIntentId },
+      {
+        onSuccess: () => {
+          toast.success("Payment completed and order placed!");
+          navigate("/orderSuccess");
+        },
+        onError: (err) => {
+          toast.error("Payment confirmation failed: " + err.message);
+        },
+      }
+    );
+  };
+
+  const handlePaymentFailed = (error) => {
+    // markFailed call here
+    console.error("Payment failed again:", error);
+  };
 
   return (
     <>
@@ -372,11 +374,13 @@ const OrderDetail = ({ orderId, onBack }) => {
                 Cancel Order
               </Button>
             )}
-{["failed", "retrying"].includes(OrderDetail.paymentStatus.toLowerCase()) && (
-        <Button variant="default" onClick={handleRetry}>
-        Retry Payment
-      </Button>
-    )}
+            {["failed", "retrying"].includes(
+              OrderDetail.paymentStatus.toLowerCase()
+            ) && new Date() <= new Date(OrderDetail.retryAvailiable) && (
+              <Button variant="default" onClick={handleRetry}>
+                Retry Payment
+              </Button>
+            )}
           </div>
         </div>
       </Card>
@@ -401,14 +405,13 @@ const OrderDetail = ({ orderId, onBack }) => {
         </div>
       </FormDialog>
       <StripePaymentDialog
-              open={openStripeDialog}
-              setOpen={setOpenStripeDialog}
-              clientSecret={stripeClientSecret}
-              onSuccess={handlePaymentSuccess}
-              onFailed={handlePaymentFailed}
-            />
+        open={openStripeDialog}
+        setOpen={setOpenStripeDialog}
+        clientSecret={stripeClientSecret}
+        onSuccess={handlePaymentSuccess}
+        onFailed={handlePaymentFailed}
+      />
     </>
-    
   );
 };
 

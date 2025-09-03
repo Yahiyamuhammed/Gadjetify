@@ -53,6 +53,7 @@ exports.getOrderById = async (userId, orderId) => {
     paymentMethod: order.paymentMethod,
     paymentStatus: order.paymentStatus,
     addressSnapshot: order.addressSnapshot,
+    retryAvailiable:order?.retryAvailableUntil,
     summary: order.summary,
     items: order.items.map((item) => ({
       productName: item.productName,
