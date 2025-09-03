@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,25 @@ const OrderDetail = ({ orderId, onBack }) => {
     isError,
   } = useOrderDetails({ orderId });
 
-  console.log(OrderDetail)
+  useEffect(() => {
+    if (!OrderDetail) return;
+
+    if (
+      isPaymentIssue &&
+      !isRetryAvailable &&
+      OrderDetail.status !== "Cancelled"
+    ) {
+      handleCancelOrder(true);
+    }
+  }, [OrderDetail]);
+
+  const isPaymentIssue = ["failed", "retrying"].includes(
+    OrderDetail?.paymentStatus?.toLowerCase()
+  );
+  const isRetryAvailable =
+    new Date() <= new Date(OrderDetail?.retryAvailiable || 0);
+
+  console.log(OrderDetail);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError || !OrderDetail) return <div>Failed to load order details</div>;
@@ -50,12 +68,16 @@ const OrderDetail = ({ orderId, onBack }) => {
     0
   );
 
-  const handleCancelOrder = () => {
+  const handleCancelOrder = (expired = false) => {
     cancelOrder(
       { orderId },
       {
         onSuccess: () => {
-          toast.success("Order cancelled");
+          if (expired) {
+            toast.error(
+              "Payment failed and retry window expired. Order cancelled."
+            );
+          } else toast.success("Order cancelled");
           queryClient.invalidateQueries(["orders", orderId]);
         },
         onError: (err) => {
@@ -374,9 +396,7 @@ const OrderDetail = ({ orderId, onBack }) => {
                 Cancel Order
               </Button>
             )}
-            {["failed", "retrying"].includes(
-              OrderDetail.paymentStatus.toLowerCase()
-            ) && new Date() <= new Date(OrderDetail.retryAvailiable) && (
+            {isPaymentIssue && isRetryAvailable && (
               <Button variant="default" onClick={handleRetry}>
                 Retry Payment
               </Button>
