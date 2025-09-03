@@ -58,8 +58,6 @@ const OrderDetail = ({ orderId, onBack }) => {
   const isRetryAvailable =
     new Date() <= new Date(OrderDetail?.retryAvailiable || 0);
 
-  console.log(OrderDetail);
-
   if (isLoading) return <div>Loading...</div>;
   if (isError || !OrderDetail) return <div>Failed to load order details</div>;
 
@@ -221,7 +219,7 @@ const OrderDetail = ({ orderId, onBack }) => {
 
   const handlePaymentFailed = (error) => {
     // markFailed call here
-    console.error("Payment failed again:", error);
+    toast.error(error.message || "Payment failed again:");
   };
 
   return (
