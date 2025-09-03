@@ -8,6 +8,7 @@ import {
   TbLogout,
   TbHeart,
   TbShoppingCart,
+  TbWallet,
 } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -74,6 +75,27 @@ export default function ProfileDropdown({ onSignOut }) {
               My Profile
             </Link>
           </li>
+          <li>
+  <Link
+    to="/orders"
+    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+    onClick={() => setIsOpen(false)}
+  >
+    <TbShoppingCart className="text-lg" />
+    Orders
+  </Link>
+</li>
+
+<li>
+  <Link
+    to="/wallet"
+    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+    onClick={() => setIsOpen(false)}
+  >
+    <TbWallet className="text-lg" />
+    Wallet
+  </Link>
+</li>
           <li>
             <a
               href="#"
