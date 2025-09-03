@@ -62,7 +62,7 @@ const OrderDetail = ({ orderId, onBack }) => {
       {
         itemId: returnProduct.itemId,
         reason: returnReason,
-        orderId: OrderDetail?.orderId,
+        orderId: OrderDetail?.orderDbId,
       },
       {
         onSuccess: () => {
