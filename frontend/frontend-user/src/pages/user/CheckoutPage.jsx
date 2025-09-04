@@ -96,12 +96,12 @@ export default function CheckoutPage() {
     placeOrder(data, {
       onSuccess: (res) => {
         setCreatedOrderId(res.orderId);
+        queryClient.invalidateQueries(['cartCount'])
 
-        toast.success("Order created!");
         if (data.paymentMethod != "Online Payment") {
           toast.success("Order placed!", res);
           navigate("/orderSuccess");
-        }
+        } else toast.success("Order created!");
         return res.orderId;
       },
       onError: (err) => {

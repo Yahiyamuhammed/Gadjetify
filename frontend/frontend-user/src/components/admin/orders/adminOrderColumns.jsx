@@ -1,7 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-export const getAdminOrderColumns = (onStatusChange, onViewDetails, onApproveReturn) => [
+export const getAdminOrderColumns = (
+  onStatusChange,
+  onViewDetails,
+  onApproveReturn
+) => [
   {
     accessorKey: "customer.name",
     header: "Customer",
@@ -27,14 +36,27 @@ export const getAdminOrderColumns = (onStatusChange, onViewDetails, onApproveRet
     header: "Status",
     cell: ({ row }) => {
       const order = row.original;
+      const isFinalStatus =
+        order.status === "Cancelled" || order.status === "Delivered";
+
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">{order.status}</Button>
+          <DropdownMenuTrigger asChild disabled={isFinalStatus}>
+            <Button
+              variant="outline"
+              className={
+                isFinalStatus ? "cursor-not-allowed" : "cursor-pointer"
+              }
+            >
+              {order.status}
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             {["Placed", "Shipped", "Delivered", "Cancelled"].map((status) => (
-              <DropdownMenuItem key={status} onClick={() => onStatusChange(order._id, status)}>
+              <DropdownMenuItem
+                key={status}
+                onClick={() => onStatusChange(order._id, status)}
+              >
                 {status}
               </DropdownMenuItem>
             ))}
@@ -49,9 +71,15 @@ export const getAdminOrderColumns = (onStatusChange, onViewDetails, onApproveRet
       const order = row.original;
       return (
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => onViewDetails(order)}>View</Button>
+          <Button
+            className="cursor-pointer"
+            variant="outline"
+            onClick={() => onViewDetails(order)}
+          >
+            View
+          </Button>
         </div>
       );
     },
-  }
+  },
 ];
