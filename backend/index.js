@@ -30,6 +30,7 @@ const adminCouponRoutes = require("./routes/adminCouponRoutes");
 const couponRoutes = require("./routes/couponRoutes");
 const adminReportRoutes = require("./routes/adminReportRoutes");
 const adminDashboardRoutes = require("./routes/adminDashboardRoutes");
+const ratingRoutes = require("./routes/ratingRoutes");
 
 const allowedOrigins = [
   "http://localhost:5173", // for local dev
@@ -76,6 +77,7 @@ app.use("/api", profileRoutes);
 app.use("/api", userBrandRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api", couponRoutes);
+app.use("/api", ratingRoutes);
 
 // MongoDB connection
 mongoose
