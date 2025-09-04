@@ -1,20 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRateProduct } from "@/hooks/mutations/useRatingMutations";
-import toast from "react-hot-toast";
+import { useUserRating } from "@/hooks/queries/useUserRating";
 
-export default function StarRating({ productId, variantId, initialRating }) {
-  const [rating, setRating] = useState(initialRating || 0);
+export default function StarRating({ productId, variantId }) {
+  const { data: userRatingData } = useUserRating(variantId);
   const { mutate } = useRateProduct();
 
-  console.log(productId, variantId,)
+  const [rating, setRating] = useState(0);
+
+  // sync with server rating when fetched
+  useEffect(() => {
+    if (userRatingData?.rating) {
+      setRating(userRatingData.rating);
+    }
+  }, [userRatingData]);
 
   const handleRate = (value) => {
     setRating(value);
-    mutate({ productId, variantId, rating: value },
-        {
-            onError:(err)=>toast.error(err.response.data.message || 'something went wrong')
-        }
-    );
+    mutate({ productId, variantId, rating: value });
   };
 
   return (
@@ -23,7 +26,9 @@ export default function StarRating({ productId, variantId, initialRating }) {
         <svg
           key={star}
           onClick={() => handleRate(star)}
-          className={`w-6 h-6 cursor-pointer ${star <= rating ? "text-yellow-500" : "text-gray-300"}`}
+          className={`w-6 h-6 cursor-pointer ${
+            star <= rating ? "text-yellow-500" : "text-gray-300"
+          }`}
           fill="currentColor"
           viewBox="0 0 20 20"
         >
