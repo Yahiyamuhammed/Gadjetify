@@ -32,6 +32,10 @@ const adminReportRoutes = require("./routes/adminReportRoutes");
 const adminDashboardRoutes = require("./routes/adminDashboardRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
 
+const adminRoutes = require("./routes/admin");
+const userRoutes = require("./routes/user");
+
+
 const allowedOrigins = [
   "http://localhost:5173", // for local dev
   "https://456fd9d6dd75.ngrok-free.app", // your frontend via ngrok
@@ -56,28 +60,31 @@ app.use(
 app.use(express.json()); // for parsing JSONa
 app.use(cookieParser());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminAuthRoutes);
-app.use("/api/admin", adminUserRoutes);
-app.use("/api/admin", adminProductRoutes);
-app.use("/api/admin", adminBrandRoutes);
-app.use("/api/admin", adminVarientRoutes);
-app.use("/api/admin", adminOrderRoutes);
-app.use("/api/admin", adminCouponRoutes);
-app.use("/api/admin", adminReportRoutes);
-app.use("/api/admin", adminDashboardRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api", userRoutes);
 
-app.use("/api", userAddressRoutes);
-app.use("/api", userProductRoutes);
-app.use("/api", wishlistRoutes);
-app.use("/api", cartRoutes);
-app.use("/api", orderRoutes);
-app.use("/api", walletRoutes);
-app.use("/api", profileRoutes);
-app.use("/api", userBrandRoutes);
-app.use("/api", paymentRoutes);
-app.use("/api", couponRoutes);
-app.use("/api", ratingRoutes);
+// app.use("/api/auth", authRoutes);
+// app.use("/api/admin", adminAuthRoutes);
+// app.use("/api/admin", adminUserRoutes);
+// app.use("/api/admin", adminProductRoutes);
+// app.use("/api/admin", adminBrandRoutes);
+// app.use("/api/admin", adminVarientRoutes);
+// app.use("/api/admin", adminOrderRoutes);
+// app.use("/api/admin", adminCouponRoutes);
+// app.use("/api/admin", adminReportRoutes);
+// app.use("/api/admin", adminDashboardRoutes);
+
+// app.use("/api", userAddressRoutes);
+// app.use("/api", userProductRoutes);
+// app.use("/api", wishlistRoutes);
+// app.use("/api", cartRoutes);
+// app.use("/api", orderRoutes);
+// app.use("/api", walletRoutes);
+// app.use("/api", profileRoutes);
+// app.use("/api", userBrandRoutes);
+// app.use("/api", paymentRoutes);
+// app.use("/api", couponRoutes);
+// app.use("/api", ratingRoutes);
 
 // MongoDB connection
 mongoose
