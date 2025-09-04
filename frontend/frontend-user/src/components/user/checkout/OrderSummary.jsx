@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useApplyCoupon,
   useRemoveCoupon,
@@ -55,7 +55,17 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   const couponDiscount = appliedCoupon
     ? (subtotal * appliedCoupon.discountPercent) / 100
     : 0;
-  setAppliedCoupon({ ...appliedCoupon, discountAmount:couponDiscount });
+  // setAppliedCoupon({ ...appliedCoupon, discountAmount:couponDiscount });
+
+  useEffect(() => {
+    if (appliedCoupon) {
+      const couponDiscount = (subtotal * appliedCoupon.discountPercent) / 100;
+      setAppliedCoupon({
+        ...appliedCoupon,
+        discountAmount: couponDiscount,
+      });
+    }
+  }, [appliedCoupon?.discountPercent]);
 
   const totalDiscount = totalOfferDiscount + customDiscount;
   const shipping = subtotal > 1000 ? 0 : 49.99;
@@ -113,7 +123,7 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
           customDiscount,
           totalDiscount,
           shipping,
-          coupon:appliedCoupon,
+          coupon: appliedCoupon,
           tax,
           total,
         },
