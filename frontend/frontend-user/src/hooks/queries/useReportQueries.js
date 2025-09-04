@@ -5,7 +5,7 @@ export const useSalesReport = ({ startDate, endDate, period, page, limit }) => {
   return useQuery({
     queryKey: ["salesReport", { startDate, endDate, period, page, limit }],
     queryFn: async () => {
-      const res = await api.get("/admin/sales-report", {
+      const res = await api.get("/admin/reports", {
         params: { startDate, endDate, period, page, limit },
       });
       return res.data.data;

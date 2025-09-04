@@ -9,28 +9,9 @@ require("dotenv").config(); // To read .env file
 
 const app = express();
 
-// const {signup}=require('./controllers/authController')
-const authRoutes = require("./routes/authRoutes");
-const adminAuthRoutes = require("./routes/adminAuthRoutes");
-const adminUserRoutes = require("./routes/adminUserRoute");
-const adminProductRoutes = require("./routes/adminProductRoutes");
-const adminBrandRoutes = require("./routes/adminBrandRoutes");
-const userAddressRoutes = require("./routes/userAddressRoutes");
-const adminVarientRoutes = require("./routes/adminVarientRoutes");
-const wishlistRoutes = require("./routes/wishlistRoute");
-const cartRoutes = require("./routes/userCartRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const adminOrderRoutes = require("./routes/adminOrderRoutes");
-const walletRoutes = require("./routes/walletRoutes");
-const profileRoutes = require("./routes/userProfileRoute");
-const userBrandRoutes = require("./routes/userBrandRoutes");
-const userProductRoutes = require("./routes/userProductRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
-const adminCouponRoutes = require("./routes/adminCouponRoutes");
-const couponRoutes = require("./routes/couponRoutes");
-const adminReportRoutes = require("./routes/adminReportRoutes");
-const adminDashboardRoutes = require("./routes/adminDashboardRoutes");
-const ratingRoutes = require("./routes/ratingRoutes");
+const adminRoutes = require("./routes/admin");
+const userRoutes = require("./routes/user");
+
 
 const allowedOrigins = [
   "http://localhost:5173", // for local dev
@@ -56,28 +37,8 @@ app.use(
 app.use(express.json()); // for parsing JSONa
 app.use(cookieParser());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminAuthRoutes);
-app.use("/api/admin", adminUserRoutes);
-app.use("/api/admin", adminProductRoutes);
-app.use("/api/admin", adminBrandRoutes);
-app.use("/api/admin", adminVarientRoutes);
-app.use("/api/admin", adminOrderRoutes);
-app.use("/api/admin", adminCouponRoutes);
-app.use("/api/admin", adminReportRoutes);
-app.use("/api/admin", adminDashboardRoutes);
-
-app.use("/api", userAddressRoutes);
-app.use("/api", userProductRoutes);
-app.use("/api", wishlistRoutes);
-app.use("/api", cartRoutes);
-app.use("/api", orderRoutes);
-app.use("/api", walletRoutes);
-app.use("/api", profileRoutes);
-app.use("/api", userBrandRoutes);
-app.use("/api", paymentRoutes);
-app.use("/api", couponRoutes);
-app.use("/api", ratingRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api", userRoutes);
 
 // MongoDB connection
 mongoose
