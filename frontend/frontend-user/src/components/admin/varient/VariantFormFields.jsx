@@ -1,60 +1,65 @@
+// VariantFormFields.jsx
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { variantValidationSchema  } from "@/utils/validation/variantSchema";
+import { useEffect } from "react";
 
-const VariantFormFields = ({ formData, setFormData }) => {
-  const handleChange = (e) => {
-    const { name, value, type } = e.target;
+const VariantFormFields = ({ onSubmit, defaultValues }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(variantValidationSchema ),
+    defaultValues,
+  });
 
-    const newValue = type === "number" ? parseInt(value) || 0 : value;
-
-    setFormData({ ...formData, [name]: newValue });
-  };
+  useEffect(() => {
+    if (defaultValues) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, reset]);
 
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" id="variant-form">
       <div>
         <Label>Product ID</Label>
-        <Input name="productId" value={formData.productId} onChange={handleChange} />
+        <Input {...register("productId")} />
+        {errors.productId && (
+          <p className="text-red-500 text-sm">{errors.productId.message}</p>
+        )}
       </div>
+
       <div>
         <Label>RAM (in GB)</Label>
-        <Input
-          type="number"
-          name="ram"
-          value={formData.ram}
-          onChange={handleChange}
-          placeholder="Enter RAM size (e.g. 8)"
-        />
+        <Input type="number" {...register("ram")} placeholder="Enter RAM size (e.g. 8)" />
+        {errors.ram && <p className="text-red-500 text-sm">{errors.ram.message}</p>}
       </div>
+
       <div>
         <Label>Storage (in GB)</Label>
-        <Input
-          type="number"
-          name="storage"
-          value={formData.storage}
-          onChange={handleChange}
-          placeholder="Enter storage size (e.g. 128)"
-        />
+        <Input type="number" {...register("storage")} placeholder="Enter storage size (e.g. 128)" />
+        {errors.storage && <p className="text-red-500 text-sm">{errors.storage.message}</p>}
       </div>
+
       <div>
         <Label>Price</Label>
-        <Input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-        />
+        <Input type="number" {...register("price")} />
+        {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
       </div>
+
       <div>
         <Label>Stock</Label>
-        <Input
-          type="number"
-          name="stock"
-          value={formData.stock}
-          onChange={handleChange}
-        />
+        <Input type="number" {...register("stock")} />
+        {errors.stock && <p className="text-red-500 text-sm">{errors.stock.message}</p>}
       </div>
-    </div>
+
+      {/* Hidden submit button triggered by FormDialog */}
+      <button type="submit" className="hidden" id="hidden-variant-submit"></button>
+    </form>
   );
 };
 

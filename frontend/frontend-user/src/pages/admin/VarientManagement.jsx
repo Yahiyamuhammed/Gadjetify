@@ -116,6 +116,10 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     });
   };
   //   console.log(variants,isError,error)
+  const handleDialogSubmit = () => {
+    const submitButton = document.getElementById("hidden-submit");
+    if (submitButton) submitButton.click();
+  };
 
   return (
     <>
@@ -129,17 +133,24 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
         onAdd={() => setOpenDialog(true)}
         addButton="Add Variant"
         pagination={pagination}
-        onPageChange={(newPage) =>{console.log(newPage); setPage(newPage)}}
+        onPageChange={(newPage) => {
+          console.log(newPage);
+          setPage(newPage);
+        }}
         filterFn={handleSearch}
       />
       <FormDialog
         open={openDialog}
         setOpen={setOpenDialog}
         title="Add Variant"
-        onSubmit={editMode ? handleEditSubmit : handleAdd}
+        onSubmit={handleDialogSubmit}
         formData={formData}
       >
-        <VariantFormFields formData={formData} setFormData={setFormData} />
+        <VariantFormFields
+          onSubmit={editMode ? handleEditSubmit : handleAdd}
+          formData={formData}
+          setFormData={setFormData}
+        />
       </FormDialog>
     </>
   );
