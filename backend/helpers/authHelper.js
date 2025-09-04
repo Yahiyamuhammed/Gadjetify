@@ -338,7 +338,7 @@ exports.resetPassword = async ({ email, password }) => {
   user.password = hashed;
   user.otp = null;
   user.otpExpiresAt = null;
-  user.isResetOtpVerified = false;
+  user.isResetOtpVerified = undefined;
   await user.save();
 
   return { status: 200, data: { message: "Password reset successful" } };
