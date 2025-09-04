@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema(
     pendingEmail: { type: String, unique: true },
     referralCode: { type: String, unique: true },
     referredBy: { type: String, default: null },
+    isResetOtpVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
