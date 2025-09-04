@@ -307,7 +307,9 @@ exports.verifyPasswordResetOtp = async ({ email, otp }) => {
   if (user.otpExpiresAt < Date.now()) {
     return { status: 400, data: { message: "OTP expired" } };
   }
-
+  user.isVerified = true;
+  user.otp = undefined;
+  user.otpExpiresAt = undefined;
   user.isResetOtpVerified = true;
   await user.save();
 
