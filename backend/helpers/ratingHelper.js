@@ -4,6 +4,7 @@ const Product = require("../models/productModel");
 
 // Add or update rating
 const upsertRating = async ({ userId, productId, variantId, rating }) => {
+    
   // upsert user rating
   const updated = await Rating.findOneAndUpdate(
     { userId, variantId },

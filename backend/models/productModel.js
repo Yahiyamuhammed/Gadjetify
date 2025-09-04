@@ -22,6 +22,8 @@ const productSchema = new mongoose.Schema(
 
     isListed: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    avgRating: { type: Number, default: 0 },
+    ratingCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 ); // adds createdAt and updatedAt
