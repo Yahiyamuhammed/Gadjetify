@@ -1,10 +1,10 @@
 const Rating = require("../models/ratingModel");
 const Variant = require("../models/variantModel");
 const Product = require("../models/productModel");
+const mongoose = require("mongoose");
 
 // Add or update rating
 const upsertRating = async ({ userId, productId, variantId, rating }) => {
-    
   // upsert user rating
   const updated = await Rating.findOneAndUpdate(
     { userId, variantId },
@@ -14,27 +14,39 @@ const upsertRating = async ({ userId, productId, variantId, rating }) => {
 
   // recalc variant rating
   const stats = await Rating.aggregate([
-    { $match: { variantId } },
-    { $group: { _id: "$variantId", avg: { $avg: "$rating" }, count: { $sum: 1 } } }
+    { $match: { variantId: new mongoose.Types.ObjectId(variantId) } },
+    {
+      $group: {
+        _id: "$variantId",
+        avg: { $avg: "$rating" },
+        count: { $sum: 1 },
+      },
+    },
   ]);
 
   if (stats.length > 0) {
     await Variant.findByIdAndUpdate(variantId, {
       avgRating: stats[0].avg,
-      ratingCount: stats[0].count
+      ratingCount: stats[0].count,
     });
   }
 
   // recalc product rating from all variants
   const productStats = await Rating.aggregate([
-    { $match: { productId } },
-    { $group: { _id: "$productId", avg: { $avg: "$rating" }, count: { $sum: 1 } } }
+    { $match: {  productId: new mongoose.Types.ObjectId(productId) } },
+    {
+      $group: {
+        _id: "$productId",
+        avg: { $avg: "$rating" },
+        count: { $sum: 1 },
+      },
+    },
   ]);
 
   if (productStats.length > 0) {
     await Product.findByIdAndUpdate(productId, {
       avgRating: productStats[0].avg,
-      ratingCount: productStats[0].count
+      ratingCount: productStats[0].count,
     });
   }
 
