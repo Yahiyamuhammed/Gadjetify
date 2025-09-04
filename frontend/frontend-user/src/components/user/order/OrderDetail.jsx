@@ -41,8 +41,6 @@ const OrderDetail = ({ orderId, onBack }) => {
     isError,
   } = useOrderDetails({ orderId });
 
-  console.log(OrderDetail)
-
   useEffect(() => {
     if (!OrderDetail) return;
 
@@ -204,8 +202,6 @@ const OrderDetail = ({ orderId, onBack }) => {
   };
 
   const handlePaymentSuccess = () => {
-    // markSuccess call here
-    console.log("Payment successful for order:", orderId);
     markSuccess(
       { orderId, paymentIntentId: paymentIntentId },
       {
@@ -301,21 +297,21 @@ const OrderDetail = ({ orderId, onBack }) => {
                 <p className="text-gray-600">Shipping</p>
                 <p className="text-gray-900">₹{OrderDetail.summary.shipping}</p>
               </div>
-              <div className="flex justify-between">
-                <p className="text-gray-600">Tax</p>
-                <p className="text-gray-900">₹{OrderDetail.summary.tax}</p>
-              </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <p className="text-gray-600">Total Discount</p>
                 <p className="text-gray-900">
-                  - ₹{OrderDetail.summary.totalDiscount}
+                - ₹{OrderDetail.summary.totalDiscount}
                 </p>
-              </div>
+                </div> */}
               <div className="flex justify-between">
                 <p className="text-gray-600">Coupon Discount</p>
                 <p className="text-gray-900">
-                  - ₹{OrderDetail.summary.couponDiscount || 0}
+                  - ₹{OrderDetail.summary?.coupon?.discountAmount || 0}
                 </p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-gray-600">Tax</p>
+                <p className="text-gray-900">₹{OrderDetail.summary.tax}</p>
               </div>
               <div className="flex justify-between pt-3 border-t font-medium">
                 <p className="text-gray-900">Total</p>
