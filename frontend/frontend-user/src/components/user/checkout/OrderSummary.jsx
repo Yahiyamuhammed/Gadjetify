@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useApplyCoupon,
   useRemoveCoupon,
@@ -55,6 +55,17 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   const couponDiscount = appliedCoupon
     ? (subtotal * appliedCoupon.discountPercent) / 100
     : 0;
+  // setAppliedCoupon({ ...appliedCoupon, discountAmount:couponDiscount });
+
+  useEffect(() => {
+    if (appliedCoupon) {
+      const couponDiscount = (subtotal * appliedCoupon.discountPercent) / 100;
+      setAppliedCoupon({
+        ...appliedCoupon,
+        discountAmount: couponDiscount,
+      });
+    }
+  }, [appliedCoupon?.discountPercent]);
 
   const totalDiscount = totalOfferDiscount + customDiscount;
   const shipping = subtotal > 1000 ? 0 : 49.99;
@@ -78,6 +89,7 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
             setAppliedCoupon({
               code: data.coupon.code,
               discountPercent: data.coupon.discountValue,
+              minPurchase: data.coupon?.minPurchase,
             });
           }
         },
@@ -86,30 +98,6 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
         },
       }
     );
-    // try {
-    //   const res = await applyCouponMutation.mutateAsync({ code: couponCode });
-
-    //   if (res.success) {
-    //     setAppliedCoupon(res.coupon);
-
-    //     // Calculate coupon discount
-    //     let discount =
-    //       (subtotal - totalOfferDiscount) * (res.coupon.discount / 100);
-    //     if (res.coupon.maxDiscount) {
-    //       discount = Math.min(discount, res.coupon.maxDiscount);
-    //     }
-
-    //     if (res.coupon.minPurchase && subtotal < res.coupon.minPurchase) {
-    //       discount = 0; // Doesn't qualify for minimum purchase
-    //     }
-
-    //     setCouponDiscount(discount);
-    //   } else {
-    //     toast.error(res.message || "Coupon could not be applied");
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    // }
   };
 
   const handleRemoveCoupon = async () => {
@@ -124,28 +112,6 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   };
 
   const handlePlaceOrder = () => {
-    const formatOrderItems = (items = []) => {
-      return items.map((item) => {
-        const product = item.productId;
-        const variant = item.variantId;
-        const brand = product.brand;
-
-        return {
-          productId: product._id,
-          productName: product.name,
-          brandId: brand._id,
-          brandName: brand.name,
-          variantId: variant._id,
-          ram: variant.ram,
-          storage: variant.storage,
-          price: variant.price,
-          quantity: item.quantity,
-          offerPercentage: product.offerPercentage,
-          image: product.images?.[0] || null,
-        };
-      });
-    };
-
     // Call parent function
     if (onPlaceOrder) {
       //   onPlaceOrder(formatOrderItems(items));
@@ -157,7 +123,7 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
           customDiscount,
           totalDiscount,
           shipping,
-          couponDiscount,
+          coupon: appliedCoupon,
           tax,
           total,
         },

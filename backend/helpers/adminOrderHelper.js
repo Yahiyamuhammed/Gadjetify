@@ -2,19 +2,69 @@ const Order = require("../models/orderModel");
 const Variant = require("../models/variantModel");
 const WalletTransaction = require("../models/walletTransactionModel");
 const User = require("../models/userModal");
-
 exports.approveReturnHelper = async ({ orderId, itemId }) => {
   const order = await Order.findById(orderId);
   if (!order) return { status: 404, message: "Order not found" };
-
-  console.log(order);
 
   const item = order.items.id(itemId);
   if (!item) return { status: 404, message: "Item not found" };
   if (item.returnStatus !== "requested")
     return { status: 400, message: "Invalid return state" };
 
-  const refundAmount = item.price * item.quantity;
+  const itemBase = item.price * item.quantity;
+  const itemOfferDiscount = (itemBase * (item.offerPercentage || 0)) / 100;
+  const itemAfterOffer = itemBase - itemOfferDiscount;
+
+  const subtotalAfterOffers =
+    order.summary.subtotal - order.summary.totalOfferDiscount;
+
+  let itemCouponShare = 0;
+  if (order.summary.coupon && order.summary.coupon.discountAmount > 0) {
+    const { discountAmount, minPurchase } = order.summary.coupon;
+    const remainingSubtotal = subtotalAfterOffers - itemAfterOffer;
+
+    if (!minPurchase || remainingSubtotal >= minPurchase) {
+      itemCouponShare = (itemAfterOffer / subtotalAfterOffers) * discountAmount;
+    } else {
+      const originalPaid = order.finalTotal;
+      const newTotal = remainingSubtotal + order.summary.tax;
+      const refundAmount = originalPaid - newTotal;
+
+      item.returnStatus = "returned";
+      item.returnApprovedAt = new Date();
+      item.refundAmount = refundAmount;
+      await order.save();
+
+      await Variant.findByIdAndUpdate(item.variantId, {
+        $inc: { stock: item.quantity },
+      });
+
+      await WalletTransaction.create({
+        userId: order.userId,
+        amount: refundAmount,
+        type: "credit",
+        description: `Refund for ${item.productName}`,
+        relatedOrderId: order._id,
+        relatedOrderItemId: item._id,
+      });
+
+      await User.findByIdAndUpdate(order.userId, {
+        $inc: { wallet: refundAmount },
+      });
+
+      return {
+        status: 200,
+        message:
+          "Return approved, stock updated and wallet credited (coupon invalidated)",
+        refundAmount,
+      };
+    }
+  }
+
+  const itemTaxShare =
+    (itemAfterOffer / subtotalAfterOffers) * order.summary.tax;
+
+  const refundAmount = itemAfterOffer - itemCouponShare + itemTaxShare;
 
   item.returnStatus = "returned";
   item.returnApprovedAt = new Date();
@@ -41,6 +91,7 @@ exports.approveReturnHelper = async ({ orderId, itemId }) => {
   return {
     status: 200,
     message: "Return approved, stock updated and wallet credited",
+    refundAmount,
   };
 };
 
@@ -77,7 +128,6 @@ exports.getAllOrdersHelper = async ({ page, limit, search }) => {
 };
 
 exports.updateOrderStatusHelper = async ({ orderId, status }) => {
-
   const order = await Order.findById(orderId);
   if (!order) {
     return { status: 404, message: "Order not found" };
@@ -88,7 +138,7 @@ exports.updateOrderStatusHelper = async ({ orderId, status }) => {
   // optionally: update timestamps
   if (status === "Delivered") {
     order.deliveredAt = new Date();
-    order.paymentStatus='paid'
+    order.paymentStatus = "paid";
   }
   if (status === "cancelled") {
     order.cancelledAt = new Date();
