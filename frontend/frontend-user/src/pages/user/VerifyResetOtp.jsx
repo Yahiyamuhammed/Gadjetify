@@ -27,7 +27,7 @@ const VerifyResetOtp = () => {
       {
         onSuccess: () => {
           toast.success("OTP verified successfully");
-          navigate("/forgot-password-otp", { state: { email } });
+          navigate("/reset-password", { state: { email } });
         },
         onError: (err) =>
           toast.error(err.response?.data?.message || "An error occurred"),

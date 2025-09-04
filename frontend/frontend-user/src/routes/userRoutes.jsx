@@ -16,6 +16,7 @@ import WalletPage from "@/pages/user/WalletPage.jsx";
 import OrderFailurePage from "@/pages/user/OrderFailurePage.jsx";
 import ForgotPassword from "@/pages/user/ForgotPassword.jsx";
 import VerifyResetOtp from "@/pages/user/VerifyResetOtp.jsx";
+import ResetPassword from "@/pages/user/ResetPassword.jsx";
 // import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
@@ -111,6 +112,11 @@ const UserRoutes=()=>(
     <Route path="/forgot-password-otp" element={
         <MainLayout>
             <VerifyResetOtp />
+        </MainLayout>
+        } />
+    <Route path="/reset-password" element={
+        <MainLayout>
+            <ResetPassword />
         </MainLayout>
         } />
 </Routes>
