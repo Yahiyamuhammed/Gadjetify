@@ -195,7 +195,7 @@ const ProductCard = ({ product = [], refetch }) => {
           <div className="flex items-center gap-1 min-h-[24px] mb-2">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => {
-                const rating = product?.reviewStats?.avgRating || 0;
+                const rating = product?.avgRating || 0;
                 const fullStars = Math.floor(rating);
                 const hasHalfStar = rating % 1 !== 0 && i === fullStars;
 
@@ -218,7 +218,7 @@ const ProductCard = ({ product = [], refetch }) => {
               })}
             </div>
             <span className="text-sm text-gray-500">
-              ({product?.reviewStats?.reviewCount || 0})
+              ({product?.ratingCount || 0})
             </span>
           </div>
 

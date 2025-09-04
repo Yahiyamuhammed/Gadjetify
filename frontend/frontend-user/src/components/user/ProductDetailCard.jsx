@@ -25,7 +25,6 @@ import toast from "react-hot-toast";
 
 const ProductDetailsCard = ({ product }) => {
   const { mutate: addToCart } = useAddToCart();
-
   const navigate = useNavigate();
   const [mainImage, setMainImage] = useState(noImage);
   // console.log(product?.images[0].url)
@@ -151,7 +150,7 @@ const ProductDetailsCard = ({ product }) => {
                       <Star
                         key={i}
                         className={`w-5 h-5 ${
-                          i < Math.floor(product?.review?.averageRating || 0)
+                          i < Math.floor(product?.avgRating || 0)
                             ? "fill-current"
                             : "text-gray-300"
                         }`}
@@ -159,7 +158,7 @@ const ProductDetailsCard = ({ product }) => {
                     ))}
                   </div>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    ({product?.review?.count || 0} reviews)
+                    ({product?.ratingCount || 0} rating)
                   </span>
                 </div>
 

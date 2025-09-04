@@ -31,7 +31,7 @@ const FormDialog = ({
             Cancel
           </Button>
 
-          <Button onClick={() => onSubmit({ formData: formData })}>
+          <Button className={'ml-4'} onClick={() => onSubmit({ formData: formData })}>
             {submitLabel}
           </Button>
         </div>

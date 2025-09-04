@@ -53,7 +53,7 @@ exports.getOrderById = async (userId, orderId) => {
     paymentMethod: order.paymentMethod,
     paymentStatus: order.paymentStatus,
     addressSnapshot: order.addressSnapshot,
-    retryAvailiable:order?.retryAvailableUntil,
+    retryAvailiable: order?.retryAvailableUntil,
     summary: order.summary,
     items: order.items.map((item) => ({
       productName: item.productName,
@@ -64,6 +64,8 @@ exports.getOrderById = async (userId, orderId) => {
       quantity: item.quantity,
       itemId: item._id,
       returnStatus: item?.returnStatus,
+      productId: item.productId,
+      variantId: item.variantId,
     })),
   };
 
