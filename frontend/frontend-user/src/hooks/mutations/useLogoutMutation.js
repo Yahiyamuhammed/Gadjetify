@@ -11,11 +11,9 @@ export const useLogoutMutation =()=>{
             return response
         },
         onSuccess: () => {
-      // Clear user data from the cache
+      
       queryClient.removeQueries(["auth-user"],undefined);
       
-      // Optionally: clear other user-related caches
-      // queryClient.clear(); // (clears all cache, if needed)
     }
     })
 } 
