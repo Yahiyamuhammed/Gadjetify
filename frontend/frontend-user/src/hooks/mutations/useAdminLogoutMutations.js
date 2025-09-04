@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 export const useAdminLogoutMutation = () => {
   return useMutation({
     mutationFn: async () => {
-      const res = await api.post("/admin/logout");
+      const res = await api.post("/admin/auth/logout");
       return res;
     },
   });

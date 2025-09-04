@@ -142,11 +142,11 @@ const Sidebar = () => {
       path: "/admin/manage-coupon",
     },
 
-    {
-      icon: User,
-      label: "Admin Profile",
-      path: "/admin/profile",
-    },
+    // {
+    //   icon: User,
+    //   label: "Admin Profile",
+    //   path: "/admin/profile",
+    // },
   ];
 
   return (
@@ -208,7 +208,7 @@ const Sidebar = () => {
       {/* Settings and Logout Section */}
       <div className=" dark:border-gray-800 p-4 space-y-3">
         {/* Theme Toggle */}
-        <div
+        {/* <div
           className={`
             flex 
             items-center 
@@ -233,7 +233,7 @@ const Sidebar = () => {
           ) : (
             <Moon className="text-indigo-500" size={20} />
           )}
-        </div>
+        </div> */}
 
         {/* Logout Button */}
         <button
