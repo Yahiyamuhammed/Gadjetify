@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 const VerifyResetOtp = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email; 
+  const email = location.state?.email;
 
   const { mutate: verifyOtp } = useVerifyForgotOtp();
 
@@ -18,6 +18,13 @@ const VerifyResetOtp = () => {
       type: "text",
       placeholder: "Enter the OTP sent to your email",
       required: true,
+    },
+  ];
+  const extraLinks = [
+    {
+      text: "Back to login",
+      linkText: "Sign In",
+      path: "/login",
     },
   ];
 
@@ -44,6 +51,7 @@ const VerifyResetOtp = () => {
           onSubmit={handleSubmit}
           buttonText="Verify OTP"
           validationRules={otpSchema}
+          extraLinks={extraLinks}
         />
       </div>
     </div>

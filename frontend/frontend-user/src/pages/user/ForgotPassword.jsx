@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const { mutate: requestPasswordReset, error } = useForgotPassword();
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
 
   const fields = [
     {
@@ -18,13 +17,19 @@ const ForgotPassword = () => {
       required: true,
     },
   ];
+  const extraLinks = [
+    {
+      text: "Back to login",
+      linkText: "Sign In",
+      path: "/login",
+    },
+  ];
 
   const handleSubmit = (values) => {
     requestPasswordReset(values, {
       onSuccess: () => {
         toast.success("An otp is sent to you email");
-        navigate("/forgot-password-otp", { state: { email: values.email } }); 
-
+        navigate("/forgot-password-otp", { state: { email: values.email } });
       },
       onError: (err) =>
         toast.error(err.response.data.message || "an error occured"),
@@ -40,6 +45,7 @@ const ForgotPassword = () => {
           onSubmit={handleSubmit}
           buttonText="Send OTP"
           validationRules={emailSchema}
+          extraLinks={extraLinks}
         />
       </div>
     </div>

@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Form from "@/components/common/Form";
 import { useResetPassword } from "@/hooks/mutations/useUserAuth";
-import { resetPasswordSchema } from "@/utils/validation/resetPasswordSchema";
 import toast from "react-hot-toast";
+import { resetPasswordSchema } from "@/utils/validation/forgotOtpSchema";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -25,6 +25,13 @@ const ResetPassword = () => {
       type: "password",
       placeholder: "Re-enter your new password",
       required: true,
+    },
+  ];
+  const extraLinks = [
+    {
+      text: "Back to login",
+      linkText: "Sign In",
+      path: "/login",
     },
   ];
 
@@ -51,6 +58,7 @@ const ResetPassword = () => {
           onSubmit={handleSubmit}
           buttonText="Reset Password"
           validationRules={resetPasswordSchema}
+          extraLinks={extraLinks}
         />
       </div>
     </div>
