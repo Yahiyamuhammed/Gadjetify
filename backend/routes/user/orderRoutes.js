@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const userAuth = require('../middlewares/authMiddleware');
-const { placeOrder, getUserOrders, getSingleOrder, requestReturn, cancelOrder } = require('../controllers/orderController');
+const userAuth = require('../../middlewares/authMiddleware');
+const { placeOrder, getUserOrders, getSingleOrder, requestReturn, cancelOrder } = require('../../controllers/orderController');
 
-router.post('/order', userAuth, placeOrder);
-router.get('/order', userAuth, getUserOrders); 
-router.get('/order/:orderId', userAuth, getSingleOrder);
-router.patch('/order/:orderId/return/:itemId', requestReturn);
-router.patch('/orders/:orderId/cancel', cancelOrder);
+router.post('/', userAuth, placeOrder);
+router.get('/', userAuth, getUserOrders); 
+router.get('/:orderId', userAuth, getSingleOrder);
+router.patch('/:orderId/return/:itemId', requestReturn);
+router.patch('/:orderId/cancel', cancelOrder);
 
 
 

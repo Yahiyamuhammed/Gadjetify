@@ -11,8 +11,8 @@ const {
   requestPasswordReset,
   verifyPasswordResetOtp,
   resetPassword,
-} = require("../controllers/authController");
-const checkBlockedUser = require("../middlewares/checkBlockedUser");
+} = require("../../controllers/authController");
+const checkBlockedUser = require("../../middlewares/checkBlockedUser");
 
 router.post("/signup", signup);
 router.post("/verify-otp", verifyOtp);
