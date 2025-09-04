@@ -20,64 +20,74 @@ const AdminLayout = ({ children }) => {
   );
 };
 
+const AdminRoutes = () => (
+  <Routes>
+    <Route path="/login" element={<AdminLogin />} />
+    <Route
+      path="/"
+      element={
+        <AdminLayout>
+          <AdminDashboard />
+        </AdminLayout>
+      }
+    />
+    <Route
+      path="/manage-products"
+      element={
+        <AdminLayout>
+          <ProductManagement />
+        </AdminLayout>
+      }
+    />
+    <Route
+      path="/manage-brands"
+      element={
+        <AdminLayout>
+          <BrandManagement />
+        </AdminLayout>
+      }
+    />
+    <Route
+      path="/manage-users"
+      element={
+        <AdminLayout>
+          <UserManagement />
+        </AdminLayout>
+      }
+    />
+    <Route
+      path="/manage-Varient"
+      element={
+        <AdminLayout>
+          <VariantList />
+        </AdminLayout>
+      }
+    />
+    <Route
+      path="/manage-orders"
+      element={
+        <AdminLayout>
+          <AdminOrders />
+        </AdminLayout>
+      }
+    />
+    <Route
+      path="/manage-coupon"
+      element={
+        <AdminLayout>
+          <AdminCoupons />
+        </AdminLayout>
+      }
+    />
+    <Route
+      path="/manage-sales"
+      element={
+        <AdminLayout>
+          <SalesReportPage />
+        </AdminLayout>
+      }
+    />
+  </Routes>
+);
 
-const AdminRoutes=()=>(
-    <Routes>
-        <Route path="/login" element={
-            <AdminLayout>
-                <AdminLogin />
-            </AdminLayout>
-        }
-        />
-        <Route path="/" element={
-            <AdminLayout>
-                <AdminDashboard />
-
-            </AdminLayout>
-            }/>
-        <Route path="/manage-products" element={
-            <AdminLayout>
-                <ProductManagement />
-
-            </AdminLayout>
-            }/>
-        <Route path="/manage-brands" element={
-            <AdminLayout>
-                <BrandManagement />
-
-            </AdminLayout>
-            }/>
-        <Route path="/manage-users" element={
-            <AdminLayout>
-                <UserManagement />
-
-            </AdminLayout>
-            }/>
-        <Route path="/manage-Varient" element={
-            <AdminLayout>
-                <VariantList />
-
-            </AdminLayout>
-            }/>
-        <Route path="/manage-orders" element={
-            <AdminLayout>
-                <AdminOrders />
-
-            </AdminLayout>
-            }/>
-        <Route path="/manage-coupon" element={
-            <AdminLayout>
-                <AdminCoupons />
-
-            </AdminLayout>
-            }/>
-        <Route path="/manage-sales" element={
-            <AdminLayout>
-                <SalesReportPage />
-
-            </AdminLayout>
-            }/>
-    </Routes>
-)
-
-export default AdminRoutes
+export default AdminRoutes;
