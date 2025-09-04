@@ -235,40 +235,27 @@ const ProfileCard = () => {
         setOpen={setOpenResetOtp}
         // onSubmit={() => {}} // handled inside form
         onSubmit={({ formData }) => {
-            verifyPasswordOtp(
-              { email: userDetail?.email, otp: formData },
-              {
-                onSuccess: () => {
-                  toast.success("OTP verified");
-                  setOpenResetOtp(false);
-                  setOpenResetForm(true); // open reset form after OTP
-                },
-                onError: (err) =>
-                  toast.error(err.response?.data?.message || "Invalid OTP"),
-              }
-            );
-          }}
+          verifyPasswordOtp(
+            { email: userDetail?.email, otp: formData },
+            {
+              onSuccess: () => {
+                toast.success("OTP verified");
+                setOpenResetOtp(false);
+                setOpenResetForm(true);
+                setOtp("");
+                setResetForm('')
+              },
+              onError: (err) => {
+                toast.error(err.response?.data?.message || "Invalid OTP"),
+                  setOtp("");
+              },
+            }
+          );
+        }}
         triggerLabel="Verify OTP"
         formData={otp}
       >
-        <InputOTPForm
-          formData={otp}
-          setFormData={setOtp}
-          onSubmit={({ formData }) => {
-            verifyPasswordOtp(
-              { email: userDetail?.email, otp: formData },
-              {
-                onSuccess: () => {
-                  toast.success("OTP verified");
-                  setOpenOtp(false);
-                  setOpenResetForm(true); // open reset form after OTP
-                },
-                onError: (err) =>
-                  toast.error(err.response?.data?.message || "Invalid OTP"),
-              }
-            );
-          }}
-        />
+        <InputOTPForm formData={otp} setFormData={setOtp} />
       </FormDialog>
 
       <FormDialog
@@ -282,6 +269,7 @@ const ProfileCard = () => {
               onSuccess: () => {
                 toast.success("Password reset successfully");
                 setOpenResetForm(false);
+                setResetForm('')
               },
               onError: (err) =>
                 toast.error(err.response?.data?.message || "Reset failed"),
