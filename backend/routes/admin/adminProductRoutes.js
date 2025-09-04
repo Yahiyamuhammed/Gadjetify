@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth= require('../middlewares/adminAuth')
-const {addProduct,unListProduct,updateProduct, getProduct,restoreProductController}=require('../controllers/adminProductController');
+const adminAuth= require('../../middlewares/adminAuth')
+const {addProduct,unListProduct,updateProduct, getProduct,restoreProductController}=require('../../controllers/adminProductController');
 
-const { upload, resizeAndSaveImages } = require('../middlewares/uploadProductImage');
+const { upload, resizeAndSaveImages } = require('../../middlewares/uploadProductImage');
 
 
 router.get('/product',adminAuth,  getProduct);

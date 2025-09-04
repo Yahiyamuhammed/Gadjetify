@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {addBrand,updateBrand,deleteBrand,getBrands,restoreBrand} = require('../controllers/adminBrandControllers');
-const adminAuth= require('../middlewares/adminAuth')
+const {addBrand,updateBrand,deleteBrand,getBrands,restoreBrand} = require('../../controllers/adminBrandControllers');
+const adminAuth= require('../../middlewares/adminAuth')
 
 router.post('/brands', addBrand);
 router.get('/brands',adminAuth, getBrands);

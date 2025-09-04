@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const adminAuthRoutes = require("./adminAuthRoutes");
-const adminUserRoutes = require("./adminUserRoutes");
+const adminUserRoutes = require("./adminUserRoute");
 const adminProductRoutes = require("./adminProductRoutes");
 const adminBrandRoutes = require("./adminBrandRoutes");
 const adminVarientRoutes = require("./adminVarientRoutes");

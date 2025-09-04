@@ -4,7 +4,7 @@ const {
   fetchCoupons,
   updateCoupon,
   toggleCouponStatus,
-} = require("../controllers/adminCouponController");
+} = require("../../controllers/adminCouponController");
 const router = express.Router();
 
 router.post("/coupons", createCoupon);

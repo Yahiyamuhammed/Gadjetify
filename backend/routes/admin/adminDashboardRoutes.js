@@ -4,7 +4,7 @@ const {
   fetchSalesReport,
   fetchTopProducts,
   fetchTopBrands,
-} = require("../controllers/adminDashboardController");
+} = require("../../controllers/adminDashboardController");
 const router = express.Router();
 
 router.get("/dashboard/summary", fetchSummary);

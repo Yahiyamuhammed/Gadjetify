@@ -6,9 +6,9 @@ const {
   updateVariant,
   deleteVariant,
   getVariants,
-} = require("../controllers/variantController.js");
+} = require("../../controllers/variantController.js");
 
-const adminAuth = require("../middlewares/adminAuth.js");
+const adminAuth = require("../../middlewares/adminAuth.js");
 
 router.post("/variants", adminAuth, createVariant);
 
