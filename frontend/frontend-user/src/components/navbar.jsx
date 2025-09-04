@@ -25,8 +25,8 @@ const Navbar = () => {
 
   const { mutate: logouMutate, isError, isSuccess } = useLogoutMutation();
 
-  const { data: user } = useAuthUser();
-  const { data: cartCount } = useFetchCartCount();
+  const { data: user, isLoading: userLoading } = useAuthUser();
+  const { data: cartCount } = useFetchCartCount({ enabled: Boolean(user) });
 
   // console.log("this is the user in navbar", !!user);
 

@@ -11,12 +11,14 @@ export const useFetchCart = () => {
   })
 }
 
-export const useFetchCartCount = () => {
+export const useFetchCartCount = (options = {}) => {
   return useQuery({
     queryKey: ["cartCount"],
     queryFn: async () => {
       const res = await api.get("/cart/count");
       return res.data.count;
     },
+    enabled: options.enabled,
+    ...options,      
   });
 };
