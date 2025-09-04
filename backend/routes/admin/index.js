@@ -10,15 +10,17 @@ const adminOrderRoutes = require("./adminOrderRoutes");
 const adminCouponRoutes = require("./adminCouponRoutes");
 const adminReportRoutes = require("./adminReportRoutes");
 const adminDashboardRoutes = require("./adminDashboardRoutes");
+const adminAuth=require('../../middlewares/adminAuth')
+
 
 router.use("/auth", adminAuthRoutes);
-router.use("/users", adminUserRoutes);
-router.use("/product", adminProductRoutes);
-router.use("/brands", adminBrandRoutes);
-router.use("/variants", adminVarientRoutes);
-router.use("/orders", adminOrderRoutes);
-router.use("/coupons", adminCouponRoutes);
-router.use("/reports", adminReportRoutes);
-router.use("/dashboard", adminDashboardRoutes);
+router.use("/users",adminAuth, adminUserRoutes);
+router.use("/product",adminAuth, adminProductRoutes);
+router.use("/brands",adminAuth, adminBrandRoutes);
+router.use("/variants",adminAuth, adminVarientRoutes);
+router.use("/orders",adminAuth, adminOrderRoutes);
+router.use("/coupons",adminAuth, adminCouponRoutes);
+router.use("/reports",adminAuth, adminReportRoutes);
+router.use("/dashboard",adminAuth, adminDashboardRoutes);
 
 module.exports = router;
