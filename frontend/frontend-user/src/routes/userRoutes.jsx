@@ -14,6 +14,7 @@ import OrderSuccessPage from "@/pages/user/OrderSuccessPage.jsx";
 import Orders from "@/pages/user/Orders.jsx";
 import WalletPage from "@/pages/user/WalletPage.jsx";
 import OrderFailurePage from "@/pages/user/OrderFailurePage.jsx";
+import ForgotPassword from "@/pages/user/ForgotPassword.jsx";
 // import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
@@ -99,6 +100,11 @@ const UserRoutes=()=>(
     <Route path="/wallet" element={
         <MainLayout>
             <WalletPage />
+        </MainLayout>
+        } />
+    <Route path="/forgot-password" element={
+        <MainLayout>
+            <ForgotPassword />
         </MainLayout>
         } />
 </Routes>
