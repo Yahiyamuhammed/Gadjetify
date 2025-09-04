@@ -100,6 +100,55 @@ const ProfileCard = () => {
     setOpen(true);
   };
 
+  const handlePasswordResetRequest = () => {
+    toast.success("Your otp is being sent");
+    requestPasswordReset(
+      { email: userDetail?.email },
+      {
+        onSuccess: () => {
+          toast.success("OTP sent to your email");
+          setOpenResetOtp(true);
+        },
+        onError: (err) =>
+          toast.error(err.response?.data?.message || "Failed to send OTP"),
+      }
+    );
+    setShowResetConfirm(false);
+  };
+
+  const handleVerifyPasswordOtp = ({ formData }) => {
+    verifyPasswordOtp(
+      { email: userDetail?.email, otp: formData },
+      {
+        onSuccess: () => {
+          toast.success("OTP verified");
+          setOpenResetOtp(false);
+          setOpenResetForm(true);
+          setOtp("");
+          setResetForm("");
+        },
+        onError: (err) => {
+          toast.error(err.response?.data?.message || "Invalid OTP"), setOtp("");
+        },
+      }
+    );
+  };
+
+  const handleResetPassword = ({ formData }) => {
+    resetPassword(
+      { email: userDetail?.email, password: formData.password },
+      {
+        onSuccess: () => {
+          toast.success("Password reset successfully");
+          setOpenResetForm(false);
+          setResetForm("");
+        },
+        onError: (err) =>
+          toast.error(err.response?.data?.message || "Reset failed"),
+      }
+    );
+  };
+
   return (
     <Card className="p-6">
       <figure>
@@ -211,22 +260,7 @@ const ProfileCard = () => {
         description="Are you sure you want to reset your password? An OTP will be sent to your registered email."
         confirmText="Yes, Send OTP"
         cancelText="Cancel"
-        onConfirm={() => {
-          requestPasswordReset(
-            { email: userDetail?.email },
-            {
-              onSuccess: () => {
-                toast.success("OTP sent to your email");
-                setOpenResetOtp(true);
-              },
-              onError: (err) =>
-                toast.error(
-                  err.response?.data?.message || "Failed to send OTP"
-                ),
-            }
-          );
-          setShowResetConfirm(false);
-        }}
+        onConfirm={handlePasswordResetRequest}
       />
 
       <FormDialog
@@ -234,24 +268,7 @@ const ProfileCard = () => {
         open={openResetOtp}
         setOpen={setOpenResetOtp}
         // onSubmit={() => {}} // handled inside form
-        onSubmit={({ formData }) => {
-          verifyPasswordOtp(
-            { email: userDetail?.email, otp: formData },
-            {
-              onSuccess: () => {
-                toast.success("OTP verified");
-                setOpenResetOtp(false);
-                setOpenResetForm(true);
-                setOtp("");
-                setResetForm('')
-              },
-              onError: (err) => {
-                toast.error(err.response?.data?.message || "Invalid OTP"),
-                  setOtp("");
-              },
-            }
-          );
-        }}
+        onSubmit={handleVerifyPasswordOtp}
         triggerLabel="Verify OTP"
         formData={otp}
       >
@@ -262,20 +279,7 @@ const ProfileCard = () => {
         title="Reset Password"
         open={openResetForm}
         setOpen={setOpenResetForm}
-        onSubmit={({ formData }) => {
-          resetPassword(
-            { email: userDetail?.email, password: formData.password },
-            {
-              onSuccess: () => {
-                toast.success("Password reset successfully");
-                setOpenResetForm(false);
-                setResetForm('')
-              },
-              onError: (err) =>
-                toast.error(err.response?.data?.message || "Reset failed"),
-            }
-          );
-        }}
+        onSubmit={handleResetPassword}
         triggerLabel="Reset"
         formData={resetForm}
       >
