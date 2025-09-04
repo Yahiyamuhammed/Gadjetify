@@ -88,7 +88,7 @@ const Products = () => {
                 className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
                 bg-white focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="">All Categories</option>
+                <option value="">All Brands</option>
                 {brands.map((cat) => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
@@ -107,8 +107,8 @@ const Products = () => {
                 >
                   <option value="latest">Latest Arrivals</option>
                   <option value="oldest">Oldest Arrivals</option>
-                  {/* <option value="price_asc">Price: Low to High</option>
-                  <option value="price_desc">Price: High to Low</option> */}
+                  <option value="price_asc">Price: Low to High</option>
+                  <option value="price_desc">Price: High to Low</option>
                   <option value="name_asc">Name: A-Z</option>
                   <option value="name_desc">Name: Z-A</option>
                 </select>
