@@ -203,8 +203,7 @@ const ProfileCard = () => {
         </div>
       </div>
 
-      {/* Action Buttons and Tabs */}
-      <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="mt-6 flex flex-col text- md:flex-row md:items-center justify-end gap-4">
         <div>
           <Button variant="secondary" size="sm" onClick={handleOpenEdit}>
             Edit
@@ -218,15 +217,6 @@ const ProfileCard = () => {
             Reset Password
           </Button>
         </div>
-
-        <Tabs defaultValue="profile">
-          <TabsList className="flex space-x-4 overflow-x-auto">
-            <TabsTrigger value="profile">My Profile</TabsTrigger>
-            <TabsTrigger value="teams">Teams</TabsTrigger>
-            <TabsTrigger value="files">Files</TabsTrigger>
-            <TabsTrigger value="connections">Connections</TabsTrigger>
-          </TabsList>
-        </Tabs>
       </div>
       <FormDialog
         title="Edit Profile"
