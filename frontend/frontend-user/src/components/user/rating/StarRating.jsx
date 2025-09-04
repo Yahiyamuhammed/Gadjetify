@@ -6,6 +6,8 @@ export default function StarRating({ productId, variantId, initialRating }) {
   const [rating, setRating] = useState(initialRating || 0);
   const { mutate } = useRateProduct();
 
+  console.log(productId, variantId,)
+
   const handleRate = (value) => {
     setRating(value);
     mutate({ productId, variantId, rating: value },

@@ -6,7 +6,7 @@ const {
 } = require("../controllers/ratingController");
 const userAuth = require("../middlewares/authMiddleware");
 
-router.post("/variant", userAuth, rateProduct);
-router.get("/variant/:variantId", userAuth, getUserRating);
+router.post("/rating", userAuth, rateProduct);
+router.get("/rating/:variantId", userAuth, getUserRating);
 
 module.exports = router;

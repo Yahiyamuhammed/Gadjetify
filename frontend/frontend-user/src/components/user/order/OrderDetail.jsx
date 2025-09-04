@@ -18,6 +18,7 @@ import {
   usePaymentSuccess,
   useRetryPayment,
 } from "@/hooks/mutations/useStripePayment";
+import StarRating from "../rating/StarRating";
 
 const OrderDetail = ({ orderId, onBack }) => {
   const queryClient = useQueryClient();
@@ -39,6 +40,8 @@ const OrderDetail = ({ orderId, onBack }) => {
     isLoading,
     isError,
   } = useOrderDetails({ orderId });
+
+  console.log(OrderDetail)
 
   useEffect(() => {
     if (!OrderDetail) return;
@@ -66,7 +69,7 @@ const OrderDetail = ({ orderId, onBack }) => {
     0
   );
 
-  const handleCancelOrder = (expired ) => {
+  const handleCancelOrder = (expired) => {
     cancelOrder(
       { orderId },
       {
@@ -338,6 +341,11 @@ const OrderDetail = ({ orderId, onBack }) => {
               />
               <div className="flex-1">
                 <p className="font-medium text-lg">{item.productName}</p>
+                <StarRating
+                  productId={item.productId}
+                  variantId={item.variantId}
+                  initialRating={item.userRating}
+                />
 
                 {item.ram && item.storage && (
                   <div className="flex gap-2 mt-1">
@@ -390,7 +398,10 @@ const OrderDetail = ({ orderId, onBack }) => {
               Download Order
             </Button>
             {OrderDetail.status.toLowerCase() === "placed" && (
-              <Button variant="destructive" onClick={()=>handleCancelOrder(false)}>
+              <Button
+                variant="destructive"
+                onClick={() => handleCancelOrder(false)}
+              >
                 Cancel Order
               </Button>
             )}
