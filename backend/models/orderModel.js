@@ -43,7 +43,7 @@ const addressSnapshotSchema = new mongoose.Schema(
     alternatePhone: { type: String },
     pincode: { type: String, required: true },
     locality: { type: String, required: true },
-    address: { type: String, required: true }, // e.g., Nadapuram, Kozhikode
+    address: { type: String, required: true }, 
     district: { type: String, required: true },
     state: { type: String, required: true },
     landmark: { type: String },
@@ -57,7 +57,14 @@ const summarySnapshotSchema = new mongoose.Schema({
   totalOfferDiscount: Number,
   customDiscount: Number,
   totalDiscount: Number,
-  couponDiscount: Number,
+  
+  // couponDiscount: Number,
+   coupon: {
+    code: { type: String, default: null },
+    discountPercent: { type: Number, default: 0 },
+    discountAmount: { type: Number, default: 0 },
+    minPurchase: { type: Number, default: 0 },
+  },
   shipping: Number,
   tax: Number,
   total: Number,
