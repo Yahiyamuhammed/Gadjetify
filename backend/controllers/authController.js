@@ -4,6 +4,9 @@ const {
   resendUserOtp,
   loginUser,
   googleAuthHandler,
+  requestPasswordReset,
+  verifyPasswordResetOtp,
+  resetPassword,
 } = require("../helpers/authHelper");
 
 exports.signup = async (req, res) => {
@@ -116,7 +119,7 @@ exports.signout = async (req, res) => {
 exports.me = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(200).json(null); // guest user
+      return res.status(200).json(null);
     }
     const { _id, name, email, isVerified, authType } = req.user;
     const user = { _id, name, email, isVerified, authType };
@@ -124,5 +127,35 @@ exports.me = async (req, res) => {
   } catch (err) {
     console.error("Error in /me:", err);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const result = await requestPasswordReset(email);
+    return res.status(result.status).json(result.data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to request password reset", error: err.message });
+  }
+};
+
+
+exports.verifyPasswordResetOtp = async (req, res) => {
+  try {
+    const result = await verifyPasswordResetOtp(req.body);
+    return res.status(result.status).json(result.data);
+  } catch (err) {
+    res.status(500).json({ message: "OTP verification failed", error: err.message });
+  }
+};
+
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const result = await resetPassword(req.body);
+    return res.status(result.status).json(result.data);
+  } catch (err) {
+    res.status(500).json({ message: "Password reset failed", error: err.message });
   }
 };

@@ -8,6 +8,9 @@ const {
   googleLogin,
   signout,
   me,
+  requestPasswordReset,
+  verifyPasswordResetOtp,
+  resetPassword,
 } = require("../controllers/authController");
 const checkBlockedUser = require("../middlewares/checkBlockedUser");
 
@@ -18,5 +21,9 @@ router.post("/login", login);
 router.post("/google-login", googleLogin);
 router.post("/signout", signout);
 router.get("/me", checkBlockedUser, me);
+
+router.post("/forgot-password", requestPasswordReset);
+router.post("/verify-forgot-otp", verifyPasswordResetOtp);
+router.post("/reset-password", resetPassword);
 
 module.exports = router;

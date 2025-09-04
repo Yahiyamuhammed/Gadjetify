@@ -93,6 +93,11 @@ const Login = () => {
       linkText: "Sign Up",
       path: "/signup",
     },
+    {
+      text: "Forgot password?",
+      linkText: "Reset it",
+      path: "/forgot-password",
+    },
   ];
 
   return (

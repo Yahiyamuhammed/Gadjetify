@@ -14,13 +14,24 @@ import EditProfileFormFields from "./EditProfileFormFields";
 import { InputOTPForm } from "../../common/InputOtp";
 import { useFetchUserDetail } from "@/hooks/queries/useProfileQueries";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  useForgotPassword,
+  useResetPassword,
+  useVerifyForgotOtp,
+} from "@/hooks/mutations/useUserAuth";
+import ConfirmAlertDialog from "@/components/common/ExternalConfirmDialog";
+import ResetPasswordFormFields from "./ResetPasswordFormFields";
 
 const ProfileCard = () => {
   const { mutate } = useUpdateProfile();
   const { mutate: verifyOtp } = useVerifyEmailOtp();
   const { data: userDetail } = useFetchUserDetail();
-  const useQuery = useQueryClient();
 
+  const { mutate: requestPasswordReset } = useForgotPassword();
+  const { mutate: verifyPasswordOtp } = useVerifyForgotOtp();
+  const { mutate: resetPassword } = useResetPassword();
+
+  const useQuery = useQueryClient();
 
   const [open, setOpen] = useState(false);
   const [openOtp, setOpenOtp] = useState(false);
@@ -29,6 +40,13 @@ const ProfileCard = () => {
     name: userDetail?.name || "",
     email: userDetail?.email || "",
     pin: "",
+  });
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [openResetForm, setOpenResetForm] = useState(false);
+  const [openResetOtp, setOpenResetOtp] = useState(false);
+  const [resetForm, setResetForm] = useState({
+    password: "",
+    confirmPassword: "",
   });
 
   const avatarUrl =
@@ -55,7 +73,7 @@ const ProfileCard = () => {
 
   const handleOtpSubmit = ({ formData }) => {
     // You can use mutate or a different API call here to verify OTP
-    toast.success("OTP verified: " + formData);
+    // toast.success("OTP verified: " + formData);
     verifyOtp(
       { otp: formData },
       {
@@ -80,6 +98,55 @@ const ProfileCard = () => {
       });
     }
     setOpen(true);
+  };
+
+  const handlePasswordResetRequest = () => {
+    toast.success("Your otp is being sent");
+    requestPasswordReset(
+      { email: userDetail?.email },
+      {
+        onSuccess: () => {
+          toast.success("OTP sent to your email");
+          setOpenResetOtp(true);
+        },
+        onError: (err) =>
+          toast.error(err.response?.data?.message || "Failed to send OTP"),
+      }
+    );
+    setShowResetConfirm(false);
+  };
+
+  const handleVerifyPasswordOtp = ({ formData }) => {
+    verifyPasswordOtp(
+      { email: userDetail?.email, otp: formData },
+      {
+        onSuccess: () => {
+          toast.success("OTP verified");
+          setOpenResetOtp(false);
+          setOpenResetForm(true);
+          setOtp("");
+          setResetForm("");
+        },
+        onError: (err) => {
+          toast.error(err.response?.data?.message || "Invalid OTP"), setOtp("");
+        },
+      }
+    );
+  };
+
+  const handleResetPassword = ({ formData }) => {
+    resetPassword(
+      { email: userDetail?.email, password: formData.password },
+      {
+        onSuccess: () => {
+          toast.success("Password reset successfully");
+          setOpenResetForm(false);
+          setResetForm("");
+        },
+        onError: (err) =>
+          toast.error(err.response?.data?.message || "Reset failed"),
+      }
+    );
   };
 
   return (
@@ -138,9 +205,19 @@ const ProfileCard = () => {
 
       {/* Action Buttons and Tabs */}
       <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <Button variant="secondary" size="sm" onClick={handleOpenEdit}>
-          Edit
-        </Button>
+        <div>
+          <Button variant="secondary" size="sm" onClick={handleOpenEdit}>
+            Edit
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setShowResetConfirm(true)}
+            className={"ml-4"}
+          >
+            Reset Password
+          </Button>
+        </div>
 
         <Tabs defaultValue="profile">
           <TabsList className="flex space-x-4 overflow-x-auto">
@@ -174,6 +251,41 @@ const ProfileCard = () => {
           formData={otp}
           setFormData={setOtp}
           onSubmit={handleOtpSubmit}
+        />
+      </FormDialog>
+      <ConfirmAlertDialog
+        open={showResetConfirm}
+        onOpenChange={setShowResetConfirm}
+        title="Reset Password"
+        description="Are you sure you want to reset your password? An OTP will be sent to your registered email."
+        confirmText="Yes, Send OTP"
+        cancelText="Cancel"
+        onConfirm={handlePasswordResetRequest}
+      />
+
+      <FormDialog
+        title="Enter OTP"
+        open={openResetOtp}
+        setOpen={setOpenResetOtp}
+        // onSubmit={() => {}} // handled inside form
+        onSubmit={handleVerifyPasswordOtp}
+        triggerLabel="Verify OTP"
+        formData={otp}
+      >
+        <InputOTPForm formData={otp} setFormData={setOtp} />
+      </FormDialog>
+
+      <FormDialog
+        title="Reset Password"
+        open={openResetForm}
+        setOpen={setOpenResetForm}
+        onSubmit={handleResetPassword}
+        triggerLabel="Reset"
+        formData={resetForm}
+      >
+        <ResetPasswordFormFields
+          formData={resetForm}
+          setFormData={setResetForm}
         />
       </FormDialog>
     </Card>

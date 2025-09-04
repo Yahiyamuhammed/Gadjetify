@@ -6,7 +6,6 @@ const bcrypt = require("bcryptjs");
 const generateReferralCode = require("../utils/generateReferralCode ");
 const WalletTransaction = require("../models/walletTransactionModel");
 
-
 exports.signupUser = async ({
   email,
   name,
@@ -41,7 +40,6 @@ exports.signupUser = async ({
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const referralCode = generateReferralCode(name);
-
 
   const user = new User({
     email,
@@ -271,4 +269,77 @@ exports.googleAuthHandler = async ({ access_token }) => {
       },
     },
   };
+};
+
+exports.requestPasswordReset = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    return { status: 404, data: { message: "User not found" } };
+  }
+
+  const otp = generateOTP();
+  const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+  user.otp = otp;
+  user.otpExpiresAt = otpExpiresAt;
+  user.isResetOtpVerified = false;
+  await user.save();
+
+  await sendMail(email, otp);
+
+  return { status: 200, data: { message: "OTP sent to your email" } };
+};
+
+exports.verifyPasswordResetOtp = async ({ email, otp }) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    return { status: 404, data: { message: "User not found" } };
+  }
+
+  if (!user.otp || !user.otpExpiresAt) {
+    return { status: 400, data: { message: "No OTP request found" } };
+  }
+
+  if (user.otp !== otp) {
+    return { status: 400, data: { message: "Invalid OTP" } };
+  }
+
+  if (user.otpExpiresAt < Date.now()) {
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiresAt = undefined;
+    await user.save();
+    return { status: 400, data: { message: "OTP expired" } };
+  }
+  user.isVerified = true;
+  user.otp = undefined;
+  user.otpExpiresAt = undefined;
+  user.isResetOtpVerified = true;
+  await user.save();
+
+  return { status: 200, data: { message: "OTP verified successfully" } };
+};
+
+exports.resetPassword = async ({ email, password }) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    return { status: 404, data: { message: "User not found" } };
+  }
+
+  if (!user.isResetOtpVerified) {
+    return {
+      status: 403,
+      data: { message: "OTP not verified for password reset" },
+    };
+  }
+
+  const hashed = await bcrypt.hash(password, 10);
+
+  user.password = hashed;
+  user.otp = null;
+  user.otpExpiresAt = null;
+  user.isResetOtpVerified = undefined;
+  await user.save();
+
+  return { status: 200, data: { message: "Password reset successful" } };
 };
