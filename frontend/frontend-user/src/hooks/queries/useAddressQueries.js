@@ -5,7 +5,7 @@ export const getAddresses = ()=>{
     return useQuery({
         queryKey:['address'],
         queryFn:async ()=>{
-            const res=await api.get('/get-all-addresses')
+            const res=await api.get('/address/get-all-addresses')
             return res.data.addresses
         }
     })
