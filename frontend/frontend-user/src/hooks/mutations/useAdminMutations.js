@@ -4,7 +4,7 @@ import { api } from "@/utils/api";
 export const useAdminLogin = () => {
   return useMutation({
     mutationFn: async (formData) => {
-      const response = await api.post("/admin/login", formData);
+      const response = await api.post("/admin/auth/login", formData);
       return response.data;
     },
   });

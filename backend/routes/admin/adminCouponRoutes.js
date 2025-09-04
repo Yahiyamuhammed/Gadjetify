@@ -7,9 +7,9 @@ const {
 } = require("../../controllers/adminCouponController");
 const router = express.Router();
 
-router.post("/coupons", createCoupon);
-router.patch("/coupons/:couponId", updateCoupon);
-router.patch("/coupons/:couponId/toggle", toggleCouponStatus);
-router.get("/coupons", fetchCoupons);
+router.post("/", createCoupon);
+router.patch("/:couponId", updateCoupon);
+router.patch("/:couponId/toggle", toggleCouponStatus);
+router.get("/", fetchCoupons);
 
 module.exports = router;

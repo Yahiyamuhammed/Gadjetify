@@ -10,12 +10,12 @@ const {
 
 const adminAuth = require("../../middlewares/adminAuth.js");
 
-router.post("/variants", adminAuth, createVariant);
+router.post("/", adminAuth, createVariant);
 
-router.get("/variants", adminAuth, getVariants);
+router.get("/", adminAuth, getVariants);
 
-router.put("/variants/:id", adminAuth, updateVariant);
+router.put("/:id", adminAuth, updateVariant);
 
-router.delete("/variants/:id", adminAuth, deleteVariant);
+router.delete("/:id", adminAuth, deleteVariant);
 
 module.exports = router;

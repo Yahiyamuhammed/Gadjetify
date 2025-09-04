@@ -4,10 +4,6 @@ const { adminLogin, createAdmin, adminLogout } = require('../../controllers/admi
 const adminAuth=require('../../middlewares/adminAuth')
 
 router.post('/login', adminLogin);
-// router.post('/create', createAdmin);
-router.get('/dashboard', adminAuth, (req, res) => {
-  res.json({ message: "Welcome Admin" });
-});
 router.post('/logout',adminLogout)
 
 module.exports = router;

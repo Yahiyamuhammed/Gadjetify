@@ -13,7 +13,7 @@ const adminDashboardRoutes = require("./adminDashboardRoutes");
 
 router.use("/auth", adminAuthRoutes);
 router.use("/users", adminUserRoutes);
-router.use("/products", adminProductRoutes);
+router.use("/product", adminProductRoutes);
 router.use("/brands", adminBrandRoutes);
 router.use("/variants", adminVarientRoutes);
 router.use("/orders", adminOrderRoutes);

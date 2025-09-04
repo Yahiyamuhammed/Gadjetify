@@ -6,12 +6,12 @@ const {addProduct,unListProduct,updateProduct, getProduct,restoreProductControll
 const { upload, resizeAndSaveImages } = require('../../middlewares/uploadProductImage');
 
 
-router.get('/product',adminAuth,  getProduct);
-// router.post('/product',  addProduct);
-router.post('/product',upload.array('images', 5),resizeAndSaveImages,addProduct);
-router.put('/product/:id/update',upload.array("images", 5),resizeAndSaveImages,updateProduct)
-router.patch('/product/:id/delete',unListProduct)
-router.patch("/product/:id/restore", restoreProductController);
+router.get('/',adminAuth,  getProduct);
+// router.post('/',  addProduct);
+router.post('/',upload.array('images', 5),resizeAndSaveImages,addProduct);
+router.put('/:id/update',upload.array("images", 5),resizeAndSaveImages,updateProduct)
+router.patch('/:id/delete',unListProduct)
+router.patch("/:id/restore", restoreProductController);
 
 
 module.exports=router
