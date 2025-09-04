@@ -13,3 +13,14 @@ export const otpSchema = yup.object().shape({
     .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
     .required("OTP is required"),
 });
+
+export const resetPasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("New password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm password is required"),
+});
