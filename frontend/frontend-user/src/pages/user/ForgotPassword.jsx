@@ -2,9 +2,12 @@ import Form from "@/components/common/Form";
 import { useForgotPassword } from "@/hooks/mutations/useUserAuth";
 import { emailSchema } from "@/utils/validation/forgotOtpSchema";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
-  const { mutate:requestPasswordReset, error } = useForgotPassword();
+  const { mutate: requestPasswordReset, error } = useForgotPassword();
+    const navigate = useNavigate();
+  
 
   const fields = [
     {
@@ -18,7 +21,11 @@ const ForgotPassword = () => {
 
   const handleSubmit = (values) => {
     requestPasswordReset(values, {
-      onSuccess: () => toast.success("An otp is sent to you email"),
+      onSuccess: () => {
+        toast.success("An otp is sent to you email");
+        navigate("/forgot-password-otp", { state: { email: values.email } }); 
+
+      },
       onError: (err) =>
         toast.error(err.response.data.message || "an error occured"),
     });
