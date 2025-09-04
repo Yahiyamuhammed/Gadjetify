@@ -34,7 +34,7 @@ export const useCancelOrder = () => {
 
   return useMutation({
     mutationFn: async ({orderId}) => {
-      const res = await api.patch(`/orders/${orderId}/cancel`);
+      const res = await api.patch(`/order/${orderId}/cancel`);
       return res.data;
     },
     onSuccess: () => {
