@@ -9,12 +9,11 @@ exports.fetchFilteredProducts = async (query) => {
     search = "",
     sort = "name_asc",
     brand = "",
-    minPrice,
-    maxPrice,
+
     page = 1,
     limit = 10,
   } = query;
-  console.log(brand)
+  console.log(brand);
 
   const filter = {
     isDeleted: false,
@@ -30,7 +29,7 @@ exports.fetchFilteredProducts = async (query) => {
     const brandDoc = await Brand.findById(brand);
     console.log(brandDoc);
     if (brandDoc) {
-      filter.brand = brandDoc;
+      filter.brand = brandDoc._id;;
     } else {
       return {
         products: [],
@@ -39,12 +38,6 @@ exports.fetchFilteredProducts = async (query) => {
         currentPage: parseInt(page),
       };
     }
-  }
-
-  if (minPrice || maxPrice) {
-    filter.price = {};
-    if (minPrice) filter.price.$gte = parseFloat(minPrice);
-    if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
   }
 
   //   let sortOption = {};
@@ -56,10 +49,10 @@ exports.fetchFilteredProducts = async (query) => {
   let sortOption = {};
   switch ((sort || "").toLowerCase()) {
     case "price_asc":
-      sortOption.price = 1;
+    sortOption = { "defaultVariant.price": 1 };
       break;
     case "price_desc":
-      sortOption.price = -1;
+    sortOption = { "defaultVariant.price": -1 };
       break;
     case "name_desc":
       sortOption.name = -1;
@@ -82,33 +75,46 @@ exports.fetchFilteredProducts = async (query) => {
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
-  const [products, totalCount] = await Promise.all([
-    Product.find(filter)
-      .populate("brand", "name")
-      .collation({ locale: "en", strength: 2 })
-      .sort(sortOption)
-      .skip(skip)
-      .limit(parseInt(limit)),
-    Product.countDocuments(filter),
+    const productsAggregation = await Product.aggregate([
+    { $match: filter },
+
+    // Lookup default variant
+    {
+      $lookup: {
+        from: "variants",
+        let: { productId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$productId", "$$productId"] }, isDefault: true } },
+          { $project: { price: 1, storage: 1, ram: 1, stock: 1, isDefault: 1 } },
+        ],
+        as: "defaultVariant",
+      },
+    },
+    { $unwind: { path: "$defaultVariant", preserveNullAndEmptyArrays: true } },
+    // Sort based on sortOption
+    { $sort: sortOption },
+
+    // Pagination
+    { $skip: skip },
+    { $limit: parseInt(limit) },
+
+    // Populate brand name
+    {
+      $lookup: {
+        from: "brands",
+        localField: "brand",
+        foreignField: "_id",
+        as: "brand",
+      },
+    },
+    { $unwind: { path: "$brand", preserveNullAndEmptyArrays: true } },
   ]);
 
-  // Fetch and attach default variant to each product
-  const productsWithVariant = await Promise.all(
-    products.map(async (product) => {
-      const defaultVariant = await Variant.findOne({
-        productId: product._id,
-        isDefault: true,
-      });
+    const totalCount = await Product.countDocuments(filter);
 
-      return {
-        ...product.toObject(),
-        defaultVariant: defaultVariant || null,
-      };
-    })
-  );
 
   return {
-    products:productsWithVariant,
+    products: productsAggregation,
     totalCount,
     totalPages: Math.ceil(totalCount / limit),
     currentPage: parseInt(page),
