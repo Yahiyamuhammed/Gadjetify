@@ -6,7 +6,7 @@ export function SectionCards({ summary, loading }) {
       <SummaryCard
         title="Total Revenue"
         data={summary?.totalRevenue}
-        footerNote="Visitors for the last 6 months"
+        footerNote="Revenue for the last 6 months"
         loading={loading}
       />
       <SummaryCard
