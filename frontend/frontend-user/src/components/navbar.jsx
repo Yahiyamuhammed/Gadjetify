@@ -80,7 +80,7 @@ const Navbar = () => {
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2">
         <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
-        <span className="text-lg font-bold text-black">My Product</span>
+        <span className="text-lg font-bold text-black">Gadjetify</span>
       </Link>
 
       {/* Center Nav Links (Desktop Only) */}
