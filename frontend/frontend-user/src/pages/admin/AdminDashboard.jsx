@@ -12,7 +12,6 @@ import { DataTable } from "@/components/admin/dashboard/data-table";
 export default function AdminDashboard() {
   const { data: summary, isLoading: summaryIsLoading } = useFetchSummaryData();
   const {data}=useFetchTopBrand()
-  console.log(data)
   return (
     <SidebarProvider
       style={{
