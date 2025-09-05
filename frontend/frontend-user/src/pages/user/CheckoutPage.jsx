@@ -3,7 +3,7 @@ import AddressList from "@/components/user/checkout/AddressList";
 import OrderSummary from "@/components/user/checkout/OrderSummary";
 import PaymentMethod from "@/components/user/checkout/PaymentMethod";
 import { getAddresses } from "@/hooks/queries/useAddressQueries";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addressSchema } from "@/utils/validation/addressSchema";
 import {
   useAddAddress,
@@ -47,6 +47,45 @@ export default function CheckoutPage() {
   const [pendingOrderPayload, setPendingOrderPayload] = useState(null);
   const [openStripeDialog, setOpenStripeDialog] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState(null);
+
+  const [subtotal, setSubtotal] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  // Calculate subtotal and total whenever items change
+  useEffect(() => {
+    if (!Array.isArray(items.items) || items.items.length === 0) return;
+console.log('items found' ,items)
+    const formattedItems = items.items.map((item) => {
+      const actualPrice = item.variantId.price * item.quantity;
+      const offerPercentage = item.productId.offerPercentage || 0;
+      const offerDiscount =
+        offerPercentage > 0 ? (actualPrice * offerPercentage) / 100 : 0;
+      return { ...item, actualPrice, offerDiscount };
+    });
+
+    const newSubtotal = formattedItems.reduce(
+      (sum, item) => sum + item.actualPrice,
+      0
+    );
+    const totalOfferDiscount = formattedItems.reduce(
+      (sum, item) => sum + item.offerDiscount,
+      0
+    );
+    const shipping = newSubtotal > 1000 ? 0 : 49.99;
+    const tax = newSubtotal * 0.08;
+    const newTotal = newSubtotal - totalOfferDiscount + shipping + tax;
+
+    setSubtotal(newSubtotal);
+    setTotal(newTotal);
+  }, [items]);
+
+  // Disable COD if total > 1000
+  useEffect(() => {
+    if (total > 1000 && paymentMethod === "cod") {
+      console.log('cod bloacked')
+      setPaymentMethod("Online Payment");
+    }
+  }, [total]);
 
   // const [addresse, setAddresses] = useState([]);
 
@@ -96,7 +135,7 @@ export default function CheckoutPage() {
     placeOrder(data, {
       onSuccess: (res) => {
         setCreatedOrderId(res.orderId);
-        queryClient.invalidateQueries(['cartCount'])
+        queryClient.invalidateQueries(["cartCount"]);
 
         if (data.paymentMethod != "Online Payment") {
           toast.success("Order placed!", res);
@@ -219,7 +258,11 @@ export default function CheckoutPage() {
           // no trigger here; you're opening manually
         />
         {/* <AddressForm /> */}
-        <PaymentMethod value={paymentMethod} onChange={setPaymentMethod} />
+        <PaymentMethod
+          value={paymentMethod}
+          onChange={setPaymentMethod}
+          subtotal={total}
+        />
       </div>
 
       <div>
