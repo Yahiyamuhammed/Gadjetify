@@ -1,5 +1,7 @@
-import { Route, Routes } from "react-router-dom";
-import Login from '../pages/Login.jsx'
+import { Route, Routes, Navigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+
+import Login from "../pages/Login.jsx";
 import Navbar from "../components/navbar.jsx";
 import Signup from "../pages/user/SignUp.jsx";
 import Products from "../pages/user/products.jsx";
@@ -17,7 +19,6 @@ import OrderFailurePage from "@/pages/user/OrderFailurePage.jsx";
 import ForgotPassword from "@/pages/user/ForgotPassword.jsx";
 import VerifyResetOtp from "@/pages/user/VerifyResetOtp.jsx";
 import ResetPassword from "@/pages/user/ResetPassword.jsx";
-// import TestGoogleLogin from "../pages/user/TestGoogle.jsx";
 
 const MainLayout = ({ children }) => {
   return (
@@ -30,95 +31,173 @@ const MainLayout = ({ children }) => {
   );
 };
 
-const UserRoutes=()=>(
-<Routes>
-    {/* <Route path="/" element={<Home />} /> */}
-    <Route path="/login" element={
+const ProtectedRoute = ({ children }) => {
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["auth-user"]);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+const UserRoutes = () => (
+  <Routes>
+    <Route
+      path="/login"
+      element={
         <MainLayout>
-            <Login />
+          <Login />
         </MainLayout>
-    } />
-    {/* <Route path="/login" element={<Login />} /> */}
-    <Route path="/signup" element={
+      }
+    />
+    <Route
+      path="/signup"
+      element={
         <MainLayout>
-            <Signup />
+          <Signup />
         </MainLayout>
-        } />
-    <Route path="/verify-otp/:email" element={
+      }
+    />
+    <Route
+      path="/verify-otp/:email"
+      element={
         <MainLayout>
-            <VerifyOtp />
+          <VerifyOtp />
         </MainLayout>
-        } />
-    <Route path="/" element={
+      }
+    />
+    <Route
+      path="/"
+      element={
         <MainLayout>
-            <HomePage />
+          <HomePage />
         </MainLayout>
-        } />
-    <Route path="/products" element={
+      }
+    />
+    <Route
+      path="/products"
+      element={
         <MainLayout>
-            <Products />
+          <Products />
         </MainLayout>
-        } />
-    <Route path="/products/:id/:brand" element={
+      }
+    />
+    <Route
+      path="/products/:id/:brand"
+      element={
         <MainLayout>
-            <ProductDetails />
+          <ProductDetails />
         </MainLayout>
-        } />
-    <Route path="/profile" element={
-        <MainLayout>
+      }
+    />
+
+    {/* Protected routes */}
+    <Route
+      path="/profile"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
             <UserProfile />
-        </MainLayout>
-        } />
-    <Route path="/wishlist" element={
-        <MainLayout>
+          </MainLayout>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/wishlist"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
             <WishlistScreen />
-        </MainLayout>
-        } />
-    <Route path="/cart" element={
-        <MainLayout>
+          </MainLayout>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/cart"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
             <CartPage />
-        </MainLayout>
-        } />
-    <Route path="/checkout" element={
-        <MainLayout>
+          </MainLayout>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/checkout"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
             <CheckoutPage />
-        </MainLayout>
-        } />
-    <Route path="/orderSuccess" element={
-        <MainLayout>
+          </MainLayout>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/orderSuccess"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
             <OrderSuccessPage />
-        </MainLayout>
-        } />
-    <Route path="/orderFailed/:orderId" element={
-        <MainLayout>
-            <OrderFailurePage />
-        </MainLayout>
-        } />
-    <Route path="/orders" element={
-        <MainLayout>
+          </MainLayout>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/orders"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
             <Orders />
-        </MainLayout>
-        } />
-    <Route path="/wallet" element={
-        <MainLayout>
+          </MainLayout>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/wallet"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
             <WalletPage />
-        </MainLayout>
-        } />
-    <Route path="/forgot-password" element={
+          </MainLayout>
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/orderFailed/:orderId"
+      element={
         <MainLayout>
-            <ForgotPassword />
+          <OrderFailurePage />
         </MainLayout>
-        } />
-    <Route path="/forgot-password-otp" element={
+      }
+    />
+    <Route
+      path="/forgot-password"
+      element={
         <MainLayout>
-            <VerifyResetOtp />
+          <ForgotPassword />
         </MainLayout>
-        } />
-    <Route path="/reset-password" element={
+      }
+    />
+    <Route
+      path="/forgot-password-otp"
+      element={
         <MainLayout>
-            <ResetPassword />
+          <VerifyResetOtp />
         </MainLayout>
-        } />
-</Routes>
-)
-export default UserRoutes
+      }
+    />
+    <Route
+      path="/reset-password"
+      element={
+        <MainLayout>
+          <ResetPassword />
+        </MainLayout>
+      }
+    />
+  </Routes>
+);
+
+export default UserRoutes;
