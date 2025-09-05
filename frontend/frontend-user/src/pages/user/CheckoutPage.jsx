@@ -54,7 +54,7 @@ export default function CheckoutPage() {
   // Calculate subtotal and total whenever items change
   useEffect(() => {
     if (!Array.isArray(items.items) || items.items.length === 0) return;
-console.log('items found' ,items)
+    console.log("items found", items);
     const formattedItems = items.items.map((item) => {
       const actualPrice = item.variantId.price * item.quantity;
       const offerPercentage = item.productId.offerPercentage || 0;
@@ -82,7 +82,7 @@ console.log('items found' ,items)
   // Disable COD if total > 1000
   useEffect(() => {
     if (total > 1000 && paymentMethod === "cod") {
-      console.log('cod bloacked')
+      console.log("cod bloacked");
       setPaymentMethod("Online Payment");
     }
   }, [total]);
@@ -144,7 +144,7 @@ console.log('items found' ,items)
         return res.orderId;
       },
       onError: (err) => {
-        toast.error(`error occuerd ${err}`);
+        toast.error(`error occuerd ${err.response.data.message}`);
         console.error("Failed to place order", err);
       },
     });
@@ -186,6 +186,7 @@ console.log('items found' ,items)
     placeOrder(pendingOrderPayload, {
       onSuccess: (res) => {
         const orderIdFromResponse = res.orderId;
+        queryClient.invalidateQueries(["cartCount"]);
 
         // Now mark payment as successful with the actual order ID
         markSuccess(
