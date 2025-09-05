@@ -54,7 +54,6 @@ export default function CheckoutPage() {
   // Calculate subtotal and total whenever items change
   useEffect(() => {
     if (!Array.isArray(items.items) || items.items.length === 0) return;
-    console.log("items found", items);
     const formattedItems = items.items.map((item) => {
       const actualPrice = item.variantId.price * item.quantity;
       const offerPercentage = item.productId.offerPercentage || 0;
@@ -82,7 +81,6 @@ export default function CheckoutPage() {
   // Disable COD if total > 1000
   useEffect(() => {
     if (total > 1000 && paymentMethod === "cod") {
-      console.log("cod bloacked");
       setPaymentMethod("Online Payment");
     }
   }, [total]);

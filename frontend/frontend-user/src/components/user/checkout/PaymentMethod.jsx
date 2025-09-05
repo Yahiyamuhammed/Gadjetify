@@ -2,7 +2,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 export default function PaymentMethod({ value, onChange, subtotal }) {
-  console.log(subtotal)
   const isCODDisabled = subtotal > 1000;
 
   return (
