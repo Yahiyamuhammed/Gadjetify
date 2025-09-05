@@ -39,8 +39,6 @@ export default function SalesReportPage() {
     limit: 10,
   });
 
-  console.log(data)
-
   const summary = data?.summary || {};
   const orders = data?.orders || [];
 
@@ -70,9 +68,6 @@ export default function SalesReportPage() {
 
     const doc = new jsPDF();
     doc.text("Sales Report", 14, 15);
-
-    console.log(orders)
-    
 
     const tableData = orders.map((order) => [
       order._id,

@@ -26,7 +26,7 @@ export function SummaryCard({ title, data, footerNote, loading }) {
       <CardHeader>
         <CardDescription>{title}</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          {data?.value}
+          {data?.value?.toFixed(2)}
           {title === "Refunds/Returns" && "%"}
         </CardTitle>
         <CardAction>

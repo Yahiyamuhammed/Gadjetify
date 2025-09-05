@@ -31,10 +31,10 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     stock: "",
     _id: "",
   });
-  const [editMode, setEditMode] = useState(false); // track if we're editing
+  const [editMode, setEditMode] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  console.log(page);
+  
 
   const {
     data: variants,
@@ -46,12 +46,12 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
   // if (varientsLoading) return "loading";
 
   const pagination = variants?.pagination || { page: 1, pages: 1 };
-  console.log("this sis the data", variants);
+  
 
   const handleEdit = ({ formData, variant }) => {
     const productId = variant.productId?._id;
 
-    console.log("this is variant", variant, productId);
+    
     setFormData({
       productId: productId,
       ram: variant.ram,
@@ -64,12 +64,12 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     setOpenDialog(true);
   };
   const handleSearch = (value) => {
-    console.log(value);
+    
     setSearch(value.toLowerCase());
   };
 
   const handleEditSubmit = (formData) => {
-    console.log("this is the datain submit", formData.formData);
+    
 
     //   console.log("Edit:", formData);
     editVariant(
@@ -84,7 +84,7 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     );
   };
   const handleAdd = (data) => {
-    console.log("variant added", data.formData);
+    
 
     const newVariant = { ...formData };
 
@@ -92,22 +92,22 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
       delete newVariant._id;
     }
 
-    console.log(newVariant, "new varient");
+    
 
     addVariant(newVariant, {
       onSuccess: () => {
         queryClient.invalidateQueries(["variants"]);
-        console.log("variant added");
+        toast.success("variant added");
         setOpenDialog(false);
       },
       onError: (err) => {
-        console.log(err);
+        toast.error(err.response.data.message || 'some error occured');
       },
     });
   };
 
   const handleDelete = async (id) => {
-    console.log(id, "this is the id");
+    
     deleteVarient(id, {
       onSuccess: () => {
         toast.success("varient deleted");
@@ -134,7 +134,6 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
         addButton="Add Variant"
         pagination={pagination}
         onPageChange={(newPage) => {
-          console.log(newPage);
           setPage(newPage);
         }}
         filterFn={handleSearch}
