@@ -17,6 +17,16 @@ const FormDialog = ({
 
   children,
 }) => {
+  const handleSubmitClick = () => {
+    if (onSubmit) onSubmit({ formData: formData });
+    else {
+      const form = document.getElementById("variant-form");
+      if (form) {
+        form.requestSubmit();
+      }
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
@@ -31,7 +41,7 @@ const FormDialog = ({
             Cancel
           </Button>
 
-          <Button className={'ml-4'} onClick={() => onSubmit({ formData: formData })}>
+          <Button className={"ml-4"} onClick={handleSubmitClick}>
             {submitLabel}
           </Button>
         </div>

@@ -31,10 +31,10 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     stock: "",
     _id: "",
   });
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false); // track if we're editing
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  
+  console.log(page);
 
   const {
     data: variants,
@@ -46,12 +46,12 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
   // if (varientsLoading) return "loading";
 
   const pagination = variants?.pagination || { page: 1, pages: 1 };
-  
+  console.log("this sis the data", variants);
 
   const handleEdit = ({ formData, variant }) => {
     const productId = variant.productId?._id;
 
-    
+    console.log("this is variant", variant, productId);
     setFormData({
       productId: productId,
       ram: variant.ram,
@@ -64,19 +64,19 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     setOpenDialog(true);
   };
   const handleSearch = (value) => {
-    
+    console.log(value);
     setSearch(value.toLowerCase());
   };
 
   const handleEditSubmit = (formData) => {
-    
+    console.log("this is the datain submit", formData);
 
     //   console.log("Edit:", formData);
     editVariant(
-      { data: formData.formData, id: formData.formData._id },
+      { data: formData, id:formData._id },
       {
         onSuccess: () => {
-          toast.success("address updated");
+          toast.success("Variant updated");
           setOpenDialog(false);
           setEditMode(false);
         },
@@ -84,30 +84,30 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     );
   };
   const handleAdd = (data) => {
-    
+    console.log("variant added", data);
 
-    const newVariant = { ...formData };
+    const newVariant = { ...data };
 
     if (!newVariant._id) {
       delete newVariant._id;
     }
 
-    
+    console.log(newVariant, "new varient");
 
     addVariant(newVariant, {
       onSuccess: () => {
         queryClient.invalidateQueries(["variants"]);
-        toast.success("variant added");
+        console.log("variant added");
         setOpenDialog(false);
       },
       onError: (err) => {
-        toast.error(err.response.data.message || 'some error occured');
+        console.log(err);
       },
     });
   };
 
   const handleDelete = async (id) => {
-    
+    console.log(id, "this is the id");
     deleteVarient(id, {
       onSuccess: () => {
         toast.success("varient deleted");
@@ -116,10 +116,10 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     });
   };
   //   console.log(variants,isError,error)
-  const handleDialogSubmit = () => {
-    const submitButton = document.getElementById("hidden-submit");
-    if (submitButton) submitButton.click();
-  };
+
+
+
+
 
   return (
     <>
@@ -130,26 +130,29 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
           onDelete: handleDelete,
         })}
         data={variants?.data ?? []}
-        onAdd={() => setOpenDialog(true)}
+        onAdd={() =>{ setFormData('');setOpenDialog(true);setEditMode(false)}}
         addButton="Add Variant"
         pagination={pagination}
-        onPageChange={(newPage) => {
-          setPage(newPage);
-        }}
+        onPageChange={(newPage) =>{console.log(newPage); setPage(newPage)}}
+
+
+
         filterFn={handleSearch}
       />
       <FormDialog
         open={openDialog}
         setOpen={setOpenDialog}
         title="Add Variant"
-        onSubmit={handleDialogSubmit}
         formData={formData}
-      >
-        <VariantFormFields
-          onSubmit={editMode ? handleEditSubmit : handleAdd}
-          formData={formData}
-          setFormData={setFormData}
+        >
+        <VariantFormFields    defaultValues={editMode ? formData : {}}
+
+        onSubmit={editMode ? handleEditSubmit : handleAdd}
         />
+
+
+
+
       </FormDialog>
     </>
   );
