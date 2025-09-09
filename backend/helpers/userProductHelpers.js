@@ -1,9 +1,6 @@
 const Product = require("../models/productModel");
 const Brand = require("../models/brandModel");
 
-const mongoose = require("mongoose");
-const Variant = require("../models/variantModel");
-
 exports.fetchFilteredProducts = async (query) => {
   const {
     search = "",
@@ -38,12 +35,6 @@ exports.fetchFilteredProducts = async (query) => {
     }
   }
 
-  //   let sortOption = {};
-  //   if (sort === 'price_asc') sortOption.price = 1;
-  //   else if (sort === 'price_desc') sortOption.price = -1;
-  //   else if (sort === 'name_desc') sortOption.name = -1;
-  //   else sortOption.name = 1; // default is name_asc
-
   let sortOption = {};
   switch ((sort || "").toLowerCase()) {
     case "price_asc":
@@ -69,14 +60,11 @@ exports.fetchFilteredProducts = async (query) => {
       sortOption.name_lower = 1;
   }
 
-  // console.log(sortOption);
-
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
   const productsAggregation = await Product.aggregate([
     { $match: filter },
 
-    // Lookup default variant
     {
       $lookup: {
         from: "variants",
@@ -96,11 +84,7 @@ exports.fetchFilteredProducts = async (query) => {
       },
     },
     { $unwind: { path: "$defaultVariant", preserveNullAndEmptyArrays: true } },
-    // Sort based on sortOption
 
-    // Pagination
-
-    // Populate brand name
     {
       $lookup: {
         from: "brands",
@@ -116,6 +100,7 @@ exports.fetchFilteredProducts = async (query) => {
         name_lower: { $toLower: "$name" },
       },
     },
+
     { $sort: sortOption },
     { $skip: skip },
     { $limit: parseInt(limit) },
