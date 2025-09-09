@@ -11,6 +11,7 @@ import {
   CreditCard,
   Check,
   PackageOpen,
+  Tag,
 } from "lucide-react";
 import noImage from "@/assets/noImage.png";
 import ProductImageZoom from "../ProductImageZoom";
@@ -140,6 +141,8 @@ const ProductDetailsCard = ({ product }) => {
                   {product.name}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
+                  Brand:{" "}
+                  <span className="font-medium">{product?.brand?.name}</span> |
                   Model: <span className="font-medium">{product.model}</span>
                 </p>
 
@@ -195,11 +198,9 @@ const ProductDetailsCard = ({ product }) => {
                     },
                     { icon: Check, label: "Warranty", value: product.warranty },
                     {
-                      icon: CreditCard,
-                      label: "COD",
-                      value: product.codAvailable
-                        ? "Available"
-                        : "Not Available",
+                      icon: Tag,
+                      label: "Brand",
+                      value: product?.brand?.name || "N/A",
                     },
                   ].map((feature, i) => (
                     <div
