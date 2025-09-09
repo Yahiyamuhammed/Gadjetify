@@ -29,7 +29,7 @@ const SearchBar = ({ searchTerm }) => {
         <input
           type="text"
           id="search-input"
-          onChange={(e) => searchTerm(e.target.value)}
+          onChange={(e) => searchTerm(e.target.value.trim())}
           className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:outline-none block w-full pl-10 pr-2.5 py-2"
           placeholder="Search something..."
         />
