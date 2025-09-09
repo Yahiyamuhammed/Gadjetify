@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/utils/api"; // adjust path if needed
+import {api} from "@/utils/api";
 
 export const useAdminLogin = () => {
   const queryClient = useQueryClient();
