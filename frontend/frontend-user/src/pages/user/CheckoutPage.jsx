@@ -173,6 +173,7 @@ export default function CheckoutPage() {
           },
           onError: (err) => {
             console.error(err);
+            toast.error(err.response.data.message || 'something went wrong')
           },
         }
       );
