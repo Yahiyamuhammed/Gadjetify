@@ -297,21 +297,21 @@ const OrderDetail = ({ orderId, onBack }) => {
                 <p className="text-gray-600">Shipping</p>
                 <p className="text-gray-900">₹{OrderDetail.summary.shipping}</p>
               </div>
-              {/* <div className="flex justify-between">
-                <p className="text-gray-600">Total Discount</p>
+              <div className="flex justify-between">
+                <p className="text-gray-600">Product Offer Discount</p>
                 <p className="text-gray-900">
-                - ₹{OrderDetail.summary.totalDiscount}
+                - ₹{OrderDetail.summary.totalOfferDiscount.toFixed(2)}
                 </p>
-                </div> */}
+                </div>
               <div className="flex justify-between">
                 <p className="text-gray-600">Coupon Discount</p>
                 <p className="text-gray-900">
-                  - ₹{OrderDetail.summary?.coupon?.discountAmount || 0}
+                  - ₹{OrderDetail.summary?.coupon?.discountAmount.toFixed(2) || 0}
                 </p>
               </div>
               <div className="flex justify-between">
                 <p className="text-gray-600">Tax</p>
-                <p className="text-gray-900">₹{OrderDetail.summary.tax}</p>
+                <p className="text-gray-900">₹{OrderDetail.summary.tax.toFixed(2)}</p>
               </div>
               <div className="flex justify-between pt-3 border-t font-medium">
                 <p className="text-gray-900">Total</p>
