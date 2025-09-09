@@ -141,8 +141,6 @@ const ProductDetailsCard = ({ product }) => {
                   {product.name}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Brand:{" "}
-                  <span className="font-medium">{product?.brand?.name}</span> |
                   Model: <span className="font-medium">{product.model}</span>
                 </p>
 
