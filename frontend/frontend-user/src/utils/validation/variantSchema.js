@@ -1,36 +1,25 @@
-import * as Yup from "yup";
+import * as yup from "yup";
 
-export const variantValidationSchema = Yup.object().shape({
-  productId: Yup.string()
-    .required("Product ID is required")
-    .min(3, "Product ID must be at least 3 characters")
-    .max(50, "Product ID must be at most 50 characters"),
-
-  ram: Yup.number()
-    .transform((value, originalValue) => (originalValue === "" ? undefined : value))
+export const variantSchema = yup.object().shape({
+  productId: yup.string().required("Product ID is required"),
+  ram: yup
+    .number()
     .typeError("RAM must be a number")
-    .required("RAM is required")
-    .min(1, "RAM must be at least 1 GB")
-    .max(512, "RAM cannot exceed 512 GB"),
-
-  storage: Yup.number()
-    .transform((value, originalValue) => (originalValue === "" ? undefined : value))
+    .positive("RAM must be positive")
+    .required("RAM is required"),
+  storage: yup
+    .number()
     .typeError("Storage must be a number")
-    .required("Storage is required")
-    .min(8, "Storage must be at least 8 GB")
-    .max(2048, "Storage cannot exceed 2048 GB"),
-
-  price: Yup.number()
-    .transform((value, originalValue) => (originalValue === "" ? undefined : value))
+    .positive("Storage must be positive")
+    .required("Storage is required"),
+  price: yup
+    .number()
     .typeError("Price must be a number")
-    .required("Price is required")
-    .min(1, "Price must be at least 1")
-    .max(1000000, "Price cannot exceed 1,000,000"),
-
-  stock: Yup.number()
-    .transform((value, originalValue) => (originalValue === "" ? undefined : value))
+    .positive("Price must be positive")
+    .required("Price is required"),
+  stock: yup
+    .number()
     .typeError("Stock must be a number")
-    .required("Stock is required")
     .min(0, "Stock cannot be negative")
-    .max(10000, "Stock cannot exceed 10,000"),
+    .required("Stock is required"),
 });
