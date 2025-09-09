@@ -11,6 +11,7 @@ import {
   CreditCard,
   Check,
   PackageOpen,
+  Tag,
 } from "lucide-react";
 import noImage from "@/assets/noImage.png";
 import ProductImageZoom from "../ProductImageZoom";
@@ -195,11 +196,9 @@ const ProductDetailsCard = ({ product }) => {
                     },
                     { icon: Check, label: "Warranty", value: product.warranty },
                     {
-                      icon: CreditCard,
-                      label: "COD",
-                      value: product.codAvailable
-                        ? "Available"
-                        : "Not Available",
+                      icon: Tag,
+                      label: "Brand",
+                      value: product?.brand?.name || "N/A",
                     },
                   ].map((feature, i) => (
                     <div
