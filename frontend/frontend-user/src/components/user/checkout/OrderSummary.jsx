@@ -53,13 +53,13 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
     0
   );
   const couponDiscount = appliedCoupon
-    ? (subtotal * appliedCoupon.discountPercent) / 100
+    ? Math.min(((subtotal-totalOfferDiscount) * appliedCoupon.discountPercent) / 100 , (subtotal-totalOfferDiscount) )
     : 0;
-  // setAppliedCoupon({ ...appliedCoupon, discountAmount:couponDiscount });
+  
 
   useEffect(() => {
     if (appliedCoupon) {
-      const couponDiscount = (subtotal * appliedCoupon.discountPercent) / 100;
+      const couponDiscount =  Math.min(((subtotal-totalOfferDiscount) * appliedCoupon.discountPercent) / 100 , (subtotal-totalOfferDiscount) )
       setAppliedCoupon({
         ...appliedCoupon,
         discountAmount: couponDiscount,
