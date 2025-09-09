@@ -15,6 +15,8 @@ const ProductCard = ({ product = [], refetch }) => {
   const navigate = useNavigate();
   //   const [toggleWishlist] = useToggleWishListMutation();
 
+  // console.log(product);
+
   //   const { userInfo } = useSelector((state) => state.userAuth);
   const { mutate: toggleWishlist } = useToggleWishlist();
   const { mutate: addToCart } = useAddToCart();
@@ -151,9 +153,15 @@ const ProductCard = ({ product = [], refetch }) => {
         <div className="p-4 flex flex-col flex-grow">
           {/* Title and Price */}
           <div className="flex justify-between items-start mb-2 gap-2">
-            <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 flex-grow">
-              {product.name}
-            </h3>
+            <div className="flex-grow">
+              <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 flex-grow">
+                {product.name}
+              </h3>
+              <span className="text-sm text-gray-800">
+                Brand: {product?.brand?.name}
+              </span>
+            </div>
+
             <div className="flex flex-col items-end min-w-[30%] pl-2">
               <span className="text-sm text-gray-500 line-through whitespace-nowrap">
                 ₹
@@ -167,6 +175,7 @@ const ProductCard = ({ product = [], refetch }) => {
               </span>
             </div>
           </div>
+
           {product?.defaultVariant && (
             <div className="flex items-center gap-2 mb-3">
               <Badge
