@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const BASE_URL = "http://localhost:5000/api";
+// const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "https://gadjetify.ddns.net/api";
 
 // const BASE_URL ="https://d6052791c50d.ngrok-free.app/api"
   // import.meta.env.MODE === 'development'
