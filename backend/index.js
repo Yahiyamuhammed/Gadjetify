@@ -16,6 +16,8 @@ const allowedOrigins = [
   "http://localhost:5173", // for local dev
   "https://456fd9d6dd75.ngrok-free.app", // your frontend via ngrok
   "http://gadjetify.ddns.net", // production
+  "https://gadjetify.ddns.net", // production secure
+  
 ];
 
 // Middleware
