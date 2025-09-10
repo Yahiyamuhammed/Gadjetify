@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import AdminLogin from "../pages/admin/AdminLogin";
-import Sidebar from "../pages/admin/sideBar";
+import Sidebar from "../pages/admin/SideBar";
 import ProductManagement from "../pages/admin/ProductManagement";
 import BrandManagement from "../pages/admin/BrandManagement";
 import UserManagement from "../pages/admin/UserManagement";
