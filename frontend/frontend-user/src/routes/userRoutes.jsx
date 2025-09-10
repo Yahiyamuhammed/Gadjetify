@@ -2,7 +2,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import Login from "../pages/Login.jsx";
 import Navbar from "../components/navbar.jsx";
 import Signup from "../pages/user/SignUp.jsx";
-import Products from "../pages/user/products.jsx";
+import Products from "../pages/user/Products.jsx";
 import ProductDetails from "../pages/user/ProductDetails.jsx";
 import VerifyOtp from "../pages/user/VerifyOtp.jsx";
 import HomePage from "@/pages/user/HomePage.jsx";
