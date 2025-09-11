@@ -78,7 +78,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white text-gray-700 shadow-md px-6 lg:px-16 py-4 flex items-center justify-between">
       {/* Logo */}
-      <Link to="/" className="flex items-center gap-2">
+      <Link to="/" className="flex items-center gap-2  cursor-default">
         <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
         <span className="text-lg font-bold text-black">Gadjetify</span>
       </Link>

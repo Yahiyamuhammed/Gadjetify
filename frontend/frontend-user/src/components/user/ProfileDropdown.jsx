@@ -50,13 +50,13 @@ export default function ProfileDropdown({ onSignOut }) {
       {isOpen && (
         <ul className="absolute right-0 mt-16 w-60 bg-white border rounded-lg shadow-lg py-2 z-50">
           <li className="flex items-center gap-2 px-4 py-2">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
+            {/* <div className="w-10 h-10 rounded-full overflow-hidden">
               <img
                 src="https://cdn.flyonui.com/fy-assets/avatar/avatar-1.png"
                 alt="avatar"
                 className="w-full h-full object-cover"
               />
-            </div>
+            </div> */}
             <div>
               <h6 className="text-gray-900 font-semibold">
                 {user?.name || "User"}
