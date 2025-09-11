@@ -76,27 +76,27 @@ export default function ProfileDropdown({ onSignOut }) {
             </Link>
           </li>
           <li>
-  <Link
-    to="/orders"
-    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-    onClick={() => setIsOpen(false)}
-  >
-    <TbShoppingCart className="text-lg" />
-    Orders
-  </Link>
-</li>
+            <Link
+              to="/orders"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              onClick={() => setIsOpen(false)}
+            >
+              <TbShoppingCart className="text-lg" />
+              Orders
+            </Link>
+          </li>
 
-<li>
-  <Link
-    to="/wallet"
-    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-    onClick={() => setIsOpen(false)}
-  >
-    <TbWallet className="text-lg" />
-    Wallet
-  </Link>
-</li>
           <li>
+            <Link
+              to="/wallet"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              onClick={() => setIsOpen(false)}
+            >
+              <TbWallet className="text-lg" />
+              Wallet
+            </Link>
+          </li>
+          {/* <li>
             <a
               href="#"
               className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
@@ -122,7 +122,7 @@ export default function ProfileDropdown({ onSignOut }) {
               <TbHelpTriangle className="text-lg" />
               FAQs
             </a>
-          </li>
+          </li> */}
           <hr className="my-1" />
           <li className="px-4 pt-1">
             <button
