@@ -29,7 +29,7 @@ exports.verifyOtp = async (req, res) => {
       .cookie("token", result.data.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(result.status)
@@ -37,7 +37,6 @@ exports.verifyOtp = async (req, res) => {
         message: result.data.message,
         user: result.data.user,
       });
-    
   } catch (err) {
     res
       .status(500)
@@ -67,7 +66,7 @@ exports.login = async (req, res) => {
       .cookie("token", result.data.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(result.status)
@@ -91,7 +90,7 @@ exports.googleLogin = async (req, res) => {
       .cookie("token", result.data.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(result.status)
@@ -111,7 +110,7 @@ exports.signout = async (req, res) => {
     .clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     })
     .status(200)
     .json({ message: "User logged out successfully" });
@@ -136,26 +135,31 @@ exports.requestPasswordReset = async (req, res) => {
     const result = await requestPasswordReset(email);
     return res.status(result.status).json(result.data);
   } catch (err) {
-    res.status(500).json({ message: "Failed to request password reset", error: err.message });
+    res.status(500).json({
+      message: "Failed to request password reset",
+      error: err.message,
+    });
   }
 };
-
 
 exports.verifyPasswordResetOtp = async (req, res) => {
   try {
     const result = await verifyPasswordResetOtp(req.body);
     return res.status(result.status).json(result.data);
   } catch (err) {
-    res.status(500).json({ message: "OTP verification failed", error: err.message });
+    res
+      .status(500)
+      .json({ message: "OTP verification failed", error: err.message });
   }
 };
-
 
 exports.resetPassword = async (req, res) => {
   try {
     const result = await resetPassword(req.body);
     return res.status(result.status).json(result.data);
   } catch (err) {
-    res.status(500).json({ message: "Password reset failed", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Password reset failed", error: err.message });
   }
 };

@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema(
     authType: { type: String, enum: ["local", "google"], default: "local" },
     googleId: { type: String, default: null },
     wallet: { type: Number, default: 0 },
-    pendingEmail: { type: String, unique: true },
+    pendingEmail: { type: String, unique: true, sparse: true },
     referralCode: { type: String, unique: true },
     referredBy: { type: String, default: null },
     isResetOtpVerified: { type: Boolean, default: false },
