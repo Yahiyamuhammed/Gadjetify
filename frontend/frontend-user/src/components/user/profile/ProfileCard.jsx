@@ -50,7 +50,7 @@ const ProfileCard = () => {
   });
 
   const avatarUrl =
-    "https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...";
+    "https://cdn.flyonui.com/fy-assets/avatar/avatar-1.png";
 
   const handleSubmit = ({ formData }) => {
     console.log(formData);
