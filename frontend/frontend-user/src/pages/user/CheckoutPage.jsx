@@ -111,7 +111,11 @@ export default function CheckoutPage() {
             queryClient.invalidateQueries(["addresses"]);
           },
           onError: (err) => {
-            toast.error(`Error updating address: ${err?.response.data.message || err.message}`);
+            toast.error(
+              `Error updating address: ${
+                err?.response.data.message || err.message
+              }`
+            );
           },
         }
       );
@@ -123,7 +127,9 @@ export default function CheckoutPage() {
           queryClient.invalidateQueries(["addresses"]);
         },
         onError: (err) => {
-          toast.error(`Error adding address: ${err?.response.data.message || err.message}`);
+          toast.error(
+            `Error adding address: ${err?.response.data.message || err.message}`
+          );
         },
       });
     }
@@ -148,6 +154,10 @@ export default function CheckoutPage() {
     });
   };
   const handleOrderSummaryData = (data) => {
+    if (!selectedAddressId) {
+      toast.error("add address to place order");
+      return;
+    }
     paymentMethod;
     selectedAddressId;
 
@@ -196,7 +206,10 @@ export default function CheckoutPage() {
               navigate("/orderSuccess");
             },
             onError: (err) => {
-              toast.error("Payment confirmation failed: " , err.response.data.message);
+              toast.error(
+                "Payment confirmation failed: ",
+                err.response.data.message
+              );
             },
           }
         );
@@ -228,14 +241,19 @@ export default function CheckoutPage() {
               navigate(`/orderFailed/${orderIdFromResponse}`);
             },
             onError: (err) => {
-              toast.error(err.response.data.message || "Failed to record payment failure");
+              toast.error(
+                err.response.data.message || "Failed to record payment failure"
+              );
               console.error(err);
             },
           }
         );
       },
       onError: (err) => {
-        toast.error(err.response.data.message || `Failed to place order after payment: ${err}`);
+        toast.error(
+          err.response.data.message ||
+            `Failed to place order after payment: ${err}`
+        );
         console.error("Failed to place order", err);
       },
     });
