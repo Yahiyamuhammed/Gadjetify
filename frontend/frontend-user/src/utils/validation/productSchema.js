@@ -20,10 +20,10 @@ export const productValidation = yup.object().shape({
 
   returnPolicy: yup.string().optional(),
 
-  codAvailable: yup
-    .mixed()
-    // . "Please select if COD is available")
-    .required("COD availability is required"),
+  // codAvailable: yup
+  //   .mixed()
+  //   // . "Please select if COD is available")
+  //   .required("COD availability is required"),
 
   warranty: yup.string().optional(),
 

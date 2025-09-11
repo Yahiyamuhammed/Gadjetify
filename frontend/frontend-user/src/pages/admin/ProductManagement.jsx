@@ -202,7 +202,7 @@ const ProductManagement = () => {
         columns={getAdminProductColumns(handleStatusChange, handleEditClick)}
         filterFn={(val) => setSearchTerm(val.toLowerCase())}
         addButton={"Add Product"}
-        onAdd={()=>setIsModalFormOpen(true)}
+        onAdd={()=>{setIsModalFormOpen(true);setEditingProduct('')}}
           dropdownFilter={productFilterConfig}
 
       />

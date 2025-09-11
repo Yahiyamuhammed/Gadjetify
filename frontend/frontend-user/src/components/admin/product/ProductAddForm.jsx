@@ -24,7 +24,8 @@ const ProductAddForm = ({
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  
+  const max_image = mode === "edit" ? 5 : 3;
+
   useEffect(() => {
     if (!isModalFormOpen) {
       setCroppedImages([]);
@@ -33,11 +34,10 @@ const ProductAddForm = ({
     }
   }, [isModalFormOpen]);
 
-  
   useEffect(() => {
     if (mode === "edit" && initialValues?.images) {
       setExistingImages(initialValues.images);
-    }
+    } else setExistingImages("");
   }, [initialValues, mode]);
 
   const transformedInitialValues = {
@@ -85,7 +85,7 @@ const ProductAddForm = ({
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       const reader = new FileReader();
@@ -128,9 +128,9 @@ const ProductAddForm = ({
 
   const productFields = getProductFields(categoryOptions);
 
-  const totalImages = 
+  const totalImages =
     existingImages.length - imagesToDelete.length + croppedImages.length;
-  
+
   const isBelowMinimum = totalImages < MIN_IMAGES;
 
   return (
@@ -156,7 +156,7 @@ const ProductAddForm = ({
             <h2 className="text-2xl font-bold text-gray-800">
               {mode === "edit" ? "Edit Product" : "Add New Product"}
             </h2>
-            <button 
+            <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-100"
               aria-label="Close modal"
@@ -171,15 +171,21 @@ const ProductAddForm = ({
               <label className="block text-lg font-semibold text-gray-800">
                 Product Images
               </label>
-              <span className={`text-sm font-medium ${isBelowMinimum ? 'text-red-500' : 'text-green-600'}`}>
-                {totalImages}/{MIN_IMAGES} images
+              <span
+                className={`text-sm font-medium ${
+                  isBelowMinimum ? "text-red-500" : "text-green-600"
+                }`}
+              >
+                {totalImages}/{max_image} images
               </span>
             </div>
 
             {/* Existing Images */}
             {mode === "edit" && existingImages.length > 0 && (
               <div className="mb-6">
-                <h4 className="text-md font-medium mb-3 text-gray-700">Current Images</h4>
+                <h4 className="text-md font-medium mb-3 text-gray-700">
+                  Current Images
+                </h4>
                 <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
                   {existingImages.map((img, index) => {
                     if (imagesToDelete.includes(img)) return null;
@@ -206,11 +212,11 @@ const ProductAddForm = ({
             )}
 
             {/* Image Upload Area */}
-            <div 
+            <div
               className={`border-2 border-dashed rounded-xl p-6 text-center mb-4 transition-all ${
-                isDragging 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-300 hover:border-blue-400 bg-gray-50'
+                isDragging
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 hover:border-blue-400 bg-gray-50"
               }`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -238,7 +244,12 @@ const ProductAddForm = ({
                 />
                 <label
                   htmlFor="image-upload"
-                  className="mt-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors shadow-sm"
+                  className={`mt-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 transition-colors shadow-sm 
+  ${
+    totalImages >= max_image
+      ? "opacity-50 cursor-not-allowed "
+      : "hover:bg-gray-50 cursor-pointer"
+  }`}
                 >
                   Select Images
                 </label>
