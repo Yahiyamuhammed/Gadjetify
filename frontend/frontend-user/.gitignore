@@ -25,4 +25,4 @@ dist-ssr
 *.sln
 *.sw?
 
-frontend-user\src\utils\api.js
+src\utils\api.js
