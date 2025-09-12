@@ -18,6 +18,7 @@ import ForgotPassword from "@/pages/user/ForgotPassword.jsx";
 import VerifyResetOtp from "@/pages/user/VerifyResetOtp.jsx";
 import ResetPassword from "@/pages/user/ResetPassword.jsx";
 import { useAuthUser } from "@/hooks/useAuthUser.js";
+import { AboutUs } from "@/pages/user/AboutUsPage.jsx";
 
 const MainLayout = ({ children }) => (
   <>
@@ -101,6 +102,14 @@ const UserRoutes = () => {
         element={
           <MainLayout>
             <ProductDetails />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/about"
+        element={
+          <MainLayout>
+            <AboutUs />
           </MainLayout>
         }
       />

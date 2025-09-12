@@ -51,6 +51,7 @@
     "clsx": "^2.1.1",
     "core-js": "^3.45.1",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.23.12",
     "input-otp": "^1.4.2",
     "jspdf": "^3.0.2",
     "jspdf-autotable": "^5.0.2",
