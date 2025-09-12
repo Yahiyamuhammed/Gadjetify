@@ -1,12 +1,16 @@
-import { api } from "@/utils/api"
-import { useQuery } from "@tanstack/react-query"
+import { api } from "@/utils/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useFetchWishlist = () => {
+  const queryClient = useQueryClient();
+  const authUser = queryClient.getQueryData(["auth-user"]);
+
   return useQuery({
-    queryKey: ['wishlist'],
+    queryKey: ["wishlist"],
     queryFn: async () => {
-      const res = await api.get("/wishlist")
-      return res.data.wishlist
-    }
-  })
-}
+      const res = await api.get("/wishlist");
+      return res.data.wishlist;
+    },
+    enabled: !!authUser,
+  });
+};
