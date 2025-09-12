@@ -22,7 +22,6 @@ const CartPage = () => {
 
   const navigate = useNavigate();
 
-  console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
 
