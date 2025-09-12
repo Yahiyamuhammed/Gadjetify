@@ -10,8 +10,8 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
 const CartPage = () => {
-  const { data: items = [], isLoading:cartIsLoading } = useFetchCart();
-  
+  const { data: items = [], isLoading: cartIsLoading } = useFetchCart();
+
   const { mutate: updateItemQuantity } = useUpdateCartQuantity();
   const { mutate: deleteItem } = useRemoveFromCart();
 
@@ -20,7 +20,7 @@ const CartPage = () => {
 
   const navigate = useNavigate();
 
-  // console.log(items);
+  console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -47,6 +47,7 @@ const CartPage = () => {
       offerPercentage,
       offerDiscount,
       customDiscount: 0,
+      brandName: item.productId.brand.name,
 
       isOutOfStock,
       isUnlisted,
@@ -153,7 +154,7 @@ const CartPage = () => {
   if (cartIsLoading)
     return (
       <>
-    <div className="fixed inset-0 flex justify-center items-center">
+        <div className="fixed inset-0 flex justify-center items-center">
           <Spinner size={44} />
         </div>
       </>
@@ -244,6 +245,9 @@ const CartPage = () => {
                         <h3 className="text-lg font-medium text-gray-900">
                           {item.name}
                         </h3>
+                        <p className="text-sm text-gray-500">
+                          Brand: {item.brandName}
+                        </p>
                         <div className="flex flex-wrap gap-2 mt-2">
                           <span className="bg-gray-100 px-2 py-1 text-xs rounded-md">
                             {item.ram} RAM
