@@ -19,6 +19,7 @@ import VerifyResetOtp from "@/pages/user/VerifyResetOtp.jsx";
 import ResetPassword from "@/pages/user/ResetPassword.jsx";
 import { useAuthUser } from "@/hooks/useAuthUser.js";
 import { AboutUs } from "@/pages/user/AboutUsPage.jsx";
+import PaymentProcessing from "@/pages/user/paymentStatus.jsx";
 
 const MainLayout = ({ children }) => (
   <>
@@ -186,15 +187,29 @@ const UserRoutes = () => {
         }
       />
 
-      {/* Always accessible */}
       <Route
         path="/orderFailed/:orderId"
         element={
-          <MainLayout>
-            <OrderFailurePage />
-          </MainLayout>
+          <ProtectedRoute user={user} loading={userLoading}>
+            <MainLayout>
+              <OrderFailurePage />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
+      <Route
+        path="/orderStatus/:orderId"
+        element={
+          <ProtectedRoute user={user} loading={userLoading}>
+            <MainLayout>
+              <PaymentProcessing />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Always accessible */}
+
       <Route
         path="/forgot-password"
         element={

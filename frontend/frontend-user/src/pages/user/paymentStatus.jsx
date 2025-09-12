@@ -3,25 +3,27 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { getOrderStatus } from "@/query/order"; // Your API call to fetch order status
+import { useOrderDetails } from "@/hooks/queries/useOrders";
+
 
 export default function PaymentProcessing() {
   const navigate = useNavigate();
   const { orderId } = useParams();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["order-status", orderId],
-    queryFn: () => getOrderStatus(orderId),
-    refetchInterval: orderId ? 3000 : false,
-    enabled: !!orderId,
-  });
+
+  const {
+    data: OrderDetail,
+    isLoading,
+    isError,
+  } = useOrderDetails({ orderId });
+
 
   useEffect(() => {
-    if (!isLoading && data) {
-      if (data.status === "PAID") navigate(`/order/success/${orderId}`);
-      if (data.status === "FAILED") navigate(`/order/failure/${orderId}`);
+    if (!isLoading && OrderDetail) {
+      if (OrderDetail.status === "PAID") navigate(`/order/success/${orderId}`);
+      if (OrderDetail.status === "FAILED") navigate(`/order/failure/${orderId}`);
     }
-  }, [data, isLoading, navigate, orderId]);
+  }, [OrderDetail, isLoading, navigate, orderId]);
 
   if (!orderId) {
     return (
@@ -44,7 +46,7 @@ export default function PaymentProcessing() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
         <motion.div
