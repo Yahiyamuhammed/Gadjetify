@@ -12,11 +12,13 @@ import { Link, useNavigate } from "react-router-dom";
 const CartPage = () => {
   const { data: items = [], isLoading: cartIsLoading } = useFetchCart();
 
-  const { mutate: updateItemQuantity, isPending:isUpdateItemQuantityLoading }= useUpdateCartQuantity();
+  const { mutate: updateItemQuantity, isPending: isUpdateItemQuantityLoading } =
+    useUpdateCartQuantity();
   const { mutate: deleteItem } = useRemoveFromCart();
 
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
+  const [updatingVariantId, setUpdatingVariantId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -94,7 +96,6 @@ const CartPage = () => {
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
   // Handle quantity changes
   const updateQuantity = (id, newQuantity) => {
-    console.log(id, newQuantity);
     // if (newQuantity < 1) return;
     if (newQuantity < 1) {
       setItemToRemove(id);
@@ -106,16 +107,18 @@ const CartPage = () => {
       toast.error("Maximum quantity is 3");
       return;
     }
+    setUpdatingVariantId(id);
     updateItemQuantity(
       { variantId: id, quantity: newQuantity },
       {
         onSuccess: (res) => {
-          console.log(res);
           if (res?.message) toast.success(res.message);
           else toast.success("quantity updated");
+          setUpdatingVariantId(null);
         },
         onError: (err) => {
           toast.error(err.response.data.message || `error occured ${err}`);
+          setUpdatingVariantId(null);
         },
       }
     );
@@ -151,10 +154,7 @@ const CartPage = () => {
     navigate("/checkout");
   };
 
-  if (cartIsLoading)
-    return (
-     <LoadingSpinner fullscreen />
-    );
+  if (cartIsLoading) return <LoadingSpinner fullscreen />;
   if (cartItems?.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
@@ -299,31 +299,36 @@ const CartPage = () => {
                         Quantity:{" "}
                       </span>
                       <div className="flex items-center border rounded-lg">
-                       {isUpdateItemQuantityLoading ?(
-                        <>
-                        <LoadingSpinner />
-                        </>
-                       ):(
-                        <>
-                         <button
-                          onClick={() =>
-                            updateQuantity(item.variantId, item.quantity - 1)
-                          }
-                          className="px-3 py-1 text-gray-600 hover:bg-gray-100"
-                        >
-                          -
-                        </button>
-                        <span className="px-3 py-1">{item.quantity}</span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.variantId, item.quantity + 1)
-                          }
-                          className="px-3 py-1 text-gray-600 hover:bg-gray-100"
-                        >
-                          +
-                        </button>
+                        {isUpdateItemQuantityLoading &&
+                        updatingVariantId === item.variantId ? (
+                          <LoadingSpinner />
+                        ) : (
+                          <>
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.variantId,
+                                  item.quantity - 1
+                                )
+                              }
+                              className="px-3 py-1 text-gray-600 hover:bg-gray-100"
+                            >
+                              -
+                            </button>
+                            <span className="px-3 py-1">{item.quantity}</span>
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.variantId,
+                                  item.quantity + 1
+                                )
+                              }
+                              className="px-3 py-1 text-gray-600 hover:bg-gray-100"
+                            >
+                              +
+                            </button>
                           </>
-                       )}
+                        )}
                       </div>
                     </div>
 
@@ -449,7 +454,6 @@ const CartPage = () => {
       />
     </div>
   );
-
 };
 
 export default CartPage;
