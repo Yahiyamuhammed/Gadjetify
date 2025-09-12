@@ -1,16 +1,20 @@
 import { useEffect } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useFetchPaymentStatus } from "@/hooks/queries/usePaymentQueries";
+import { Button } from "@/components/ui/button";
 
 export default function PaymentProcessing() {
   const navigate = useNavigate();
-  const { orderId, payment_intent } = useParams();
   const [searchParams] = useSearchParams();
 
   const paymentIntentId = searchParams.get("payment_intent");
-  console.log(payment_intent, paymentIntentId);
 
   const {
     data: paymentStatus,
@@ -18,8 +22,6 @@ export default function PaymentProcessing() {
     isError: verifyError,
     isLoading: verifyLoading,
   } = useFetchPaymentStatus(paymentIntentId);
-
-  console.log(paymentStatus)
 
   useEffect(() => {
     if (!verifyLoading && paymentStatus) {
@@ -46,6 +48,12 @@ export default function PaymentProcessing() {
             of stock or removed. If you have already made a payment, don’t worry
             – your money will be refunded within 3 business days.
           </p>
+          <br />
+          <Link to={"/cart"}>
+            <Button className="bg-indigo-600 text-white hover:bg-indigo-700">
+              Go to Cart
+            </Button>
+          </Link>
         </motion.div>
       </div>
     );
