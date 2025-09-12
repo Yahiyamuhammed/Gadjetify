@@ -67,3 +67,31 @@ exports.retryPayment = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+exports.getOrderByPaymentIntent=async (paymentIntentId)=> {
+  if (!paymentIntentId) {
+    return {
+      success: false,
+      statusCode: 400,
+      message: "PaymentIntent ID is required",
+    };
+  }
+
+  const order = await Order.findOne({ paymentIntentId });
+
+  if (!order) {
+    return {
+      success: false,
+      statusCode: 404,
+      message: "No order found for this PaymentIntent",
+    };
+  }
+
+  return {
+    success: true,
+    statusCode: 200,
+    message: "Order found",
+    data: order,
+  };
+}
