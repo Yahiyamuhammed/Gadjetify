@@ -13,7 +13,7 @@ const UserProfile = () => {
       <ProfileCard
         user={{
           avatarUrl:
-            "https://images.unsplash.com/photo-1659482634023-2c4fda99ac0c?...",
+            "https://cdn.flyonui.com/fy-assets/avatar/avatar-2.png",
         }}
       />
       {/* <SidebarLayout /> */}

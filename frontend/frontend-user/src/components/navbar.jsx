@@ -8,13 +8,14 @@ import Logo from "../assets/react.svg"; // Replace with your logo
 import toast from "react-hot-toast";
 
 import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import ProfileDropdown from "./user/ProfileDropdown";
 import { useFetchCartCount } from "@/hooks/queries/useCartQuery";
 import { Badge } from "@/components/ui/badge";
 
 import { ShoppingCart, Heart } from "lucide-react";
+import { TbUser, TbLogout, TbShoppingCart, TbWallet } from "react-icons/tb";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,6 +28,7 @@ const Navbar = () => {
 
   const { data: user, isLoading: userLoading } = useAuthUser();
   const { data: cartCount } = useFetchCartCount({ enabled: Boolean(user) });
+  const queryClient = useQueryClient();
 
   // console.log("this is the user in navbar", !!user);
 
@@ -49,13 +51,16 @@ const Navbar = () => {
     logouMutate(null, {
       onSuccess: (res) => {
         toast.success("signout successfull", res.message);
+            queryClient.invalidateQueries(["auth-user"]);
+
       },
       onError: (err) => {
         toast.error("signout failed", err);
       },
     });
 
-    localStorage.removeItem("token");
+    queryClient.invalidateQueries(["auth-user"]);
+
     setIsLoggedIn(false);
     Navigate("/login");
   };
@@ -78,7 +83,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white text-gray-700 shadow-md px-6 lg:px-16 py-4 flex items-center justify-between">
       {/* Logo */}
-      <Link to="/" className="flex items-center gap-2">
+      <Link to="/" className="flex items-center gap-2  cursor-default">
         <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
         <span className="text-lg font-bold text-black">Gadjetify</span>
       </Link>
@@ -189,30 +194,86 @@ const Navbar = () => {
           ))}
 
           <div className="h-1 w-10" />
+          {user ? (
+            <ul className="flex flex-col w-full max-w-[90%] rounded-xl bg-gray-50 shadow-sm divide-y divide-gray-200">
+              <li className="px-4 py-3 flex flex-col items-center">
+                <div>
+                  <h6 className="text-gray-900 font-semibold">
+                    {user?.name || "User"}
+                  </h6>
+                  <small className="text-gray-500">{user?.email || ""}</small>
+                </div>
+              </li>
+              <hr className="my-1" />
+              <li>
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <TbUser className="text-lg" />
+                  My Profile
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/orders"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <TbShoppingCart className="text-lg" />
+                  Orders
+                </Link>
+              </li>
 
-          <Link to="/login" onClick={() => setMenuOpen(false)}>
-            <button
-              className={`px-6 py-2 rounded-full ${
-                isActive("/login")
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-600 hover:text-blue-600"
-              }`}
-            >
-              LOGIN
-            </button>
-          </Link>
+              <li>
+                <Link
+                  to="/wallet"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <TbWallet className="text-lg" />
+                  Wallet
+                </Link>
+              </li>
+              <hr className="my-1" />
+              <li className="px-4 pt-1">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center gap-2 bg-red-100 text-red-600 w-full py-2  font-medium"
+                >
+                  <TbLogout className="text-red-600 text-lg" />
+                  Sign out
+                </button>
+              </li>
+            </ul>
+          ) : (
+            <>
+              <Link to="/login" onClick={() => setMenuOpen(false)}>
+                <button
+                  className={`px-6 py-2 rounded-full ${
+                    isActive("/login")
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600 hover:text-blue-600"
+                  }`}
+                >
+                  LOGIN
+                </button>
+              </Link>
 
-          <Link to="/signup" onClick={() => setMenuOpen(false)}>
-            <button
-              className={`px-6 py-2 rounded-full ${
-                isActive("/signup")
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-600 hover:text-blue-600"
-              }`}
-            >
-              SIGN UP
-            </button>
-          </Link>
+              <Link to="/signup" onClick={() => setMenuOpen(false)}>
+                <button
+                  className={`px-6 py-2 rounded-full ${
+                    isActive("/signup")
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600 hover:text-blue-600"
+                  }`}
+                >
+                  SIGN UP
+                </button>
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>

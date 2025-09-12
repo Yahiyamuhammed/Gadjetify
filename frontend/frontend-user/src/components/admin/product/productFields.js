@@ -40,19 +40,19 @@ export const getProductFields = (brandOptions = [], product = {}) => [
     required: false,
     defaultValue: product.returnPolicy || "",
   },
-  {
-    name: "codAvailable",
-    label: "Cash on Delivery Available?",
-    type: "select",
-    placeholder: "Select an option",
-    required: true,
-    options: [
-      { label: "Yes", value: true },
-      { label: "No", value: false },
-    ],
-    defaultValue:
-      product.codAvailable !== undefined ? product.codAvailable : "",
-  },
+  // {
+  //   name: "codAvailable",
+  //   label: "Cash on Delivery Available?",
+  //   type: "select",
+  //   placeholder: "Select an option",
+  //   required: true,
+  //   options: [
+  //     { label: "Yes", value: true },
+  //     { label: "No", value: false },
+  //   ],
+  //   defaultValue:
+  //     product.codAvailable !== undefined ? product.codAvailable : "",
+  // },
   {
     name: "warranty",
     label: "Warranty",
