@@ -1,5 +1,5 @@
 import ConfirmAlertDialog from "@/components/common/ExternalConfirmDialog";
-import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import {
   useRemoveFromCart,
   useUpdateCartQuantity,
@@ -12,7 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 const CartPage = () => {
   const { data: items = [], isLoading: cartIsLoading } = useFetchCart();
 
-  const { mutate: updateItemQuantity } = useUpdateCartQuantity();
+  const { mutate: updateItemQuantity, isPending:isUpdateItemQuantityLoading }= useUpdateCartQuantity();
   const { mutate: deleteItem } = useRemoveFromCart();
 
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
@@ -20,7 +20,7 @@ const CartPage = () => {
 
   const navigate = useNavigate();
 
-  console.log(items);
+  // console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -153,11 +153,7 @@ const CartPage = () => {
 
   if (cartIsLoading)
     return (
-      <>
-        <div className="fixed inset-0 flex justify-center items-center">
-          <Spinner size={44} />
-        </div>
-      </>
+     <LoadingSpinner fullscreen />
     );
   if (cartItems?.length === 0) {
     return (
@@ -303,7 +299,13 @@ const CartPage = () => {
                         Quantity:{" "}
                       </span>
                       <div className="flex items-center border rounded-lg">
-                        <button
+                       {isUpdateItemQuantityLoading ?(
+                        <>
+                        <LoadingSpinner />
+                        </>
+                       ):(
+                        <>
+                         <button
                           onClick={() =>
                             updateQuantity(item.variantId, item.quantity - 1)
                           }
@@ -320,6 +322,8 @@ const CartPage = () => {
                         >
                           +
                         </button>
+                          </>
+                       )}
                       </div>
                     </div>
 
@@ -445,6 +449,7 @@ const CartPage = () => {
       />
     </div>
   );
+
 };
 
 export default CartPage;
