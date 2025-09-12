@@ -120,6 +120,13 @@ exports.placeOrder = async ({
       return { status: 404, message: "Product, Variant, or Brand not found" };
     }
 
+    if (variant.isDeleted) {
+      return {
+        status: 400,
+        message: `The Variant  ${variant.ram} GB ${variant.storage} GB doesn't availiable for ${product.name}`,
+      };
+    }
+
     if (variant.stock < quantity) {
       return { status: 400, message: `Not enough stock for ${product.name}` };
     }
