@@ -8,6 +8,7 @@ import {
 } from "@/hooks/mutations/useCouponMutations";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
+import { UNSAFE_getTurboStreamSingleFetchDataStrategy } from "react-router-dom";
 
 export default function OrderSummary({ items = [], onPlaceOrder }) {
   const [couponCode, setCouponCode] = useState("");
@@ -17,7 +18,7 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   const { mutate: applyCoupon } = useApplyCoupon();
   const { mutate: removeCoupon } = useRemoveCoupon();
   const removeCouponMutation = useRemoveCoupon();
-  console.log(items);
+  // console.log(items);
   const formattedItems = items.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
 
@@ -81,7 +82,8 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
     : 0;
 
   // total savings before coupon
-  const totalDiscount = totalChosenBrandDiscount + totalChosenBrandDiscount;
+
+  const totalDiscount = totalChosenBrandDiscount + totalChosenProductDiscount;
 
   const shipping = subtotal > 1000 ? 0 : 49.99;
   const tax = subtotal * 0.08;
@@ -130,7 +132,6 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   };
 
   const handlePlaceOrder = () => {
-    // Call parent function
     if (onPlaceOrder) {
       //   onPlaceOrder(formatOrderItems(items));
       onPlaceOrder({
