@@ -6,9 +6,10 @@ import ProductCard from "@/components/user/ProductCard";
 import toast from "react-hot-toast";
 import { useClearWishlist } from "@/hooks/mutations/useWishListMutations";
 import ConfirmAlertDialog from "@/components/common/ExternalConfirmDialog";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const WishlistScreen = () => {
-  const { data: products, isLoading, isError, error } = useFetchWishlist();
+  const { data: products, isLoading:wishlistIsLoading, isError, error } = useFetchWishlist();
   const { mutate: clearWishlist } = useClearWishlist();
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
@@ -77,8 +78,8 @@ const WishlistScreen = () => {
           products.map((product) => (
             <ProductCard key={product.defaultVariant._id} product={product} />
           ))
-        ) : isLoading ? (
-          <p>Loading products...</p>
+        ) : wishlistIsLoading ? (
+          <LoadingSpinner />
         ) : error ? (
           <p className="text-red-500">Error: {error.response.data.message}</p>
         ) : (
