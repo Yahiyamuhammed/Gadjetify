@@ -81,7 +81,7 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
     : 0;
 
   // total savings before coupon
-  const totalDiscount = totalOfferDiscount;
+  const totalDiscount = totalChosenBrandDiscount + totalChosenBrandDiscount;
 
   const shipping = subtotal > 1000 ? 0 : 49.99;
   const tax = subtotal * 0.08;
