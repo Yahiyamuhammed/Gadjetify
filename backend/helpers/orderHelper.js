@@ -16,14 +16,16 @@ exports.getUserOrders = async (userId) => {
     .sort({ createdAt: -1 })
     .select("-__v");
 
-  const simplifiedOrders = orders.map((order) => ({
+    
+    const simplifiedOrders = orders.map((order) => ({
+    
     orderDbId: order._id,
     orderId: order.orderId,
     status: order.status,
     date: order.createdAt,
     items: order.items.map((item) => ({
       image: item.image || null,
-      name: item.name,
+      name: item.productName,
       ram: item.ram,
       storage: item.storage,
       quantity: item.quantity,
