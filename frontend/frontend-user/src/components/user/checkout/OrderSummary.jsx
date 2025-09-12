@@ -53,13 +53,18 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
     0
   );
   const couponDiscount = appliedCoupon
-    ? Math.min(((subtotal-totalOfferDiscount) * appliedCoupon.discountPercent) / 100 , (subtotal-totalOfferDiscount) )
+    ? Math.min(
+        ((subtotal - totalOfferDiscount) * appliedCoupon.discountPercent) / 100,
+        subtotal - totalOfferDiscount
+      )
     : 0;
-  
 
   useEffect(() => {
     if (appliedCoupon) {
-      const couponDiscount =  Math.min(((subtotal-totalOfferDiscount) * appliedCoupon.discountPercent) / 100 , (subtotal-totalOfferDiscount) )
+      const couponDiscount = Math.min(
+        ((subtotal - totalOfferDiscount) * appliedCoupon.discountPercent) / 100,
+        subtotal - totalOfferDiscount
+      );
       setAppliedCoupon({
         ...appliedCoupon,
         discountAmount: couponDiscount,
@@ -70,8 +75,10 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   const totalDiscount = totalOfferDiscount + customDiscount;
   const shipping = subtotal > 1000 ? 0 : 49.99;
   const tax = subtotal * 0.08;
-  // const total = subtotal - totalDiscount + shipping + tax;
-  const total = subtotal - totalDiscount - couponDiscount + shipping + tax;
+  const total =
+    Math.round(
+      (subtotal - totalDiscount - couponDiscount + shipping + tax) * 100
+    ) / 100;
 
   const totalOfferPercentage =
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
