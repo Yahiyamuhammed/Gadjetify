@@ -1,51 +1,58 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Trash2, X } from 'lucide-react';
-import { useFetchWishlist } from '@/hooks/queries/useWishlistQueries';
-import ProductCard from '@/components/user/ProductCard';
-import toast from 'react-hot-toast';
-import { useClearWishlist } from '@/hooks/mutations/useWishListMutations';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Trash2, X } from "lucide-react";
+import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
+import ProductCard from "@/components/user/ProductCard";
+import toast from "react-hot-toast";
+import { useClearWishlist } from "@/hooks/mutations/useWishListMutations";
+import ConfirmAlertDialog from "@/components/common/ExternalConfirmDialog";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const WishlistScreen = () => {
+  const { data: products, isLoading:wishlistIsLoading, isError, error } = useFetchWishlist();
+  const { mutate: clearWishlist } = useClearWishlist();
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
-    const {data:products,isLoading,isError,error}=useFetchWishlist()
-    const {mutate:clearWishlist}=useClearWishlist()
-
-
-  const [wishlistItems, setWishlistItems] = useState([])
-//     // {
-//     //   id: 1,
-//     //   name: 'Premium Headphones',
-//     //   price: 199.99,
-//     //   image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80',
-//     // },
-//     // {
-//     //   id: 2,
-//     //   name: 'Designer Watch',
-//     //   price: 349.99,
-//     //   image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80',
-//     // },
-//     // {
-//     //   id: 3,
-//     //   name: 'Wireless Speaker',
-//     //   price: 129.99,
-//     //   image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80',
-//     // },
-//   ]);
+  const [wishlistItems, setWishlistItems] = useState([]);
+  //     // {
+  //     //   id: 1,
+  //     //   name: 'Premium Headphones',
+  //     //   price: 199.99,
+  //     //   image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80',
+  //     // },
+  //     // {
+  //     //   id: 2,
+  //     //   name: 'Designer Watch',
+  //     //   price: 349.99,
+  //     //   image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80',
+  //     // },
+  //     // {
+  //     //   id: 3,
+  //     //   name: 'Wireless Speaker',
+  //     //   price: 129.99,
+  //     //   image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80',
+  //     // },
+  //   ]);
 
   const removeItem = (id) => {
     // setWishlistItems(wishlistItems.filter(item => item.id !== id));
   };
 
+  const handleEmptyWishlist = () => {
+    setShowRemoveDialog(true);
+  };
   const emptyWishlist = () => {
-    clearWishlist({},{
-        onSuccess:()=>{
-            toast.success('wishlist cleared')
+    clearWishlist(
+      {},
+      {
+        onSuccess: () => {
+          toast.success("wishlist cleared");
         },
-        onError:(err)=>{
-          toast.error(` ${err.response.data.message}` || 'an error occured')
-        }
-    })
+        onError: (err) => {
+          toast.error(` ${err.response.data.message}` || "an error occured");
+        },
+      }
+    );
     // setWishlistItems([]);
   };
 
@@ -54,9 +61,9 @@ const WishlistScreen = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Your Wishlist</h1>
         {products?.length > 0 && (
-          <Button 
-            variant="destructive" 
-            onClick={emptyWishlist}
+          <Button
+            variant="destructive"
+            onClick={handleEmptyWishlist}
             className="flex items-center gap-2"
           >
             <Trash2 size={18} />
@@ -65,20 +72,20 @@ const WishlistScreen = () => {
         )}
       </div>
 
-        {/* Products Grid */}
-              <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
-                {products?.length > 0 ? (
-                  products.map((product) => (
-                    <ProductCard key={product.defaultVariant._id} product={product} />
-                  ))
-                ) : isLoading ? (
-                  <p>Loading products...</p>
-                ) : error ? (
-                  <p className="text-red-500">Error: {error.response.data.message}</p>
-                ) : (
-                  <p>No products found.</p>
-                )}
-              </section>
+      {/* Products Grid */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
+        {products?.length > 0 ? (
+          products.map((product) => (
+            <ProductCard key={product.defaultVariant._id} product={product} />
+          ))
+        ) : wishlistIsLoading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <p className="text-red-500">Error: {error.response.data.message}</p>
+        ) : (
+          <p>No products found.</p>
+        )}
+      </section>
 
       {/* {wishlistItems.length === 0 ? (
         <div className="text-center py-20">
@@ -121,6 +128,18 @@ const WishlistScreen = () => {
           ))}
         </div>
       )} */}
+      <ConfirmAlertDialog
+        open={showRemoveDialog}
+        onOpenChange={setShowRemoveDialog}
+        title="Empty wishlist"
+        description="This will clear the wishlist. Are you sure you want to continue?"
+        confirmText="Empty"
+        cancelText="Cancel"
+        onConfirm={() => {
+          emptyWishlist();
+          setShowRemoveDialog(false);
+        }}
+      />
     </div>
   );
 };

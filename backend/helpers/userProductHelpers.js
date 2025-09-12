@@ -84,7 +84,7 @@ exports.fetchFilteredProducts = async (query) => {
       },
     },
     { $unwind: { path: "$defaultVariant", preserveNullAndEmptyArrays: true } },
-
+    { $match: { defaultVariant: { $ne: null } } },
     {
       $lookup: {
         from: "brands",

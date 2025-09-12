@@ -6,7 +6,7 @@ exports.createVariant = async (data) => {
 
   const variant = new Variant({
     ...data,
-    isDefault: existingVariants.length === 0, // make default if it's the first
+    isDefault: existingVariants.length === 0, 
   });
 
   await variant.save();

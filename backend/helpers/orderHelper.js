@@ -106,8 +106,10 @@ exports.placeOrder = async ({
   }
 
   const itemSnapshots = [];
+  const stockUpdates = [];
 
   for (let item of items) {
+    console.log(items);
     const { productId, variantId, quantity } = item;
 
     const product = await Product.findById(productId).lean();
@@ -116,6 +118,13 @@ exports.placeOrder = async ({
 
     if (!product || !variant || !brand) {
       return { status: 404, message: "Product, Variant, or Brand not found" };
+    }
+
+    if (variant.isDeleted) {
+      return {
+        status: 400,
+        message: `The Variant  ${variant.ram} GB ${variant.storage} GB doesn't availiable for ${product.name}`,
+      };
     }
 
     if (variant.stock < quantity) {
@@ -136,10 +145,16 @@ exports.placeOrder = async ({
       image: product.images[0].url || "",
     });
 
-    await Variant.findByIdAndUpdate(variantId, { $inc: { stock: -quantity } });
+    stockUpdates.push({ variantId, quantity });
   }
+
+  for (let update of stockUpdates) {
+    await Variant.findByIdAndUpdate(update.variantId, {
+      $inc: { stock: -update.quantity },
+    });
+  }
+
   const orderId = generateOrderId();
-  console.log(orderId);
 
   const newOrder = await Order.create({
     orderId,
