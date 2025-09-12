@@ -90,6 +90,7 @@ exports.getOrderByPaymentIntent = async (paymentIntentId, userId) => {
     };
   }
 
+  console.log(paymentIntentId)
   const order = await Order.findOne({ paymentIntentId, userId });
 
   if (!order) {

@@ -6,6 +6,6 @@ router.post("/", createPayment);
 router.post("/success", paymentSuccess);
 router.post("/failed", paymentFailed);
 router.post("/retry", retryPayment);
-router.get('/status',verifyPayment)
+router.get('/status/:paymentIntentId',verifyPayment)
 
 module.exports = router;
