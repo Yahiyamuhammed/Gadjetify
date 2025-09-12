@@ -18,10 +18,10 @@ const StripeCheckoutForm = forwardRef(({ onSuccess, onFailed }, ref) => {
     setLoading(true);
     setErrorMessage(null);
 
-    const { error, paymentIntent } = await stripe.confirmPayment({
+    const { error, paymentIntent} = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/orderSuccess`,
+        return_url: `${window.location.origin}/orderStatus`,
       },
       redirect: "if_required",
     });

@@ -198,7 +198,7 @@ const UserRoutes = () => {
         }
       />
       <Route
-        path="/orderStatus/:orderId"
+        path="/orderStatus"
         element={
           <ProtectedRoute user={user} loading={userLoading}>
             <MainLayout>
