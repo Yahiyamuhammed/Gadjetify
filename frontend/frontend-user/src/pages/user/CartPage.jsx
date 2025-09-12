@@ -1,4 +1,5 @@
 import ConfirmAlertDialog from "@/components/common/ExternalConfirmDialog";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import {
   useRemoveFromCart,
   useUpdateCartQuantity,
@@ -9,7 +10,8 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
 const CartPage = () => {
-  const { data: items = [] } = useFetchCart();
+  const { data: items = [], isLoading:cartIsLoading } = useFetchCart();
+  
   const { mutate: updateItemQuantity } = useUpdateCartQuantity();
   const { mutate: deleteItem } = useRemoveFromCart();
 
@@ -18,7 +20,7 @@ const CartPage = () => {
 
   const navigate = useNavigate();
 
-  console.log(items);
+  // console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -50,7 +52,8 @@ const CartPage = () => {
       isUnlisted,
       isBrandDeleted,
       isVarientDeleted,
-      isUnavailable: isOutOfStock || isUnlisted || isBrandDeleted || isVarientDeleted,
+      isUnavailable:
+        isOutOfStock || isUnlisted || isBrandDeleted || isVarientDeleted,
     };
   });
 
@@ -111,7 +114,7 @@ const CartPage = () => {
           else toast.success("quantity updated");
         },
         onError: (err) => {
-          toast.error(err.response.data.message ||`error occured ${err}`);
+          toast.error(err.response.data.message || `error occured ${err}`);
         },
       }
     );
@@ -147,6 +150,14 @@ const CartPage = () => {
     navigate("/checkout");
   };
 
+  if (cartIsLoading)
+    return (
+      <>
+    <div className="fixed inset-0 flex justify-center items-center">
+          <Spinner size={44} />
+        </div>
+      </>
+    );
   if (cartItems?.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
@@ -267,7 +278,8 @@ const CartPage = () => {
                             {item.isUnlisted &&
                               "Product is not currently unlisted."}
                             {item.isBrandDeleted && "Brand has been deleted."}
-                            {item.isVarientDeleted && "This varient has been deleted."}
+                            {item.isVarientDeleted &&
+                              "This varient has been deleted."}
                           </p>
                         )}
                       </div>
