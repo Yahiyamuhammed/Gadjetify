@@ -37,7 +37,7 @@ const ProductAddForm = ({
   useEffect(() => {
     if (mode === "edit" && initialValues?.images) {
       setExistingImages(initialValues.images);
-    } else setExistingImages("");
+    } else setExistingImages([]);
   }, [initialValues, mode]);
 
   const transformedInitialValues = {
@@ -95,7 +95,7 @@ const ProductAddForm = ({
   };
 
   const handleFinalSubmit = async (formData) => {
-    const remainingExistingImages = existingImages.filter(
+    const remainingExistingImages = existingImages?.filter(
       (img) => !imagesToDelete.includes(img)
     );
 
@@ -244,15 +244,22 @@ const ProductAddForm = ({
                 />
                 <label
                   htmlFor="image-upload"
+                  onClick={(e) => {
+                    if (totalImages >= max_image) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                  }}
                   className={`mt-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 transition-colors shadow-sm 
-  ${
-    totalImages >= max_image
-      ? "opacity-50 cursor-not-allowed "
-      : "hover:bg-gray-50 cursor-pointer"
-  }`}
+                  ${
+                    totalImages >= max_image
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-gray-50 cursor-pointer"
+                  }`}
                 >
                   Select Images
                 </label>
+
                 <p className="text-xs text-gray-500 mt-2">
                   Minimum {MIN_IMAGES} images required • JPG, PNG up to 5MB
                 </p>
