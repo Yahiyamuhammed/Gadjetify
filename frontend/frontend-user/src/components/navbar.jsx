@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Heart } from "lucide-react";
 import { TbUser, TbLogout, TbShoppingCart, TbWallet } from "react-icons/tb";
 
-
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
@@ -29,6 +28,7 @@ const Navbar = () => {
 
   const { data: user, isLoading: userLoading } = useAuthUser();
   const { data: cartCount } = useFetchCartCount({ enabled: Boolean(user) });
+  const queryClient = useQueryClient();
 
   // console.log("this is the user in navbar", !!user);
 
@@ -51,6 +51,7 @@ const Navbar = () => {
     logouMutate(null, {
       onSuccess: (res) => {
         toast.success("signout successfull", res.message);
+            queryClient.invalidateQueries(["auth-user"]);
 
       },
       onError: (err) => {
@@ -58,9 +59,8 @@ const Navbar = () => {
       },
     });
 
-    const queryClient= useQueryClient()
-    queryClient.invalidateQueries(['auth-user'])
-    
+    queryClient.invalidateQueries(["auth-user"]);
+
     setIsLoggedIn(false);
     Navigate("/login");
   };
@@ -195,60 +195,58 @@ const Navbar = () => {
 
           <div className="h-1 w-10" />
           {user ? (
-           
-              <ul className="flex flex-col w-full max-w-[90%] rounded-xl bg-gray-50 shadow-sm divide-y divide-gray-200">
-                <li className="px-4 py-3 flex flex-col items-center">
-                  <div>
-                    <h6 className="text-gray-900 font-semibold">
-                      {user?.name || "User"}
-                    </h6>
-                    <small className="text-gray-500">{user?.email || ""}</small>
-                  </div>
-                </li>
-                <hr className="my-1" />
-                <li>
-                  <Link
-                    to="/profile"
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <TbUser className="text-lg" />
-                    My Profile
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/orders"
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <TbShoppingCart className="text-lg" />
-                    Orders
-                  </Link>
-                </li>
+            <ul className="flex flex-col w-full max-w-[90%] rounded-xl bg-gray-50 shadow-sm divide-y divide-gray-200">
+              <li className="px-4 py-3 flex flex-col items-center">
+                <div>
+                  <h6 className="text-gray-900 font-semibold">
+                    {user?.name || "User"}
+                  </h6>
+                  <small className="text-gray-500">{user?.email || ""}</small>
+                </div>
+              </li>
+              <hr className="my-1" />
+              <li>
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <TbUser className="text-lg" />
+                  My Profile
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/orders"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <TbShoppingCart className="text-lg" />
+                  Orders
+                </Link>
+              </li>
 
-                <li>
-                  <Link
-                    to="/wallet"
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <TbWallet className="text-lg" />
-                    Wallet
-                  </Link>
-                </li>
-                <hr className="my-1" />
-                <li className="px-4 pt-1">
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center justify-center gap-2 bg-red-100 text-red-600 w-full py-2  font-medium"
-                  >
-                    <TbLogout className="text-red-600 text-lg" />
-                    Sign out
-                  </button>
-                </li>
-              </ul>
-            
+              <li>
+                <Link
+                  to="/wallet"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <TbWallet className="text-lg" />
+                  Wallet
+                </Link>
+              </li>
+              <hr className="my-1" />
+              <li className="px-4 pt-1">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center gap-2 bg-red-100 text-red-600 w-full py-2  font-medium"
+                >
+                  <TbLogout className="text-red-600 text-lg" />
+                  Sign out
+                </button>
+              </li>
+            </ul>
           ) : (
             <>
               <Link to="/login" onClick={() => setMenuOpen(false)}>

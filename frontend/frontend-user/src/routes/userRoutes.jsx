@@ -34,8 +34,10 @@ const ProtectedRoute = ({ children, user, loading }) => {
   return children;
 };
 
-const PublicRoute = ({ children, user, loading }) => {
-  if (loading) return null;
+const PublicRoute = ({ children }) => {
+  const { data: user, isLoading: userLoading } = useAuthUser();
+
+  if (userLoading) return null;
   if (user) return <Navigate to="/" replace />;
   return children;
 };
