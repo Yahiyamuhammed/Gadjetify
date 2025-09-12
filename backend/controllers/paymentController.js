@@ -79,7 +79,7 @@ exports.verifyPayment = async (req, res) => {
     return res.status(result.statusCode).json({
       success: result.success,
       message: result.message,
-      paymentStatus: result.data || null,
+      orderStatus: result.data || null,
     });
   } catch (error) {
     console.log(error);
