@@ -22,18 +22,22 @@ const CartPage = () => {
 
   const navigate = useNavigate();
 
-  // console.log(items);
+  console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
-    const offerPercentage = item.productId.offerPercentage || 0;
-    const offerDiscount =
-      offerPercentage > 0 ? (actualPrice * offerPercentage) / 100 : 0;
 
-    const isOutOfStock =
-      !item.variantId.stock || item.variantId.stock < item.quantity;
-    const isUnlisted = item.productId.isListed === false;
-    const isBrandDeleted = item.productId.brand?.isDeleted === true;
-    const isVarientDeleted = item?.variantId?.isDeleted === true;
+    const productOffer = item.productId.offerPercentage || 0;
+    const brandOffer = item.productId.brand?.offerPercentage || 0;
+
+    // Calculate both discounts separately
+    const productDiscount =
+      productOffer > 0 ? (actualPrice * productOffer) / 100 : 0;
+    const brandDiscount = brandOffer > 0 ? (actualPrice * brandOffer) / 100 : 0;
+
+    // Choose the bigger one
+    const chosenOffer =
+      productDiscount > brandDiscount ? productOffer : brandOffer;
+    const chosenDiscount = Math.max(productDiscount, brandDiscount);
 
     return {
       id: item._id,
@@ -46,32 +50,26 @@ const CartPage = () => {
       price: item.variantId.price,
       quantity: item.quantity,
       actualPrice,
-      offerPercentage,
-      offerDiscount,
+      offerPercentage: chosenOffer,
+      offerDiscount: chosenDiscount,
+      productDiscount,
+      brandDiscount,
       customDiscount: 0,
       brandName: item.productId.brand.name,
-
-      isOutOfStock,
-      isUnlisted,
-      isBrandDeleted,
-      isVarientDeleted,
+      isOutOfStock:
+        !item.variantId.stock || item.variantId.stock < item.quantity,
+      isUnlisted: item.productId.isListed === false,
+      isBrandDeleted: item.productId.brand?.isDeleted === true,
+      isVarientDeleted: item?.variantId?.isDeleted === true,
       isUnavailable:
-        isOutOfStock || isUnlisted || isBrandDeleted || isVarientDeleted,
+        !item.variantId.stock ||
+        item.variantId.stock < item.quantity ||
+        item.productId.isListed === false ||
+        item.productId.brand?.isDeleted === true ||
+        item?.variantId?.isDeleted === true,
     };
   });
 
-  //   console.log(formattedItems, "this is formated");
-
-  const IMAGE_BASE_URL = "http://localhost:5000/products/";
-
-  // Price details
-  //   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  //   const discount = 150;
-  //   const shipping = subtotal > 1000 ? 0 : 49.99;
-  //   const tax = subtotal * 0.08;
-  //   const total = subtotal - discount + shipping + tax;
-
-  // Make sure cartItems is the formattedItems
   const cartItems = formattedItems || [];
 
   const subtotal = cartItems.reduce(
@@ -94,6 +92,19 @@ const CartPage = () => {
   // Calculate total offer percentage (for display)
   const totalOfferPercentage =
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
+  const totalChosenBrandDiscount = cartItems.reduce(
+    (sum, item) =>
+      sum +
+      (item.brandDiscount > item.productDiscount ? item.brandDiscount : 0),
+    0
+  );
+
+  const totalChosenProductDiscount = cartItems.reduce(
+    (sum, item) =>
+      sum +
+      (item.productDiscount >= item.brandDiscount ? item.productDiscount : 0),
+    0
+  );
   // Handle quantity changes
   const updateQuantity = (id, newQuantity) => {
     // if (newQuantity < 1) return;
@@ -356,37 +367,37 @@ const CartPage = () => {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>₹${subtotal.toFixed(2)}</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
                 </div>
 
                 {/* Show offer discount if exists */}
+                {totalChosenProductDiscount > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Product Offers</span>
+                    <span className="text-green-600">
+                      -₹{totalChosenProductDiscount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Show chosen brand discount */}
+                {totalChosenBrandDiscount > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Brand Offers</span>
+                    <span className="text-green-600">
+                      -₹{totalChosenBrandDiscount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Total chosen savings */}
                 {totalOfferDiscount > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">
-                      Offer Discount ({totalOfferPercentage}%)
-                    </span>
-                    <span className="text-green-600">
-                      -₹{totalOfferDiscount.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                {customDiscount > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Additional Discount</span>
-                    <span className="text-green-600">
-                      -₹${customDiscount.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                {totalDiscount > 0 && (
                   <div className="flex justify-between border-t pt-2">
                     <span className="text-gray-600 font-medium">
                       Total Savings
                     </span>
                     <span className="text-green-600 font-medium">
-                      -₹${totalDiscount.toFixed(2)}
+                      -₹{totalOfferDiscount.toFixed(2)}
                     </span>
                   </div>
                 )}

@@ -78,7 +78,7 @@ exports.getCart = async (userId) => {
       select: "name brand model images offerPercentage isListed",
       populate: {
         path: "brand",
-        select: "name isDeleted",
+        select: "name isDeleted offerPercentage",
       },
     })
     .populate("items.variantId");
