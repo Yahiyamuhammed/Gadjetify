@@ -26,8 +26,8 @@ exports.handlePaymentSuccess = async (orderId, paymentIntentId) => {
     {
       paymentStatus: "paid",
       paymentIntentId,
-      status:'placed',
-      retryAvailableUntil:''
+      status: "placed",
+      retryAvailableUntil: "",
     },
     { new: true }
   );
@@ -40,7 +40,7 @@ exports.handlePaymentFailure = async (orderId, paymentIntentId) => {
       paymentStatus: "failed",
       paymentIntentId,
       retryAvailableUntil: Date.now() + 15 * 60 * 1000,
-      status:'failed',
+      status: "failed",
     },
     { new: true }
   );
@@ -71,9 +71,39 @@ exports.retryPayment = async (orderId) => {
     return {
       status: 200,
       message: "Retry payment initiated",
-      data: { clientSecret: paymentIntent.client_secret,paymentIntentId: paymentIntent.id },
+      data: {
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+      },
     };
   } catch (err) {
     return { status: 500, message: "Stripe error: " + err.message };
   }
+};
+
+exports.getOrderByPaymentIntent = async (paymentIntentId) => {
+  if (!paymentIntentId) {
+    return {
+      success: false,
+      statusCode: 400,
+      message: "PaymentIntent ID is required",
+    };
+  }
+
+  const order = await Order.findOne({ paymentIntentId });
+
+  if (!order) {
+    return {
+      success: false,
+      statusCode: 404,
+      message: "No order found for this PaymentIntent",
+    };
+  }
+
+  return {
+    success: true,
+    statusCode: 200,
+    message: "Order found",
+    data: order,
+  };
 };

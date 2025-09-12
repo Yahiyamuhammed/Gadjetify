@@ -259,30 +259,3 @@ exports.cancelOrderHelper = async (orderId, userId) => {
 
   return { status: 200, message: "Order cancelled successfully", data: order };
 };
-
-export async function getOrderByPaymentIntent(paymentIntentId) {
-  if (!paymentIntentId) {
-    return {
-      success: false,
-      statusCode: 400,
-      message: "PaymentIntent ID is required",
-    };
-  }
-
-  const order = await Order.findOne({ paymentIntentId });
-
-  if (!order) {
-    return {
-      success: false,
-      statusCode: 404,
-      message: "No order found for this PaymentIntent",
-    };
-  }
-
-  return {
-    success: true,
-    statusCode: 200,
-    message: "Order found",
-    data: order,
-  };
-}
