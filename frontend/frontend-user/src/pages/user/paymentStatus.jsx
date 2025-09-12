@@ -5,27 +5,26 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { useOrderDetails } from "@/hooks/queries/useOrders";
 
-
 export default function PaymentProcessing() {
   const navigate = useNavigate();
   const { orderId } = useParams();
-
+  const notValidId = !/^[0-9a-fA-F]{24}$/.test(orderId);
 
   const {
     data: OrderDetail,
     isLoading,
     isError,
-  } = useOrderDetails({ orderId });
-
+  } = useOrderDetails({ orderId: notValidId ? undefined : orderId });
 
   useEffect(() => {
     if (!isLoading && OrderDetail) {
       if (OrderDetail.status === "PAID") navigate(`/order/success/${orderId}`);
-      if (OrderDetail.status === "FAILED") navigate(`/order/failure/${orderId}`);
+      if (OrderDetail.status === "FAILED")
+        navigate(`/order/failure/${orderId}`);
     }
   }, [OrderDetail, isLoading, navigate, orderId]);
 
-  if (!orderId) {
+  if (isError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
         <motion.div
@@ -46,7 +45,7 @@ export default function PaymentProcessing() {
     );
   }
 
-  if (isError) {
+  if (notValidId) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
         <motion.div
