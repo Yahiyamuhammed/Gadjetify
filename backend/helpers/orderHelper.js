@@ -106,8 +106,10 @@ exports.placeOrder = async ({
   }
 
   const itemSnapshots = [];
+  const stockUpdates = [];
 
   for (let item of items) {
+    console.log(items);
     const { productId, variantId, quantity } = item;
 
     const product = await Product.findById(productId).lean();
@@ -136,10 +138,16 @@ exports.placeOrder = async ({
       image: product.images[0].url || "",
     });
 
-    await Variant.findByIdAndUpdate(variantId, { $inc: { stock: -quantity } });
+    stockUpdates.push({ variantId, quantity });
   }
+
+  for (let update of stockUpdates) {
+    await Variant.findByIdAndUpdate(update.variantId, {
+      $inc: { stock: -update.quantity },
+    });
+  }
+
   const orderId = generateOrderId();
-  console.log(orderId);
 
   const newOrder = await Order.create({
     orderId,
