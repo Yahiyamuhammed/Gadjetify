@@ -19,12 +19,14 @@ export default function PaymentProcessing() {
     isLoading: verifyLoading,
   } = useFetchPaymentStatus(paymentIntentId);
 
+  console.log(paymentStatus)
+
   useEffect(() => {
     if (!verifyLoading && paymentStatus) {
       if (paymentStatus.orderStatus.paymentStatus === "paid")
-        navigate(`/order/success`);
+        navigate(`/orderSuccess`);
       if (paymentStatus.orderStatus.paymentStatus === "failed")
-        navigate(`/order/failure/${orderId}`);
+        navigate(`/orderFailed/${paymentStatus.orderStatus.orderId}`);
     }
   }, [paymentStatus, verifyLoading, navigate, paymentIntentId]);
 
