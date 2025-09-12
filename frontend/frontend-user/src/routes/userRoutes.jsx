@@ -20,6 +20,7 @@ import ResetPassword from "@/pages/user/ResetPassword.jsx";
 import { useAuthUser } from "@/hooks/useAuthUser.js";
 import { AboutUs } from "@/pages/user/AboutUsPage.jsx";
 import PaymentProcessing from "@/pages/user/paymentStatus.jsx";
+import NotFoundPage from "@/pages/user/NotFoundPage.jsx";
 
 const MainLayout = ({ children }) => (
   <>
@@ -234,6 +235,7 @@ const UserRoutes = () => {
           </MainLayout>
         }
       />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

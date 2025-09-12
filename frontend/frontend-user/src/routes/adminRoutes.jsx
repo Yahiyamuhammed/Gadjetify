@@ -9,6 +9,7 @@ import VariantList from "@/pages/admin/VarientManagement";
 import AdminOrders from "@/pages/admin/OrderManagement";
 import AdminCoupons from "@/pages/admin/AdminCoupons";
 import SalesReportPage from "@/pages/admin/SalesReportPage";
+import NotFoundPage from "@/pages/user/NotFoundPage";
 // import { Sidebar } from "lucide-react";
 
 const AdminLayout = ({ children }) => {
@@ -87,6 +88,7 @@ const AdminRoutes = () => (
         </AdminLayout>
       }
     />
+    <Route path="*" element={<NotFoundPage />} />
   </Routes>
 );
 
