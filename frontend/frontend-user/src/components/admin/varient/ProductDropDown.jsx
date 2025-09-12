@@ -1,46 +1,47 @@
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
-import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Controller } from "react-hook-form";
 import { useFetchProductsForVariantAdding } from "@/hooks/queries/useProductQueries";
 
-const ProductDropdown = ({ control, name }) => {
+const ProductSelect = ({ control, name }) => {
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useFetchProductsForVariantAdding({ search, page, limit: 10 });
+  const { data, isLoading } = useFetchProductsForVariantAdding({ search, page: 1, limit: 10 });
 
   return (
     <Controller
       control={control}
       name={name}
       render={({ field }) => (
-        <Command>
-          <CommandInput
-            placeholder="Search product..."
-            value={search}
-            onValueChange={(value) => setSearch(value)}
-          />
-          <CommandList>
-            <CommandEmpty>No product found.</CommandEmpty>
-            <CommandGroup>
-              {isLoading ? (
-                <CommandItem disabled>Loading...</CommandItem>
-              ) : (
-                data?.data.map((product) => (
-                  <CommandItem
-                    key={product._id}
-                    onSelect={() => field.onChange(product._id)}
-                  >
-                    {product.name}
-                  </CommandItem>
-                ))
-              )}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        <Select
+          value={field.value}
+          onValueChange={field.onChange}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a product..." />
+          </SelectTrigger>
+          <SelectContent>
+            <input
+              type="text"
+              placeholder="Search product..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value.trim())}
+              className="w-full p-2 border-b border-gray-200"
+            />
+            {isLoading ? (
+              <SelectItem disabled>Loading...</SelectItem>
+            ) : (
+              data?.products.map((product) => (
+                <SelectItem key={product._id} value={product._id}>
+                  {product.name}
+                </SelectItem>
+              ))
+            )}
+          </SelectContent>
+        </Select>
       )}
     />
   );
 };
 
-export default ProductDropdown;
+export default ProductSelect;

@@ -1,10 +1,10 @@
-
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { variantSchema } from "@/utils/validation/variantSchema";
 import { useEffect } from "react";
+import ProductDropdown from "./ProductDropDown";
 
 const VariantFormFields = ({ onSubmit, defaultValues }) => {
   const {
@@ -12,12 +12,12 @@ const VariantFormFields = ({ onSubmit, defaultValues }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm({
     resolver: yupResolver(variantSchema),
     defaultValues,
   });
 
-  // Reset when editing (edit mode)
   useEffect(() => {
     if (defaultValues) {
       reset(defaultValues);
@@ -32,7 +32,7 @@ const VariantFormFields = ({ onSubmit, defaultValues }) => {
     >
       <div>
         <Label>Product ID</Label>
-        <Input {...register("productId")} />
+        <ProductDropdown control={control} name="productId" />
         {errors.productId && (
           <p className="text-red-500 text-sm">{errors.productId.message}</p>
         )}
@@ -40,8 +40,14 @@ const VariantFormFields = ({ onSubmit, defaultValues }) => {
 
       <div>
         <Label>RAM (in GB)</Label>
-        <Input type="number" placeholder="Enter RAM size" {...register("ram")} />
-        {errors.ram && <p className="text-red-500 text-sm">{errors.ram.message}</p>}
+        <Input
+          type="number"
+          placeholder="Enter RAM size"
+          {...register("ram")}
+        />
+        {errors.ram && (
+          <p className="text-red-500 text-sm">{errors.ram.message}</p>
+        )}
       </div>
 
       <div>
@@ -73,7 +79,11 @@ const VariantFormFields = ({ onSubmit, defaultValues }) => {
       </div>
 
       {/* hidden button so FormDialog can trigger submit */}
-      <button type="submit" className="hidden" id="hidden-variant-submit"></button>
+      <button
+        type="submit"
+        className="hidden"
+        id="hidden-variant-submit"
+      ></button>
     </form>
   );
 };
