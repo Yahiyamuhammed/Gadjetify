@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Smartphone, Truck, CreditCard } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
-export const AboutUs=()=> {
+export const AboutUs = () => {
   return (
     <div className="bg-white text-gray-800">
       {/* Hero Section */}
@@ -13,9 +14,11 @@ export const AboutUs=()=> {
         <p className="text-lg mb-6">
           Your trusted online store for the latest smartphones and gadgets.
         </p>
-        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-          Shop Now
-        </Button>
+        <Link to="/products">
+          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
+            Shop Now
+          </Button>
+        </Link>
       </section>
 
       {/* Mission and Vision */}
@@ -120,10 +123,13 @@ export const AboutUs=()=> {
         <h2 className="text-3xl font-bold mb-4">
           Ready to Explore the Latest Gadgets?
         </h2>
-        <Button variant="secondary" className="text-indigo-600 bg-white hover:bg-gray-100">
+        <Link
+          to="/products"
+          className="inline-block text-center px-4 py-2 text-indigo-600 bg-white rounded hover:bg-gray-100"
+        >
           Browse Products
-        </Button>
+        </Link>
       </section>
     </div>
   );
-}
+};
