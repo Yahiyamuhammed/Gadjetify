@@ -18,7 +18,7 @@ const CartPage = () => {
 
   const navigate = useNavigate();
 
-  //   console.log(items);
+  console.log(items);
   const formattedItems = items?.items?.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
     const offerPercentage = item.productId.offerPercentage || 0;
@@ -29,6 +29,7 @@ const CartPage = () => {
       !item.variantId.stock || item.variantId.stock < item.quantity;
     const isUnlisted = item.productId.isListed === false;
     const isBrandDeleted = item.productId.brand?.isDeleted === true;
+    const isVarientDeleted = item?.variantId?.isDeleted === true;
 
     return {
       id: item._id,
@@ -48,7 +49,8 @@ const CartPage = () => {
       isOutOfStock,
       isUnlisted,
       isBrandDeleted,
-      isUnavailable: isOutOfStock || isUnlisted || isBrandDeleted,
+      isVarientDeleted,
+      isUnavailable: isOutOfStock || isUnlisted || isBrandDeleted || isVarientDeleted,
     };
   });
 
@@ -109,7 +111,7 @@ const CartPage = () => {
           else toast.success("quantity updated");
         },
         onError: (err) => {
-          toast.error(`error occured ${err}`);
+          toast.error(err.response.data.message ||`error occured ${err}`);
         },
       }
     );
@@ -263,8 +265,9 @@ const CartPage = () => {
                           <p className="text-sm text-red-600 mt-2">
                             {item.isOutOfStock && "Not enough stock available."}
                             {item.isUnlisted &&
-                              "Product is not currently listed."}
+                              "Product is not currently unlisted."}
                             {item.isBrandDeleted && "Brand has been deleted."}
+                            {item.isVarientDeleted && "This varient has been deleted."}
                           </p>
                         )}
                       </div>
@@ -388,9 +391,24 @@ const CartPage = () => {
                 </button>
 
                 <div className="flex justify-center mt-4">
-                  <button className="text-indigo-600 hover:text-indigo-800 font-medium">
+                  <Link
+                    to="/products"
+                    className="flex items-center text-indigo-600 hover:text-indigo-800"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-1"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                     Continue Shopping
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
