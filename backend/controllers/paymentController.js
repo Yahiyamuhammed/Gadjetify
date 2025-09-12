@@ -63,35 +63,28 @@ exports.retryPayment = async (req, res) => {
 
     return res.status(result.status).json(result);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+exports.verifyPayment = async (req, res) => {
+  try {
+    const { payment_intent } = req.query;
+    const userId = req.user;
 
-exports.getOrderByPaymentIntent=async (paymentIntentId)=> {
-  if (!paymentIntentId) {
-    return {
+    const result = await getOrderByPaymentIntent(payment_intent, userId);
+
+    return res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      order: result.data || null,
+    });
+  } catch (error) {
+    return res.status(500).json({
       success: false,
-      statusCode: 400,
-      message: "PaymentIntent ID is required",
-    };
+      message: "Something went wrong",
+      error: error.message,
+    });
   }
-
-  const order = await Order.findOne({ paymentIntentId });
-
-  if (!order) {
-    return {
-      success: false,
-      statusCode: 404,
-      message: "No order found for this PaymentIntent",
-    };
-  }
-
-  return {
-    success: true,
-    statusCode: 200,
-    message: "Order found",
-    data: order,
-  };
-}
+};

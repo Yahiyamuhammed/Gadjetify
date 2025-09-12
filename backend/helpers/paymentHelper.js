@@ -81,7 +81,7 @@ exports.retryPayment = async (orderId) => {
   }
 };
 
-exports.getOrderByPaymentIntent = async (paymentIntentId) => {
+exports.getOrderByPaymentIntent = async (paymentIntentId, userId) => {
   if (!paymentIntentId) {
     return {
       success: false,
@@ -90,7 +90,7 @@ exports.getOrderByPaymentIntent = async (paymentIntentId) => {
     };
   }
 
-  const order = await Order.findOne({ paymentIntentId });
+  const order = await Order.findOne({ paymentIntentId, userId });
 
   if (!order) {
     return {
@@ -104,6 +104,6 @@ exports.getOrderByPaymentIntent = async (paymentIntentId) => {
     success: true,
     statusCode: 200,
     message: "Order found",
-    data: order,
+    data: order.paymentStatus,
   };
 };
