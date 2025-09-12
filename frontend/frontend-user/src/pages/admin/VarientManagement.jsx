@@ -108,7 +108,7 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
       },
     });
   };
-  //   console.log(variants,isError,error)
+  
 
   return (
     <>

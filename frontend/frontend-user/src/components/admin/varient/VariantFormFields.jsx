@@ -1,4 +1,4 @@
-// VariantFormFields.jsx
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Input } from "@/components/ui/input";

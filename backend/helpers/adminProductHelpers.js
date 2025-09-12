@@ -160,3 +160,38 @@ switch ((sort || '').toLowerCase()) {
     currentPage: parseInt(page)
   };
 };
+
+
+exports.getActiveProducts = async ({ search = "", page = 1, limit = 10 }) => {
+  try {
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const filter = { isDeleted: false };
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
+    const products = await Product.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .select("_id name");
+
+    const total = await Product.countDocuments(filter);
+
+    return {
+      success: true,
+      message: "Products fetched successfully",
+      data: products,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        total,
+      },
+    };
+  } catch (err) {
+    return { success: false, message: err.message, data: [] };
+  }
+};
