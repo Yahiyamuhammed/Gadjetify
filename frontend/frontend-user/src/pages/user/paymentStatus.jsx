@@ -1,30 +1,34 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-import { useOrderDetails } from "@/hooks/queries/useOrders";
+import { useFetchPaymentStatus } from "@/hooks/queries/usePaymentQueries";
 
 export default function PaymentProcessing() {
   const navigate = useNavigate();
-  const { orderId } = useParams();
-  const notValidId = !/^[0-9a-fA-F]{24}$/.test(orderId);
+  const { orderId, payment_intent } = useParams();
+  const [searchParams] = useSearchParams();
+
+  const paymentIntentId = searchParams.get("payment_intent");
+  console.log(payment_intent, paymentIntentId);
 
   const {
-    data: OrderDetail,
-    isLoading,
-    isError,
-  } = useOrderDetails({ orderId: notValidId ? undefined : orderId });
+    data: paymentStatus,
+    error,
+    isError: verifyError,
+    isLoading: verifyLoading,
+  } = useFetchPaymentStatus(paymentIntentId);
 
   useEffect(() => {
-    if (!isLoading && OrderDetail) {
-      if (OrderDetail.status === "PAID") navigate(`/order/success/${orderId}`);
-      if (OrderDetail.status === "FAILED")
+    if (!verifyLoading && paymentStatus) {
+      if (paymentStatus.orderStatus.paymentStatus === "paid")
+        navigate(`/order/success`);
+      if (paymentStatus.orderStatus.paymentStatus === "failed")
         navigate(`/order/failure/${orderId}`);
     }
-  }, [OrderDetail, isLoading, navigate, orderId]);
+  }, [paymentStatus, verifyLoading, navigate, paymentIntentId]);
 
-  if (isError) {
+  if (verifyError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
         <motion.div
@@ -39,26 +43,6 @@ export default function PaymentProcessing() {
             Your order could not be placed because one or more products were out
             of stock or removed. If you have already made a payment, don’t worry
             – your money will be refunded within 3 business days.
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (notValidId) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center text-center max-w-md"
-        >
-          <AlertTriangle className="text-red-500 w-12 h-12 mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Unable to Fetch Order</h1>
-          <p className="text-gray-600">
-            Something went wrong while checking your order status. Please try
-            again later or contact support.
           </p>
         </motion.div>
       </div>
