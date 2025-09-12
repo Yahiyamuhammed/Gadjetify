@@ -20,6 +20,9 @@ exports.addToCart = async (userId, { productId, variantId }) => {
   if (!variant || variant.isDeleted) {
     return { status: 400, message: "Variant not available" };
   }
+  if (variant.isDeleted)
+    return { status: 400, message: "The selected variant not available" };
+
   if (variant.stock < 1)
     return { status: 400, message: "The selected variant is out of stock" };
 
@@ -96,6 +99,9 @@ exports.updateQuantity = async (userId, { variantId, quantity }) => {
 
   const variant = await Variant.findById(variantId);
   if (!variant) return { status: 400, message: "Variant not found" };
+
+  if (variant.isDeleted)
+    return { status: 400, message: "The selected variant not available" };
 
   const cappedQuantity = Math.min(quantity, variant.stock, MAX_QUANTITY);
 
