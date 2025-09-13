@@ -1,10 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useFetchWalletBalance } from "@/hooks/queries/useWalletQueries";
 
 
 export default function PaymentMethod({ value, onChange, subtotal }) {
-  const data=null, isLoading =false
+  const {data, isLoading} = useFetchWalletBalance()
   const walletBalance = data?.balance || 0;
   const isCODDisabled = subtotal > 1000;
   const isWalletDisabled = walletBalance < subtotal;

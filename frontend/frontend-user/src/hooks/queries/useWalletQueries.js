@@ -11,7 +11,7 @@ export const useWallet = () => {
   });
 };
 
-export const useWalletBalance = () => {
+export const useFetchWalletBalance = () => {
   return useQuery({
     queryKey: ["wallet-balance"],
     queryFn: async () => {

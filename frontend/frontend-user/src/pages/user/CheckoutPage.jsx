@@ -50,6 +50,7 @@ export default function CheckoutPage() {
 
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
+  const [totalFinal, setTotalFinal] = useState(0);
 
   // Calculate subtotal and total whenever items change
   useEffect(() => {
@@ -98,6 +99,10 @@ export default function CheckoutPage() {
 
   const handleSelectAddress = (addressId) => {
     setSelectedAddressId(addressId);
+  };
+  
+  const handletotalChange = ({amount}) => {
+    setTotalFinal(amount);
   };
 
   const onFormSubmit = (formData) => {
@@ -168,7 +173,7 @@ export default function CheckoutPage() {
       items: data.items,
       summary: data.summary,
     };
-    if (paymentMethod === "cod") {
+    if (paymentMethod === "cod" || paymentMethod === "wallet") {
       handlePlaceOrder(payload);
     } else if (paymentMethod === "Online Payment") {
       createPaymentIntent(
@@ -283,7 +288,7 @@ export default function CheckoutPage() {
         <PaymentMethod
           value={paymentMethod}
           onChange={setPaymentMethod}
-          subtotal={total}
+          subtotal={totalFinal}
         />
       </div>
 
@@ -299,6 +304,7 @@ export default function CheckoutPage() {
         <OrderSummary
           items={items.items}
           onPlaceOrder={handleOrderSummaryData}
+          onPymentChange={handletotalChange}
         />
       </div>
     </div>

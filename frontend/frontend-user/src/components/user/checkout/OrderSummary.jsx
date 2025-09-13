@@ -10,7 +10,11 @@ import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { UNSAFE_getTurboStreamSingleFetchDataStrategy } from "react-router-dom";
 
-export default function OrderSummary({ items = [], onPlaceOrder }) {
+export default function OrderSummary({
+  items = [],
+  onPlaceOrder,
+  onPymentChange,
+}) {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   // const [couponDiscount, setCouponDiscount] = useState(0);
@@ -92,6 +96,9 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
     Math.round(
       (subtotal - totalDiscount - couponDiscount + shipping + tax) * 100
     ) / 100;
+  useEffect(() => {
+    onPymentChange({amount:total });
+  }, [total]);
 
   const totalOfferPercentage =
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
