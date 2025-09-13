@@ -28,7 +28,7 @@ exports.getSingleProduct = async (req, res,next) => {
 
     // console.log(product)
 
-    if (!product || product.isDeleted) {
+    if (!product || !product.isListed) {
       return res.status(404).json({ message: 'Product not found or is deleted' });
     }
 

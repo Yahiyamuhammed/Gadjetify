@@ -7,6 +7,8 @@ import { ChevronRight, Home, ListFilter, Search, SortAsc } from "lucide-react";
 import Pagination from "../../components/common/Pagination";
 import { useUserFetchProducts } from "../../hooks/queries/useUserProductQueries";
 import { useFetchUserBrands } from "../../hooks/queries/useBrandQueries";
+import SpinningButton from "@/components/SpinningButton";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -124,7 +126,7 @@ const Products = () => {
               <ProductCard key={product._id} product={product} />
             ))
           ) : isLoading ? (
-            <p>Loading products...</p>
+            <LoadingSpinner fullscreen/>
           ) : isError ? (
             <p className="text-red-500">Error: {error.message}</p>
           ) : (
