@@ -1,4 +1,4 @@
-const { getUserWalletHelper } = require('../helpers/walletHelper');
+const { getUserWalletHelper, getWalletBalanceHelper } = require('../helpers/walletHelper');
 
 exports.getUserWallet = async (req, res) => {
   try {
@@ -7,5 +7,15 @@ exports.getUserWallet = async (req, res) => {
     res.status(response.status).json(response);
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+exports.getWalletBalanceController = async (req, res) => {
+  try {
+    const result = await getWalletBalanceHelper(req.user.id);
+    return res.status(result.status).json(result);
+  } catch (error) {
+    console.error("Error fetching wallet balance:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };

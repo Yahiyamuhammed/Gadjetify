@@ -20,7 +20,7 @@ exports.getUserWalletHelper = async (userId) => {
 };
 
 exports.getWalletBalanceHelper = async (userId) => {
-  const user = await User.findById(userId).select("walletBalance");
+  const user = await User.findById(userId).select("wallet");
   if (!user) return { status: 404, message: "User not found" };
 
   return {
