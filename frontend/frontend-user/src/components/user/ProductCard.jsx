@@ -10,6 +10,7 @@ import { useToggleWishlist } from "@/hooks/mutations/useWishListMutations";
 import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
 import { useAddToCart } from "@/hooks/mutations/useCartMutations";
 import { Badge } from "@/components/ui/badge";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const ProductCard = ({ product = [], refetch }) => {
   const navigate = useNavigate();
@@ -18,7 +19,8 @@ const ProductCard = ({ product = [], refetch }) => {
   // console.log(product);
 
   //   const { userInfo } = useSelector((state) => state.userAuth);
-  const { mutate: toggleWishlist } = useToggleWishlist();
+  const { mutate: toggleWishlist, isPending: wishlistIsPending } =
+    useToggleWishlist();
   const { mutate: addToCart, isPending: addToCartIsLoading } = useAddToCart();
   const { data: wishlistItems } = useFetchWishlist();
 
@@ -126,13 +128,20 @@ const ProductCard = ({ product = [], refetch }) => {
               e.stopPropagation();
               handleFavClick(product._id, product?.defaultVariant?._id);
             }}
+            disabled={wishlistIsPending}
             className="wishlist-btn absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform duration-200"
           >
-            <Heart
-              className={`w-5 h-5 ${
-                isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600"
-              }`}
-            />
+            <span className="flex items-center justify-center w-5 h-5">
+              {wishlistIsPending ? (
+                <LoadingSpinner size={16} color="red" />
+              ) : (
+                <Heart
+                  className={`w-5 h-5 ${
+                    isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600"
+                  }`}
+                />
+              )}
+            </span>
           </button>
 
           {/* Offer Badge */}
