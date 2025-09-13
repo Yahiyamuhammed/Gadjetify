@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import FormDialog from "@/components/common/FormDialog";
@@ -14,6 +14,7 @@ export default function StripePaymentDialog({
   onFailed,
 }) {
   const formRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   if (!clientSecret) return null;
 
@@ -23,7 +24,6 @@ export default function StripePaymentDialog({
       open={open}
       setOpen={setOpen}
       triggerLabel={null}
-      // connect the outer "Pay" button to StripeCheckoutForm
       onSubmit={async () => {
         if (formRef.current) {
           const success = await formRef.current.submit();
@@ -34,12 +34,14 @@ export default function StripePaymentDialog({
       }}
       onFailed
       submitLabel="Pay"
+      loading={loading}
     >
       <Elements stripe={stripePromise} options={{ clientSecret }}>
         <StripeCheckoutForm
           ref={formRef}
           onSuccess={onSuccess}
           onFailed={onFailed}
+          setLoading={setLoading}
         />
       </Elements>
     </FormDialog>

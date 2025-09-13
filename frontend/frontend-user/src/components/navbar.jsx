@@ -30,13 +30,11 @@ const Navbar = () => {
   const { data: cartCount } = useFetchCartCount({ enabled: Boolean(user) });
   const queryClient = useQueryClient();
 
-  // console.log("this is the user in navbar", !!user);
 
   const navLinks = [
     { name: "HOME", path: "/" },
     { name: "PRODUCTS", path: "/products" },
-    { name: "CONTACT", path: "" },
-    { name: "ABOUT US", path: "" },
+    { name: "ABOUT US", path: "/about" },
     ...(user
       ? [
           { name: "Wishlist", path: "/wishlist" },
@@ -51,8 +49,7 @@ const Navbar = () => {
     logouMutate(null, {
       onSuccess: (res) => {
         toast.success("signout successfull", res.message);
-            queryClient.invalidateQueries(["auth-user"]);
-
+        queryClient.invalidateQueries(["auth-user"]);
       },
       onError: (err) => {
         toast.error("signout failed", err);
@@ -84,7 +81,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white text-gray-700 shadow-md px-6 lg:px-16 py-4 flex items-center justify-between">
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2  cursor-default">
-        <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
+        {/* <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" /> */}
         <span className="text-lg font-bold text-black">Gadjetify</span>
       </Link>
 

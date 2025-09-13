@@ -1,37 +1,43 @@
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { editProfileSchema } from "@/utils/validation/editProfileSchema";
 
-const EditProfileFormFields = ({
-  formData,
-  setFormData,
-  originalEmail,
-  onEmailChange
-}) => {
+const EditProfileFormFields = ({ onSubmit, defaultValues, formId }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
+    resolver: yupResolver(editProfileSchema),
+    defaultValues,
+  });
+
+  const email = watch("email");
+
   return (
-    <div className="grid gap-4">
-      <div className="grid gap-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" id={formId}>
+      <div>
         <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          value={formData.name}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, name: e.target.value }))
-          }
-        />
+        <Input id="name" {...register("name")} />
+        {errors.name && (
+          <p className="text-red-500 text-sm">{errors.name.message}</p>
+        )}
       </div>
-      <div className="grid gap-2">
+
+      <div>
         <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          value={formData.email}
-          onChange={(e) => {
-            const newEmail = e.target.value;
-            setFormData((prev) => ({ ...prev, email: newEmail }));
-            onEmailChange(newEmail !== originalEmail); 
-          }}
-        />
+        <Input id="email" {...register("email")} />
+        {errors.email && (
+          <p className="text-red-500 text-sm">{errors.email.message}</p>
+        )}
       </div>
-    </div>
+
+      {/* hidden button so FormDialog can trigger submit */}
+      <button type="submit" className="hidden" id={formId}></button>
+    </form>
   );
 };
 

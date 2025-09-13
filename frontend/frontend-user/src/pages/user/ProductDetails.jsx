@@ -3,13 +3,15 @@ import ProductDetailsCard from "@/components/user/ProductDetailCard.jsx";
 // import Review from "../../components/user/Review.jsx";
 // import Footer from "../../components/user/Footer.jsx";
 import ProductCard from "../../components/user/ProductCard.jsx";
-import { Link } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import { Box, ChevronRight, Home } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useSingleProduct } from "../../hooks/queries/useSignleProductQueries.js";
 import { useUserFetchProducts } from "@/hooks/queries/useUserProductQueries.js";
+import LoadingSpinner from "@/components/common/LoadingSpinner.jsx";
 const ProductDetails = () => {
   
+  const navigate=useNavigate()
   const { id ,brand } = useParams(); 
 
   const {data:relatedProducts,isLoading:relatedIsLoading,isError:relatedIsError}=useUserFetchProducts({brand:brand,})
@@ -17,9 +19,10 @@ const ProductDetails = () => {
 
     // console.log('this is the id',id,brand,relatedProducts)
 
-      const { data: product, isLoading, isError, error } = useSingleProduct(id);
-      if (isLoading) return <p>Loading product...</p>;
-  if (isError) return <p>Error: {error?.response?.data?.message || error.message}</p>;
+      const { data: product, isLoading, isError:sigleError, error } = useSingleProduct(id);
+      if (isLoading) return <LoadingSpinner fullscreen/>
+
+  if (sigleError || relatedIsError) navigate('/products')
 
   // console.log('this is the product varients',product.variants)
   

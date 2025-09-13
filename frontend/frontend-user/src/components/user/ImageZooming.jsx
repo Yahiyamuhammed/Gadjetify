@@ -3,13 +3,15 @@ import { Heart } from "lucide-react";
 import { useFetchWishlist } from "@/hooks/queries/useWishlistQueries";
 import { useToggleWishlist } from "@/hooks/mutations/useWishListMutations";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const ImageZoom = ({ mainImage, product, onFavClick, selectedVariant }) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
   const { data: wishlistItems = [] } = useFetchWishlist();
-  const { mutate: toggleWishlist } = useToggleWishlist();
+  const { mutate: toggleWishlist, isPending: wishlistIsPending } =
+    useToggleWishlist();
 
   const isInWishlist = wishlistItems.some(
     (item) =>
@@ -75,17 +77,22 @@ const ImageZoom = ({ mainImage, product, onFavClick, selectedVariant }) => {
 
       <button
         onClick={() => handleFavClick(product._id, selectedVariant?._id)}
-        className="absolute top-4 right-4 p-1.5 rounded-full bg-white/70 backdrop-blur-md shadow hover:bg-white/90 transition"
+        // className="absolute top-4 right-4 p-1.5 rounded-full bg-white/70 backdrop-blur-md shadow hover:bg-white/90 transition"
         aria-label="Add to Wishlist"
+        disabled={wishlistIsPending}
+        className="wishlist-btn absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform duration-200"
       >
-        <Heart
-          className={
-            isInWishlist
-              ? "text-red-600 fill-current"
-              : "text-gray-700 dark:text-gray-300 "
-          }
-          size={20}
-        />
+        <span className="flex items-center justify-center w-5 h-5">
+          {wishlistIsPending ? (
+            <LoadingSpinner size={16} color="red" />
+          ) : (
+            <Heart
+              className={`w-5 h-5 ${
+                isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600"
+              }`}
+            />
+          )}
+        </span>
       </button>
     </div>
   );

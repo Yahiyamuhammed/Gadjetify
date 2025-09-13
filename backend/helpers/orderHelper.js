@@ -9,11 +9,15 @@ const User = require("../models/userModal");
 const { nanoid } = require("nanoid");
 
 const generateOrderId = () => `ORD-${nanoid(8).toUpperCase()}`;
+exports.getUserOrders = async ({ userId, page = 1, limit = 5 }) => {
+  page = parseInt(page);
+  limit = parseInt(limit);
+  const skip = (page - 1) * limit;
 
-exports.getUserOrders = async (userId) => {
   const orders = await Order.find({ userId })
-
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
     .select("-__v");
 
   const simplifiedOrders = orders.map((order) => ({
@@ -177,7 +181,7 @@ exports.placeOrder = async ({
       landmark: address.landmark,
     },
     paymentMethod,
-    paymentStatus:paymentMethod === 'wallet'? "paid":"pending",
+    paymentStatus: paymentMethod === "wallet" ? "paid" : "pending",
     items: itemSnapshots,
     finalTotal,
     summary,

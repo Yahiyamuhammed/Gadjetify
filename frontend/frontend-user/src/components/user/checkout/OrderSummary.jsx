@@ -9,11 +9,13 @@ import {
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { UNSAFE_getTurboStreamSingleFetchDataStrategy } from "react-router-dom";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function OrderSummary({
   items = [],
   onPlaceOrder,
   onPymentChange,
+  loading,
 }) {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -97,7 +99,7 @@ export default function OrderSummary({
       (subtotal - totalDiscount - couponDiscount + shipping + tax) * 100
     ) / 100;
   useEffect(() => {
-    onPymentChange({amount:total });
+    onPymentChange({ amount: total });
   }, [total]);
 
   const totalOfferPercentage =
@@ -282,8 +284,19 @@ export default function OrderSummary({
           </div>
         </div>
 
-        <Button className="w-full mt-4" onClick={handlePlaceOrder}>
-          Place Order
+        <Button
+          className="w-full mt-4"
+          onClick={handlePlaceOrder}
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <LoadingSpinner size={18} color="white" />
+              <span>Placing Order...</span>
+            </>
+          ) : (
+            "Place Order"
+          )}{" "}
         </Button>
       </CardContent>
     </Card>

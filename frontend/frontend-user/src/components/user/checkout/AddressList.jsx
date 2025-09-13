@@ -1,27 +1,33 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
+import { getAddresses } from "@/hooks/queries/useAddressQueries";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
 
 export default function AddressList({
-  addresses = [],
   onSelect,
   onAdd = () => {},
-  onEdit = (address) => {},
+  onEdit = () => {},
 }) {
+  const [limit, setLimit] = useState(5);
+  const { data: addresses = [], isLoading } = getAddresses(limit);
+
   const primaryAddress = addresses.find((addr) => addr.isPrimary);
   const [selectedAddressId, setSelectedAddressId] = useState(
     primaryAddress?._id
   );
-console.log(selectedAddressId)
-  useEffect(() => {
+
+  // Set initial selected address
+  useState(() => {
     if (primaryAddress?._id) {
       setSelectedAddressId(primaryAddress._id);
-      onSelect(primaryAddress._id)
+      onSelect(primaryAddress._id);
     }
   }, [primaryAddress?._id]);
 
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div>
@@ -35,8 +41,9 @@ console.log(selectedAddressId)
       <RadioGroup
         value={selectedAddressId}
         onValueChange={(val) => {
-          onSelect(val)
-          setSelectedAddressId(val)}}
+          onSelect(val);
+          setSelectedAddressId(val);
+        }}
         className="space-y-2 max-h-64 overflow-y-auto pr-1"
       >
         {addresses.map((address) => (
@@ -86,7 +93,17 @@ console.log(selectedAddressId)
             </CardContent>
           </Card>
         ))}
+        {addresses.length >= limit && (
+          <div className="text-center mt-4">
+            <LoadMoreButton
+              onClick={() => setLimit(limit + 5)}
+              disabled={false}
+            />
+          </div>
+        )}
       </RadioGroup>
+
+      {/* Load More Button */}
     </div>
   );
 }
