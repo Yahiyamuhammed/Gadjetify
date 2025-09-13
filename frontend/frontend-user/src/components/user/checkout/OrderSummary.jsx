@@ -8,8 +8,13 @@ import {
 } from "@/hooks/mutations/useCouponMutations";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
+import { UNSAFE_getTurboStreamSingleFetchDataStrategy } from "react-router-dom";
 
-export default function OrderSummary({ items = [], onPlaceOrder }) {
+export default function OrderSummary({
+  items = [],
+  onPlaceOrder,
+  onPymentChange,
+}) {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   // const [couponDiscount, setCouponDiscount] = useState(0);
@@ -17,12 +22,21 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   const { mutate: applyCoupon } = useApplyCoupon();
   const { mutate: removeCoupon } = useRemoveCoupon();
   const removeCouponMutation = useRemoveCoupon();
-
+  // console.log(items);
   const formattedItems = items.map((item) => {
     const actualPrice = item.variantId.price * item.quantity;
-    const offerPercentage = item.productId.offerPercentage || 0;
-    const offerDiscount =
-      offerPercentage > 0 ? (actualPrice * offerPercentage) / 100 : 0;
+
+    const productOffer = item.productId.offerPercentage || 0;
+    const brandOffer = item.productId.brand?.offerPercentage || 0;
+
+    const productDiscount =
+      productOffer > 0 ? (actualPrice * productOffer) / 100 : 0;
+    const brandDiscount = brandOffer > 0 ? (actualPrice * brandOffer) / 100 : 0;
+
+    // Pick which discount applies
+    const isProductChosen = productDiscount > brandDiscount;
+    const chosenOffer = isProductChosen ? productOffer : brandOffer;
+    const chosenDiscount = isProductChosen ? productDiscount : brandDiscount;
 
     return {
       productId: item.productId._id,
@@ -32,26 +46,38 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
       price: item.variantId.price,
       quantity: item.quantity,
       actualPrice,
-      offerPercentage,
-      offerDiscount,
-      customDiscount: 0,
-      brand: item.productId.brand._id,
+      chosenOffer,
+      offerDiscount: chosenDiscount, // apply only chosen discount
+      productDiscount: isProductChosen ? productDiscount : 0, // store only if chosen
+      brandDiscount: !isProductChosen ? brandDiscount : 0, // store only if chosen
       variantId: item.variantId._id,
+      brand: item.productId.brand._id,
     };
   });
-
   const subtotal = formattedItems.reduce(
     (sum, item) => sum + item.actualPrice,
     0
   );
+
+  // sum of only chosen discounts
   const totalOfferDiscount = formattedItems.reduce(
     (sum, item) => sum + item.offerDiscount,
     0
   );
-  const customDiscount = formattedItems.reduce(
-    (sum, item) => sum + item.customDiscount,
+
+  // sum chosen brand discounts
+  const totalChosenBrandDiscount = formattedItems.reduce(
+    (sum, item) => sum + item.brandDiscount,
     0
   );
+
+  // sum chosen product discounts
+  const totalChosenProductDiscount = formattedItems.reduce(
+    (sum, item) => sum + item.productDiscount,
+    0
+  );
+
+  // coupon stays same
   const couponDiscount = appliedCoupon
     ? Math.min(
         ((subtotal - totalOfferDiscount) * appliedCoupon.discountPercent) / 100,
@@ -59,26 +85,20 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
       )
     : 0;
 
-  useEffect(() => {
-    if (appliedCoupon) {
-      const couponDiscount = Math.min(
-        ((subtotal - totalOfferDiscount) * appliedCoupon.discountPercent) / 100,
-        subtotal - totalOfferDiscount
-      );
-      setAppliedCoupon({
-        ...appliedCoupon,
-        discountAmount: couponDiscount,
-      });
-    }
-  }, [appliedCoupon?.discountPercent]);
+  // total savings before coupon
 
-  const totalDiscount = totalOfferDiscount + customDiscount;
+  const totalDiscount = totalChosenBrandDiscount + totalChosenProductDiscount;
+
   const shipping = subtotal > 1000 ? 0 : 49.99;
   const tax = subtotal * 0.08;
+
   const total =
     Math.round(
       (subtotal - totalDiscount - couponDiscount + shipping + tax) * 100
     ) / 100;
+  useEffect(() => {
+    onPymentChange({amount:total });
+  }, [total]);
 
   const totalOfferPercentage =
     subtotal > 0 ? ((totalOfferDiscount / subtotal) * 100).toFixed(1) : 0;
@@ -119,15 +139,14 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
   };
 
   const handlePlaceOrder = () => {
-    // Call parent function
     if (onPlaceOrder) {
       //   onPlaceOrder(formatOrderItems(items));
       onPlaceOrder({
         items: formattedItems,
         summary: {
           subtotal,
-          totalOfferDiscount,
-          customDiscount,
+          totalOfferDiscount: totalChosenProductDiscount,
+          customDiscount: totalChosenBrandDiscount,
           totalDiscount,
           shipping,
           coupon: appliedCoupon,
@@ -210,22 +229,20 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
             </span>
           </div>
 
-          {totalOfferDiscount > 0 && (
+          {totalChosenProductDiscount > 0 && (
             <div className="flex justify-between">
-              <span className="text-gray-600">
-                Offer Discount ({totalOfferPercentage}%)
-              </span>
+              <span className="text-gray-600">Product Offer</span>
               <span className="text-green-600">
-                -₹{totalOfferDiscount.toFixed(2)}
+                -₹{totalChosenProductDiscount.toFixed(2)}
               </span>
             </div>
           )}
 
-          {customDiscount > 0 && (
+          {totalChosenBrandDiscount > 0 && (
             <div className="flex justify-between">
-              <span className="text-gray-600">Additional Discount</span>
+              <span className="text-gray-600">Brand Offer</span>
               <span className="text-green-600">
-                -₹{customDiscount.toFixed(2)}
+                -₹{totalChosenBrandDiscount.toFixed(2)}
               </span>
             </div>
           )}
@@ -238,20 +255,11 @@ export default function OrderSummary({ items = [], onPlaceOrder }) {
             </div>
           )}
 
-          {/* {totalDiscount > 0 && (
+          {totalOfferDiscount + couponDiscount > 0 && (
             <div className="flex justify-between border-t pt-2">
               <span className="text-gray-800 font-medium">Total Savings</span>
               <span className="text-green-600 font-medium">
-                -₹{totalDiscount.toFixed(2)}
-              </span>
-            </div>
-          )} */}
-
-          {totalDiscount + couponDiscount > 0 && (
-            <div className="flex justify-between border-t pt-2">
-              <span className="text-gray-800 font-medium">Total Savings</span>
-              <span className="text-green-600 font-medium">
-                -₹{(totalDiscount + couponDiscount).toFixed(2)}
+                -₹{(totalOfferDiscount + couponDiscount).toFixed(2)}
               </span>
             </div>
           )}

@@ -10,3 +10,13 @@ export const useWallet = () => {
     },
   });
 };
+
+export const useFetchWalletBalance = () => {
+  return useQuery({
+    queryKey: ["wallet-balance"],
+    queryFn: async () => {
+      const { data } = await api.get("/wallet/balance");
+      return data; 
+    },
+  });
+};

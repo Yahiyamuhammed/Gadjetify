@@ -23,7 +23,7 @@ exports.getUserOrders = async (userId) => {
     date: order.createdAt,
     items: order.items.map((item) => ({
       image: item.image || null,
-      name: item.name,
+      name: item.productName,
       ram: item.ram,
       storage: item.storage,
       quantity: item.quantity,
@@ -104,12 +104,17 @@ exports.placeOrder = async ({
   if (!address) {
     return { status: 404, message: "Address not found" };
   }
+  if (paymentMethod === "wallet") {
+    const user = await User.findById(userId).lean();
+    if (!user || user.walletBalance < finalTotal) {
+      return { status: 400, message: "Insufficient wallet balance" };
+    }
+  }
 
   const itemSnapshots = [];
   const stockUpdates = [];
 
   for (let item of items) {
-    console.log(items);
     const { productId, variantId, quantity } = item;
 
     const product = await Product.findById(productId).lean();
@@ -172,11 +177,25 @@ exports.placeOrder = async ({
       landmark: address.landmark,
     },
     paymentMethod,
-    paymentStatus: "pending",
+    paymentStatus:paymentMethod === 'wallet'? "paid":"pending",
     items: itemSnapshots,
     finalTotal,
     summary,
   });
+
+  if (paymentMethod === "wallet") {
+    await User.findByIdAndUpdate(userId, {
+      $inc: { walletBalance: -finalTotal },
+    });
+
+    await WalletTransaction.create({
+      userId,
+      amount: finalTotal,
+      type: "debit",
+      description: "Payment for order",
+      relatedOrderId: newOrder._id,
+    });
+  }
 
   await Cart.findOneAndUpdate(
     { userId },

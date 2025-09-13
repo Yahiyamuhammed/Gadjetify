@@ -28,6 +28,7 @@ const OrderCard = ({ order, navigate }) => {
               alt="Product"
             />
             <div>
+              <p className="font-medium">{item.name}</p>
               <p className="font-medium">₹{item.price}</p>
               {(item.ram || item.storage) && (
                 <p className="text-sm text-muted-foreground">

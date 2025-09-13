@@ -31,6 +31,13 @@ const BrandForm = ({
       type: "text",
       required: true,
     },
+    {
+    name: "offerPercentage",
+    label: "Offer Percentage",
+    placeholder: "Enter offer percentage (0-100)",
+    type: "number",
+    required: false,
+  },
   ];
   if (!isModalFormOpen) return null;
   const handleOverlayClick = (e) => {

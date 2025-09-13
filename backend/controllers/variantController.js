@@ -33,7 +33,7 @@ exports.deleteVariant = async (req, res) => {
 exports.getVariants = async (req, res) => {
   try {
     const { productId,page,limit,search } = req.query;
-        // const { page,limit } = req.body;
+        
 
     console.log(page,limit)
     const variants = await getVariants({productId,page,limit,search});

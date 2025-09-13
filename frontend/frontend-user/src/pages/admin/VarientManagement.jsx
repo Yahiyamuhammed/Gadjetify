@@ -13,6 +13,7 @@ import {
 } from "@/hooks/mutations/useVarientMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
   const queryClient = useQueryClient();
@@ -34,7 +35,6 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
   const [editMode, setEditMode] = useState(false); // track if we're editing
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  console.log(page);
 
   const {
     data: variants,
@@ -43,15 +43,13 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     isLoading: varientsLoading,
   } = useFetchVarients({ page, limit: 10, search });
 
-  // if (varientsLoading) return "loading";
+  if (varientsLoading) return <LoadingSpinner fullscreen />;
 
   const pagination = variants?.pagination || { page: 1, pages: 1 };
-  console.log("this sis the data", variants);
 
   const handleEdit = ({ formData, variant }) => {
     const productId = variant.productId?._id;
 
-    console.log("this is variant", variant, productId);
     setFormData({
       productId: productId,
       ram: variant.ram,
@@ -64,16 +62,13 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     setOpenDialog(true);
   };
   const handleSearch = (value) => {
-    console.log(value);
     setSearch(value.toLowerCase());
   };
 
   const handleEditSubmit = (formData) => {
-    console.log("this is the datain submit", formData);
-
     //   console.log("Edit:", formData);
     editVariant(
-      { data: formData, id:formData._id },
+      { data: formData, id: formData._id },
       {
         onSuccess: () => {
           toast.success("Variant updated");
@@ -84,30 +79,28 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     );
   };
   const handleAdd = (data) => {
-    console.log("variant added", data);
-
     const newVariant = { ...data };
 
     if (!newVariant._id) {
       delete newVariant._id;
     }
 
-    console.log(newVariant, "new varient");
-
     addVariant(newVariant, {
       onSuccess: () => {
         queryClient.invalidateQueries(["variants"]);
-        console.log("variant added");
+        toast.success("variant added");
         setOpenDialog(false);
       },
       onError: (err) => {
+        toast.error(
+          err.response.data.message || err.message || "failed to add variant"
+        );
         console.log(err);
       },
     });
   };
 
   const handleDelete = async (id) => {
-    console.log(id, "this is the id");
     deleteVarient(id, {
       onSuccess: () => {
         toast.success("varient deleted");
@@ -115,11 +108,7 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
       },
     });
   };
-  //   console.log(variants,isError,error)
-
-
-
-
+  
 
   return (
     <>
@@ -130,13 +119,16 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
           onDelete: handleDelete,
         })}
         data={variants?.data ?? []}
-        onAdd={() =>{ setFormData('');setOpenDialog(true);setEditMode(false)}}
+        onAdd={() => {
+          setFormData("");
+          setOpenDialog(true);
+          setEditMode(false);
+        }}
         addButton="Add Variant"
         pagination={pagination}
-        onPageChange={(newPage) =>{console.log(newPage); setPage(newPage)}}
-
-
-
+        onPageChange={(newPage) => {
+          setPage(newPage);
+        }}
         filterFn={handleSearch}
       />
       <FormDialog
@@ -144,15 +136,11 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
         setOpen={setOpenDialog}
         title="Add Variant"
         formData={formData}
-        >
-        <VariantFormFields    defaultValues={editMode ? formData : {}}
-
-        onSubmit={editMode ? handleEditSubmit : handleAdd}
+      >
+        <VariantFormFields
+          defaultValues={editMode ? formData : {}}
+          onSubmit={editMode ? handleEditSubmit : handleAdd}
         />
-
-
-
-
       </FormDialog>
     </>
   );

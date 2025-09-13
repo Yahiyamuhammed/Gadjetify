@@ -1,4 +1,3 @@
-// import Variant from '../models/variantModel.js';
 const Variant = require("../models/variantModel");
 
 exports.createVariant = async (data) => {
@@ -6,7 +5,7 @@ exports.createVariant = async (data) => {
 
   const variant = new Variant({
     ...data,
-    isDefault: existingVariants.length === 0, 
+    isDefault: existingVariants.length === 0,
   });
 
   await variant.save();
@@ -42,36 +41,71 @@ exports.deleteVariant = async (variantId) => {
 
   return true;
 };
-exports.getVariants = async ({ productId = null, page = 1, limit = 10 }) => {
+
+exports.getVariants = async ({
+  productId = null,
+  page = 1,
+  limit = 10,
+  search,
+}) => {
   try {
     let filter = {};
     if (productId) {
       filter.product = productId;
     }
 
-    // Convert to numbers (in case frontend sends strings)
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Count total documents
     const total = await Variant.countDocuments(filter);
 
-    // Get paginated variants
-    const variants = await Variant.find(filter)
-      .populate("productId")
-      .sort({ updatedAt: 1 })
-      .skip(skip)
-      .limit(limit);
+    const result = await Variant.aggregate([
+      { $match: filter },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "productId",
+        },
+      },
+      {
+        $unwind: {
+          path: "$productId",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $match: search
+          ? { "productId.name": { $regex: search, $options: "i" } }
+          : {},
+      },
+      {
+        $facet: {
+          data: [
+            { $sort: { updatedAt: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+          ],
+          totalCount: [{ $count: "count" }],
+        },
+      },
+    ]);
+
+    const variants = result[0].data;
+    const totalCount = result[0].totalCount[0]?.count || 0;
+
+    console.log(variants);
 
     return {
       status: 200,
       message: "variants fetched",
       data: variants,
       pagination: {
-        total,
+        totalCount,
         page,
-        pages: Math.ceil(total / limit),
+        pages: Math.ceil(totalCount / limit),
         limit,
       },
     };

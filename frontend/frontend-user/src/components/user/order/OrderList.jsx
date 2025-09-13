@@ -1,7 +1,9 @@
 import React from "react";
 import OrderCard from "./OrderCard";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-const OrderList = ({ orders, navigate }) => {
+const OrderList = ({ orders, navigate,isLoading }) => {
+  if (isLoading) return <LoadingSpinner fullscreen />
   if (!orders?.length) return <p className="text-center text-gray-500">No orders found.</p>;
 
   return (

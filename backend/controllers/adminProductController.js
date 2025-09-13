@@ -4,12 +4,12 @@ const fs = require("fs");
 const path = require("path");
 const cloudinary = require("../config/cloudinary");
 
-
 const {
   unListProduct,
   editProduct,
   fetchFilteredProducts,
   restoreProduct,
+  getActiveProducts,
 } = require("../helpers/adminProductHelpers");
 const mongoose = require("mongoose");
 
@@ -88,12 +88,13 @@ exports.updateProduct = async (req, res) => {
     let deletedImages = [];
     if (imagesToDelete) {
       // Ensure it's an array
-      const parsed = typeof imagesToDelete === "string" 
-        ? JSON.parse(imagesToDelete) 
-        : imagesToDelete;
+      const parsed =
+        typeof imagesToDelete === "string"
+          ? JSON.parse(imagesToDelete)
+          : imagesToDelete;
 
       // Normalize: only keep public_id strings
-      deletedImages = parsed.map((img) => 
+      deletedImages = parsed.map((img) =>
         typeof img === "string" ? img : img.public_id
       );
     }
@@ -107,7 +108,11 @@ exports.updateProduct = async (req, res) => {
           const result = await cloudinary.uploader.destroy(public_id);
           console.log("Deleted from Cloudinary:", public_id, result);
         } catch (err) {
-          console.error("Cloudinary delete failed for:", public_id, err.message);
+          console.error(
+            "Cloudinary delete failed for:",
+            public_id,
+            err.message
+          );
         }
       }
     }
@@ -145,4 +150,16 @@ exports.addUser = async (req, res) => {
   const exists = await User.findOne({ email: email });
 
   if (!exists) await User.insertOne({ email: email, name: name });
+};
+
+exports.fetchProducts = async (req, res) => {
+  const { search, page, limit } = req.query;
+
+  const result = await getActiveProducts({ search, page, limit });
+
+  if (!result.success) {
+    return res.status(500).json({ message: result.message });
+  }
+
+  return res.status(200).json(result);
 };

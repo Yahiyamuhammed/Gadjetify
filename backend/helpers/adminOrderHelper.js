@@ -12,11 +12,12 @@ exports.approveReturnHelper = async ({ orderId, itemId }) => {
     return { status: 400, message: "Invalid return state" };
 
   const itemBase = item.price * item.quantity;
-  const itemOfferDiscount = (itemBase * (item.offerPercentage || 0)) / 100;
+  const itemOfferDiscount =
+    (item.totalOfferDiscount || 0) + (item.customDiscount || 0);
   const itemAfterOffer = itemBase - itemOfferDiscount;
 
   const subtotalAfterOffers =
-    order.summary.subtotal - order.summary.totalOfferDiscount;
+    order.summary.subtotal - order.summary.totalDiscount;
 
   let itemCouponShare = 0;
   if (order.summary.coupon && order.summary.coupon.discountAmount > 0) {
@@ -60,11 +61,17 @@ exports.approveReturnHelper = async ({ orderId, itemId }) => {
       };
     }
   }
+  const totalItemBase = order.items.reduce(
+    (acc, it) => acc + it.price * it.quantity,
+    0
+  );
 
-  const itemTaxShare =
-    (itemAfterOffer / subtotalAfterOffers) * order.summary.tax;
+  const itemProportion = (item.price * item.quantity) / totalItemBase;
 
-  const refundAmount = itemAfterOffer - itemCouponShare + itemTaxShare;
+  const itemDiscountShare = itemProportion * order.summary.totalDiscount;
+  const itemTaxShare = itemProportion * order.summary.tax;
+
+  const refundAmount = itemBase - itemDiscountShare + itemTaxShare;
 
   item.returnStatus = "returned";
   item.returnApprovedAt = new Date();
@@ -80,7 +87,7 @@ exports.approveReturnHelper = async ({ orderId, itemId }) => {
     amount: refundAmount,
     type: "credit",
     description: `Refund for ${item.productName}`,
-    relatedOrderId: order._id,
+    relatedOrderId: order.orderId,
     relatedOrderItemId: item._id,
   });
 

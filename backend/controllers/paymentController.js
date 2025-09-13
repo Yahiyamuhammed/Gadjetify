@@ -6,6 +6,7 @@ const {
   retryPayment,
   handlePaymentFailure,
   handlePaymentSuccess,
+  getOrderByPaymentIntent,
 } = require("../helpers/paymentHelper");
 
 exports.createPayment = async (req, res) => {
@@ -63,7 +64,29 @@ exports.retryPayment = async (req, res) => {
 
     return res.status(result.status).json(result);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.verifyPayment = async (req, res) => {
+  try {
+    const { paymentIntentId } = req.params;
+    const userId = req.user;
+
+    const result = await getOrderByPaymentIntent(paymentIntentId, userId);
+
+    return res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      orderStatus: result.data || null,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
   }
 };

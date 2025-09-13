@@ -18,6 +18,9 @@ import ForgotPassword from "@/pages/user/ForgotPassword.jsx";
 import VerifyResetOtp from "@/pages/user/VerifyResetOtp.jsx";
 import ResetPassword from "@/pages/user/ResetPassword.jsx";
 import { useAuthUser } from "@/hooks/useAuthUser.js";
+import { AboutUs } from "@/pages/user/AboutUsPage.jsx";
+import PaymentProcessing from "@/pages/user/paymentStatus.jsx";
+import NotFoundPage from "@/pages/user/NotFoundPage.jsx";
 
 const MainLayout = ({ children }) => (
   <>
@@ -104,6 +107,14 @@ const UserRoutes = () => {
           </MainLayout>
         }
       />
+      <Route
+        path="/about"
+        element={
+          <MainLayout>
+            <AboutUs />
+          </MainLayout>
+        }
+      />
 
       {/* Protected routes */}
       <Route
@@ -177,15 +188,29 @@ const UserRoutes = () => {
         }
       />
 
-      {/* Always accessible */}
       <Route
         path="/orderFailed/:orderId"
         element={
-          <MainLayout>
-            <OrderFailurePage />
-          </MainLayout>
+          <ProtectedRoute user={user} loading={userLoading}>
+            <MainLayout>
+              <OrderFailurePage />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
+      <Route
+        path="/orderStatus"
+        element={
+          <ProtectedRoute user={user} loading={userLoading}>
+            <MainLayout>
+              <PaymentProcessing />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Always accessible */}
+
       <Route
         path="/forgot-password"
         element={
@@ -210,6 +235,7 @@ const UserRoutes = () => {
           </MainLayout>
         }
       />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
