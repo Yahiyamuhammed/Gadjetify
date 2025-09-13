@@ -6,10 +6,10 @@ import {
 import { useState, useImperativeHandle, forwardRef } from "react";
 import { Link } from "react-router-dom";
 
-const StripeCheckoutForm = forwardRef(({ onSuccess, onFailed }, ref) => {
+const StripeCheckoutForm = forwardRef(({ onSuccess, onFailed ,setLoading }, ref) => {
   const stripe = useStripe();
   const elements = useElements();
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const handleSubmit = async () => {
@@ -45,7 +45,6 @@ const StripeCheckoutForm = forwardRef(({ onSuccess, onFailed }, ref) => {
 
   useImperativeHandle(ref, () => ({
     submit: handleSubmit,
-    loading,
   }));
 
   return (

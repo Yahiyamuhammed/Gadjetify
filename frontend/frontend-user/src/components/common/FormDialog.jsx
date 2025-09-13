@@ -6,6 +6,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import LoadingSpinner from "./LoadingSpinner";
 
 const FormDialog = ({
   title,
@@ -16,6 +17,7 @@ const FormDialog = ({
   onSubmit,
   formId,
   children,
+  loading,
 }) => {
   const handleSubmitClick = () => {
     if (onSubmit) onSubmit({ formData: formData });
@@ -41,8 +43,12 @@ const FormDialog = ({
             Cancel
           </Button>
 
-          <Button className={"ml-4"} onClick={handleSubmitClick}>
-            {submitLabel}
+          <Button
+            disabled={loading}
+            className={"ml-4"}
+            onClick={handleSubmitClick}
+          >
+            {loading ? <LoadingSpinner /> : submitLabel}
           </Button>
         </div>
       </DialogContent>
