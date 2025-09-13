@@ -3,12 +3,12 @@ import { api } from "@/utils/api";
 
 export const useOrders = (limit = 5) => {
   return useQuery({
-    queryKey: ["orders", limit], // refetches when limit changes
+    queryKey: ["orders", limit],
     queryFn: async () => {
       const res = await api.get(`/order?limit=${limit}`);
       return res.data.data;
     },
-    keepPreviousData: true, // keeps old data while fetching more
+    keepPreviousData: true,
   });
 };
 

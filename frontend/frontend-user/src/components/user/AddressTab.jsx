@@ -53,6 +53,7 @@ import { getAddresses } from "@/hooks/queries/useAddressQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import ConfirmDialog from "../common/ConfirmDialog";
 import ConfirmAlertDialog from "../common/ConfirmDialog";
+import toast from "react-hot-toast";
 
 // import { useAddressMutations } from "@/hooks/mutations/useAddressMutations";
 
@@ -64,29 +65,35 @@ function App() {
   const { mutate: editAddress, data: address } = useEditAddress();
   const { mutate: deleteAddress } = useDeleteAddress();
   const { mutate: setPrimary } = useSetPrimaryAddress();
+  const [limit, setLimit] = useState(5);
 
   const {
     data: addresses = [],
     isError: adError,
     isLoading: adLoading,
-  } = getAddresses();
+  } = getAddresses(limit);
   const queryClient = useQueryClient();
 
   const [openDropdownId, setOpenDropdownId] = useState(null);
 
-  // State for modal visibility
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
+  const handleLoadMore = () => {
+    setLimit(limit + 5);
+  };
+
   const handleNewAddress = (formData) => {
-    console.log("this ist the api ", formData);
     addAddress(formData, {
       onSuccess: () => {
-        console.log("address added");
+        toast.success("address added");
         setIsEditDialogOpen(false);
         queryClient.invalidateQueries(["address"]);
         setOpenDropdownId(null);
       },
-      onError: (err) => console.log("error occured", err),
+      onError: (err) => {
+        toast.error(err.response.data.message);
+        console.log("error occured", err);
+      },
     });
   };
 
@@ -336,7 +343,13 @@ function App() {
             )}
           </div>
         </CardContent>
+        {addresses.length >= limit && (
+          <div className="text-center mt-4">
+            <Button onClick={handleLoadMore}>Load More</Button>
+          </div>
+        )}
       </Card>
+
       {/* </div> */}
     </div>
   );
