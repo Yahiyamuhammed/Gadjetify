@@ -30,13 +30,11 @@ const Navbar = () => {
   const { data: cartCount } = useFetchCartCount({ enabled: Boolean(user) });
   const queryClient = useQueryClient();
 
-  // console.log("this is the user in navbar", !!user);
 
   const navLinks = [
     { name: "HOME", path: "/" },
     { name: "PRODUCTS", path: "/products" },
-    { name: "CONTACT", path: "" },
-    { name: "ABOUT US", path: "" },
+    { name: "ABOUT US", path: "/about" },
     ...(user
       ? [
           { name: "Wishlist", path: "/wishlist" },
@@ -51,8 +49,7 @@ const Navbar = () => {
     logouMutate(null, {
       onSuccess: (res) => {
         toast.success("signout successfull", res.message);
-            queryClient.invalidateQueries(["auth-user"]);
-
+        queryClient.invalidateQueries(["auth-user"]);
       },
       onError: (err) => {
         toast.error("signout failed", err);
