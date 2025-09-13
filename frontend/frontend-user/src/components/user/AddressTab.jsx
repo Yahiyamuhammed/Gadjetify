@@ -54,6 +54,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import ConfirmDialog from "../common/ConfirmDialog";
 import ConfirmAlertDialog from "../common/ConfirmDialog";
 import toast from "react-hot-toast";
+import LoadMoreButton from "../common/LoadMoreButton";
 
 // import { useAddressMutations } from "@/hooks/mutations/useAddressMutations";
 
@@ -345,7 +346,10 @@ function App() {
         </CardContent>
         {addresses.length >= limit && (
           <div className="text-center mt-4">
-            <Button onClick={handleLoadMore}>Load More</Button>
+            <LoadMoreButton
+              onClick={() => setLimit(limit + 5)}
+              disabled={false}
+            />
           </div>
         )}
       </Card>
