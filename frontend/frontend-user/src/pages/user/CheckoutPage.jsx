@@ -33,8 +33,8 @@ export default function CheckoutPage() {
 
   const { mutate: addAddress, data: addedAddress } = useAddAddress();
   const { mutate: editAddress, data: editedAddress } = useEditAddress();
-  const { mutate: placeOrder, isPending } = usePlaceOrder();
-  const { mutate: createPaymentIntent } = useStripePayment();
+  const { mutate: placeOrder, isPending:paceOrderIsPending } = usePlaceOrder();
+  const { mutate: createPaymentIntent,isPending:intentIsPending } = useStripePayment();
   const { mutate: markSuccess } = usePaymentSuccess();
   const { mutate: markFailed } = usePaymentFailed();
 
@@ -305,6 +305,7 @@ export default function CheckoutPage() {
           items={items.items}
           onPlaceOrder={handleOrderSummaryData}
           onPymentChange={handletotalChange}
+          loading={intentIsPending||paceOrderIsPending}
         />
       </div>
     </div>
