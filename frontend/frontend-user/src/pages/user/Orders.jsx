@@ -5,7 +5,6 @@ import OrderDetail from "@/components/user/order/OrderDetail";
 import { useOrders } from "@/hooks/queries/useOrders";
 
 const Orders = () => {
-  const {data:orders,isLoading:ordersIsLoading} = useOrders();
 
 // const [orders] = useState(MOCK_ORDERS);
 const [selectedOrder, setSelectedOrder] = useState(null);
@@ -27,7 +26,7 @@ const navigateToOrder = (orderId) => {
       {selectedOrder ? (
         <OrderDetail orderId={selectedOrder} onBack={backToList} />
       ) : (
-        <OrderList orders={orders} isLoading={ordersIsLoading} navigate={navigateToOrder} />
+        <OrderList navigate={navigateToOrder} />
       )}
     </div>
   );

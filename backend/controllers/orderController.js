@@ -5,11 +5,14 @@ const {
   placeOrder,
   cancelOrderHelper,
 } = require("../helpers/orderHelper");
-
 exports.getUserOrders = async (req, res) => {
   try {
     const userId = req.user;
-    const response = await getUserOrders(userId);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    const response = await getUserOrders({ userId, page, limit });
+
     res.status(response.status).json({
       message: response.message,
       data: response.data,
@@ -20,6 +23,7 @@ exports.getUserOrders = async (req, res) => {
       .json({ message: "Internal server error", error: err?.message });
   }
 };
+
 
 exports.getSingleOrder = async (req, res) => {
   try {

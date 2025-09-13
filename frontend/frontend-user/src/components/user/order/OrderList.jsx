@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import OrderCard from "./OrderCard";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-const OrderList = ({ orders, navigate,isLoading }) => {
-  if (isLoading) return <LoadingSpinner fullscreen />
+import { useOrders } from "@/hooks/queries/useOrders";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
+
+const OrderList = ({ navigate }) => {
+  const [limit, setLimit] = useState(5);
+  const { data: orders, isLoading } = useOrders(limit);
+
+  if (isLoading) return <LoadingSpinner fullscreen />;
   if (!orders?.length) return <p className="text-center text-gray-500">No orders found.</p>;
 
   return (
@@ -12,6 +18,12 @@ const OrderList = ({ orders, navigate,isLoading }) => {
       {orders.map((order) => (
         <OrderCard key={order.orderId} order={order} navigate={navigate} />
       ))}
+
+      {orders.length >= limit && (
+        <div className="text-center mt-4">
+          <LoadMoreButton onClick={() => setLimit(limit + 5)} />
+        </div>
+      )}
     </div>
   );
 };
