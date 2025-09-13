@@ -177,7 +177,7 @@ exports.placeOrder = async ({
       landmark: address.landmark,
     },
     paymentMethod,
-    paymentStatus: "pending",
+    paymentStatus:paymentMethod === 'wallet'? "paid":"pending",
     items: itemSnapshots,
     finalTotal,
     summary,

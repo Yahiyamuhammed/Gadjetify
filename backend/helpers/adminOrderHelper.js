@@ -87,7 +87,7 @@ exports.approveReturnHelper = async ({ orderId, itemId }) => {
     amount: refundAmount,
     type: "credit",
     description: `Refund for ${item.productName}`,
-    relatedOrderId: order._id,
+    relatedOrderId: order.orderId,
     relatedOrderItemId: item._id,
   });
 
