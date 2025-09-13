@@ -25,7 +25,7 @@ import { useAddToCart } from "@/hooks/mutations/useCartMutations";
 import toast from "react-hot-toast";
 
 const ProductDetailsCard = ({ product }) => {
-  const { mutate: addToCart } = useAddToCart();
+  const { mutate: addToCart, isPending: addToCartIsLoading } = useAddToCart();
   const navigate = useNavigate();
   const [mainImage, setMainImage] = useState(noImage);
   // console.log(product?.images[0].url)
@@ -242,7 +242,12 @@ const ProductDetailsCard = ({ product }) => {
                       handleAddToCart(selectedVariant._id, product._id);
                     }}
                     productId={product._id}
-                    disabled={selectedVariant.stock === 0 || product.isDeleted}
+                    loading={addToCartIsLoading}
+                    disabled={
+                      addToCartIsLoading ||
+                      selectedVariant.stock === 0 ||
+                      product.isDeleted
+                    }
                     className="w-full px-6 py-3 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
                       disabled:bg-gray-100 disabled:text-gray-400 rounded-lg font-medium flex items-center justify-center gap-2"
                   >
