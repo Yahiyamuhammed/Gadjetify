@@ -1,9 +1,9 @@
-const WalletTransaction = require('../models/walletTransactionModel');
-const User = require('../models/userModal');
+const WalletTransaction = require("../models/walletTransactionModel");
+const User = require("../models/userModal");
 
 exports.getUserWalletHelper = async (userId) => {
-  const user = await User.findById(userId).select('wallet');
-  if (!user) return { status: 404, message: 'User not found' };
+  const user = await User.findById(userId).select("wallet");
+  if (!user) return { status: 404, message: "User not found" };
 
   const transactions = await WalletTransaction.find({ userId })
     .sort({ createdAt: -1 })
@@ -11,10 +11,21 @@ exports.getUserWalletHelper = async (userId) => {
 
   return {
     status: 200,
-    message: 'Wallet data fetched',
+    message: "Wallet data fetched",
     data: {
       balance: user.wallet || 0,
       transactions,
     },
+  };
+};
+
+exports.getWalletBalanceHelper = async (userId) => {
+  const user = await User.findById(userId).select("walletBalance");
+  if (!user) return { status: 404, message: "User not found" };
+
+  return {
+    status: 200,
+    message: "Wallet balance fetched",
+    balance: user.walletBalance || 0,
   };
 };
