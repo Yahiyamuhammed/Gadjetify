@@ -225,8 +225,9 @@ const ProfileCard = () => {
         triggerLabel="Edit"
         formData={formData}
         onSubmit={handleSubmit}
+        formId={'editProfile'}
       >
-        <EditProfileFormFields formData={formData} setFormData={setFormData} />
+        <EditProfileFormFields defaultValues={formData} onSubmit={setFormData} formId={'editProfile'}/>
       </FormDialog>
 
       <FormDialog

@@ -14,13 +14,13 @@ const FormDialog = ({
   formData,
   submitLabel = "Submit",
   onSubmit,
-
+  formId,
   children,
 }) => {
   const handleSubmitClick = () => {
     if (onSubmit) onSubmit({ formData: formData });
     else {
-      const form = document.getElementById("variant-form");
+      const form = document.getElementById(formId || "variant-form");
       if (form) {
         form.requestSubmit();
       }
