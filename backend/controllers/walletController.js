@@ -12,7 +12,7 @@ exports.getUserWallet = async (req, res) => {
 
 exports.getWalletBalanceController = async (req, res) => {
   try {
-    const result = await getWalletBalanceHelper(req.user.id);
+    const result = await getWalletBalanceHelper(req.user);
     return res.status(result.status).json(result);
   } catch (error) {
     console.error("Error fetching wallet balance:", error);

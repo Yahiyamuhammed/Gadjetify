@@ -26,6 +26,6 @@ exports.getWalletBalanceHelper = async (userId) => {
   return {
     status: 200,
     message: "Wallet balance fetched",
-    balance: user.walletBalance || 0,
+    balance: user.wallet.toFixed(2) || 0,
   };
 };

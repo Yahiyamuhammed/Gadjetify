@@ -5,7 +5,7 @@ const { getUserWallet, getWalletBalanceController } = require('../../controllers
 const checkBlockedUser = require('../../middlewares/checkBlockedUser');
 
 router.get('/', checkBlockedUser, getUserWallet);
-router.get("/balance", checkBlockedUser, getWalletBalanceController);
+router.get("/balance", getWalletBalanceController);
 
 
 module.exports = router;
