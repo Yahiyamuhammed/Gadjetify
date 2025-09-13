@@ -16,7 +16,6 @@ export default function StripePaymentDialog({
   const formRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
-
   if (!clientSecret) return null;
 
   return (
@@ -37,13 +36,12 @@ export default function StripePaymentDialog({
       submitLabel="Pay"
       loading={loading}
     >
-      {console.log('this is the loading ',formRef.current?.loading)}
       <Elements stripe={stripePromise} options={{ clientSecret }}>
         <StripeCheckoutForm
           ref={formRef}
           onSuccess={onSuccess}
           onFailed={onFailed}
-            setLoading={setLoading}
+          setLoading={setLoading}
         />
       </Elements>
     </FormDialog>
