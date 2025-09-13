@@ -9,12 +9,14 @@ import { Loader2, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useFetchPaymentStatus } from "@/hooks/queries/usePaymentQueries";
 import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function PaymentProcessing() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const paymentIntentId = searchParams.get("payment_intent");
+  const queryClient = useQueryClient();
 
   const {
     data: paymentStatus,
@@ -25,10 +27,14 @@ export default function PaymentProcessing() {
 
   useEffect(() => {
     if (!verifyLoading && paymentStatus) {
-      if (paymentStatus.orderStatus.paymentStatus === "paid")
+      if (paymentStatus.orderStatus.paymentStatus === "paid") {
+        queryClient.invalidateQueries(["cartCount"]);
         navigate(`/orderSuccess`);
-      if (paymentStatus.orderStatus.paymentStatus === "failed")
+      }
+      if (paymentStatus.orderStatus.paymentStatus === "failed") {
+        queryClient.invalidateQueries(["cartCount"]);
         navigate(`/orderFailed/${paymentStatus.orderStatus.orderId}`);
+      }
     }
   }, [paymentStatus, verifyLoading, navigate, paymentIntentId]);
 
