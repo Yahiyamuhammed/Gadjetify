@@ -35,7 +35,7 @@ export default function AdminCoupons() {
   const { data } = useAdminFetchCoupons({
     page,
     limit: 10,
-    search: useDebouncedQueryParams(searchTerm),
+    search: useDebouncedQueryParams(search),
   });
   const coupons = data?.data || [];
   const pagination = data?.pagination || { page: 1, pages: 1 };

@@ -45,7 +45,7 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
   } = useFetchVarients({
     page,
     limit: 10,
-    search: useDebouncedQueryParams(searchTerm),
+    search: useDebouncedQueryParams(search),
   });
 
   if (varientsLoading) return <LoadingSpinner fullscreen />;
