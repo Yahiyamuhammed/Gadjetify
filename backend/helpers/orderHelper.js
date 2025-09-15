@@ -7,6 +7,7 @@ const Cart = require("../models/cartModel");
 const WalletTransaction = require("../models/walletTransactionModel");
 const User = require("../models/userModal");
 const { nanoid } = require("nanoid");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const generateOrderId = () => `ORD-${nanoid(8).toUpperCase()}`;
 exports.getUserOrders = async ({ userId, page = 1, limit = 5 }) => {
@@ -88,10 +89,9 @@ exports.placeOrder = async ({
   items,
   finalTotal,
   summary,
+  paymentIntentId,
 }) => {
-  if (!items || items.length === 0) {
-    return { status: 400, message: "No items to order" };
-  }
+  let refund = false;
 
   if (
     !addressId ||
@@ -100,14 +100,64 @@ exports.placeOrder = async ({
     !finalTotal ||
     !summary
   ) {
-    return { status: 400, message: "Missing required fields" };
+    if (paymentIntentId) {
+      refund = await handleOnlineRefund(
+        userId,
+        paymentMethod,
+        paymentIntentId,
+        finalTotal
+      );
+    }
+    return {
+      status: 400,
+      message: `Missing required fields${
+        refund
+          ? " - If any amount has been deducted from your account, it will be credited to your wallet."
+          : ""
+      }`,
+    };
+  }
+
+  if (!items || items.length === 0) {
+    if (paymentIntentId) {
+      refund = await handleOnlineRefund(
+        userId,
+        paymentMethod,
+        paymentIntentId,
+        finalTotal
+      );
+    }
+    return {
+      status: 400,
+      message: `No items to order${
+        refund
+          ? " - If any amount has been deducted from your account, it will be credited to your wallet."
+          : ""
+      }`,
+    };
   }
 
   const address = await Address.findById(addressId).lean();
 
   if (!address) {
-    return { status: 404, message: "Address not found" };
+    if (paymentIntentId) {
+      refund = await handleOnlineRefund(
+        userId,
+        paymentMethod,
+        paymentIntentId,
+        finalTotal
+      );
+    }
+    return {
+      status: 404,
+      message: `Address not found${
+        refund
+          ? " - If any amount has been deducted from your account, it will be credited to your wallet."
+          : ""
+      }`,
+    };
   }
+
   if (paymentMethod === "wallet") {
     const user = await User.findById(userId).lean();
     if (!user || user.walletBalance < finalTotal) {
@@ -126,18 +176,62 @@ exports.placeOrder = async ({
     const brand = await Brand.findById(product.brand).lean();
 
     if (!product || !variant || !brand) {
-      return { status: 404, message: "Product, Variant, or Brand not found" };
+      if (paymentIntentId) {
+        refund = await handleOnlineRefund(
+          userId,
+          paymentMethod,
+          paymentIntentId,
+          finalTotal
+        );
+      }
+      return {
+        status: 404,
+        message: `Product, Variant, or Brand not found${
+          refund
+            ? " - If any amount has been deducted from your account, it will be credited to your wallet."
+            : ""
+        }`,
+      };
     }
 
     if (variant.isDeleted) {
+      if (paymentIntentId) {
+        refund = await handleOnlineRefund(
+          userId,
+          paymentMethod,
+          paymentIntentId,
+          finalTotal
+        );
+      }
       return {
         status: 400,
-        message: `The Variant  ${variant.ram} GB ${variant.storage} GB doesn't availiable for ${product.name}`,
+        message: `The variant ${variant.ram}GB / ${
+          variant.storage
+        }GB is no longer available for ${product.name}${
+          refund
+            ? " - If any amount has been deducted from your account, it will be credited to your wallet."
+            : ""
+        }`,
       };
     }
 
     if (variant.stock < quantity) {
-      return { status: 400, message: `Not enough stock for ${product.name}` };
+      if (paymentIntentId) {
+        refund = await handleOnlineRefund(
+          userId,
+          paymentMethod,
+          paymentIntentId,
+          finalTotal
+        );
+      }
+      return {
+        status: 400,
+        message: `Not enough stock available for ${product.name}${
+          refund
+            ? " - If any amount has been deducted from your account, it will be credited to your wallet."
+            : ""
+        }`,
+      };
     }
 
     itemSnapshots.push({
@@ -214,6 +308,37 @@ exports.placeOrder = async ({
     orderId: newOrder._id,
   };
 };
+
+async function handleOnlineRefund(
+  userId,
+  paymentMethod,
+  paymentIntentId,
+  amount
+) {
+  if (paymentMethod !== "Online Payment") return;
+
+  try {
+    if (paymentIntentId) {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        paymentIntentId
+      );
+      if (paymentIntent.status === "succeeded") {
+        await User.findByIdAndUpdate(userId._id, {
+          $inc: { walletBalance: amount },
+        });
+        await WalletTransaction.create({
+          userId,
+          amount,
+          type: "credit",
+          description: "Refund for failed order (credited to wallet)",
+        });
+        return true;
+      }
+    }
+  } catch (err) {
+    console.error("Wallet refund error:", err);
+  }
+}
 
 exports.requestReturnHelper = async ({ userId, orderId, itemId, reason }) => {
   const order = await Order.findOne({ _id: orderId, userId });

@@ -24,7 +24,6 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
-
 exports.getSingleOrder = async (req, res) => {
   try {
     const userId = req.user;
@@ -43,9 +42,15 @@ exports.getSingleOrder = async (req, res) => {
 exports.placeOrder = async (req, res) => {
   try {
     const userId = req.user;
-    console.log("this is the body", req.body);
 
-    const { addressId, paymentMethod, items, finalTotal, summary } = req.body;
+    const {
+      addressId,
+      paymentMethod,
+      items,
+      finalTotal,
+      summary,
+      paymentIntentId,
+    } = req.body;
 
     const response = await placeOrder({
       userId,
@@ -54,6 +59,7 @@ exports.placeOrder = async (req, res) => {
       items,
       finalTotal,
       summary,
+      paymentIntentId,
     });
 
     res.status(response.status).json({
@@ -62,7 +68,7 @@ exports.placeOrder = async (req, res) => {
     });
   } catch (err) {
     console.error("Order placement failed:", err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message:err.message || "Internal server error" });
   }
 };
 
@@ -90,13 +96,13 @@ exports.requestReturn = async (req, res) => {
 exports.cancelOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const userId = req.user._id; 
+    const userId = req.user._id;
 
     const response = await cancelOrderHelper(orderId, userId);
 
     res.status(response.status).json(response);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
       status: 500,
       message: "Internal server error",
