@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
@@ -19,9 +19,9 @@ export default function AddressList({
     primaryAddress?._id
   );
 
-  // Set initial selected address
-  useState(() => {
-    if (primaryAddress?._id) {
+  
+  useEffect(() => {
+    if (limit == 5 && primaryAddress?._id) {
       setSelectedAddressId(primaryAddress._id);
       onSelect(primaryAddress._id);
     }
