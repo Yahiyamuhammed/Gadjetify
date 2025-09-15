@@ -7,9 +7,15 @@ import SearchBar from "../../components/SearchBar.jsx";
 import { Pencil, Ban, ChevronRight, DatabaseBackup, Home } from "lucide-react";
 import { Link } from "react-router";
 import { useFetchBrands } from "@/hooks/queries/useBrandQueries";
-import {useAddBrand,useDeleteBrand,useRestoreBrand,useEditBrand,} from "@/hooks/mutations/useBrandMutations";
+import {
+  useAddBrand,
+  useDeleteBrand,
+  useRestoreBrand,
+  useEditBrand,
+} from "@/hooks/mutations/useBrandMutations";
 import { toast } from "react-hot-toast";
 import Pagination from "../../components/common/Pagination.jsx";
+import { useDebouncedQueryParams } from "@/hooks/useDebouncedQueryParams";
 
 const BrandManagement = () => {
   const [isModalFormOpen, setIsModalFormOpen] = useState(false);
@@ -32,14 +38,13 @@ const BrandManagement = () => {
   const { mutate: restoreBrand, isPending: isRestoring } = useRestoreBrand();
   const { mutate: editBrand, isPending: isEditing } = useEditBrand();
 
-
   const {
     data: brands = [],
     isLoading: isBrandLoading,
     isError: isBrandError,
     error: brandError,
   } = useFetchBrands({
-    search: searchTerm,
+    search: useDebouncedQueryParams(searchTerm),
     page: currentPage,
     limit: pageSize,
   });
@@ -49,47 +54,42 @@ const BrandManagement = () => {
 
   // console.log(' this inside the brand list', brands,searchTerm)
 
-
   const handleAddBrand = async (formData) => {
-  mutate(formData, {
-    onSuccess: () => {
-      toast.success("Brand added successfully");
-      setIsModalFormOpen(false);
-    },
-    onError: (err) => {
-      const message = err?.response?.data?.error || "Failed to add brand";
-      setServerError(message);
-      toast.error(message);
-    },
-  });
-};
-
-
- const handleEditBrand = async (formData) => {
-    
-  if (!editingBrand?._id) return;
-
-  editBrand(
-    {
-      id: editingBrand._id,
-      updatedData: formData,
-    },
-    {
+    mutate(formData, {
       onSuccess: () => {
-        toast.success("Brand updated successfully");
+        toast.success("Brand added successfully");
         setIsModalFormOpen(false);
-        setEditingBrand(null);
       },
       onError: (err) => {
-        const message = err?.response?.data?.error || "Update failed";
+        const message = err?.response?.data?.error || "Failed to add brand";
         setServerError(message);
-        toast.error(message,error);
-
+        toast.error(message);
       },
-    }
-  );
-};
+    });
+  };
 
+  const handleEditBrand = async (formData) => {
+    if (!editingBrand?._id) return;
+
+    editBrand(
+      {
+        id: editingBrand._id,
+        updatedData: formData,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Brand updated successfully");
+          setIsModalFormOpen(false);
+          setEditingBrand(null);
+        },
+        onError: (err) => {
+          const message = err?.response?.data?.error || "Update failed";
+          setServerError(message);
+          toast.error(message, error);
+        },
+      }
+    );
+  };
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -185,9 +185,7 @@ const BrandManagement = () => {
       </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 ">
-          Brand Management
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-800 ">Brand Management</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-2">
           Manage and monitor all brands
         </p>
@@ -205,9 +203,9 @@ const BrandManagement = () => {
         isModalFormOpen={isModalFormOpen}
         onClose={() => {
           setIsModalFormOpen(false);
-          setEditingBrand(null); 
+          setEditingBrand(null);
         }}
-        onSubmit={editingBrand ? handleEditBrand:handleAddBrand  }
+        onSubmit={editingBrand ? handleEditBrand : handleAddBrand}
         serverError={serverError}
         initialValues={editingBrand || {}}
         mode={editingBrand ? "edit" : "add"}
