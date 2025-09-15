@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import addressFields from "./addressFields";
+import addressFields, { statesAndDistricts } from "./addressFields";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -30,34 +30,44 @@ const EditAddressDialog = ({
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
-  // onSubmit(updatedAddress);
 
-
-useEffect(() => {
-  if (open) {
-    if (address && Object.keys(address).length > 0) {
-      reset({
-        ...address,
-        addressType: address.addressType || "home",
-      });
-    } else {
-      reset({
-        name: "",
-        street: "",
-        city: "",
-        state: "",
-        pincode: "",
-        phone: "",
-        addressType: "home",
-      });
+  useEffect(() => {
+    if (open) {
+      if (address && Object.keys(address).length > 0) {
+        reset({
+          ...address,
+          addressType: address.addressType || "home",
+        });
+      } else {
+        reset({
+          name: "",
+          street: "",
+          city: "",
+          state: "",
+          pincode: "",
+          phone: "",
+          addressType: "home",
+        });
+      }
     }
-  }
-}, [open, address, reset]);
+  }, [open, address, reset]);
 
+  const selectedState = watch("state");
+
+  const updatedFields = addressFields.map((field) => {
+    if (field.name === "district") {
+      return {
+        ...field,
+        options: selectedState ? statesAndDistricts[selectedState] : [],
+      };
+    }
+    return field;
+  });
 
   const onFormSubmit = (data) => {
     onSubmit(data);
@@ -80,7 +90,7 @@ useEffect(() => {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            {addressFields.map((field) => (
+            {updatedFields.map((field) => (
               <div key={field.name} className="grid gap-3">
                 <Label htmlFor={field.name}>{field.label}</Label>
 
