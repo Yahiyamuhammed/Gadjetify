@@ -17,6 +17,7 @@ import {
 } from "@/hooks/mutations/useAdminOrderMutations";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDebouncedQueryParams } from "@/hooks/useDebouncedQueryParams";
 export default function AdminOrders() {
   const { mutate: approveReturn } = useApproveReturn();
   const { mutate: updateStatus } = useUpdateOrderStatus();
@@ -28,7 +29,11 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
 
-  const { data, isLoading } = useAdminFetchOrders({ page, limit: 10, search });
+  const { data, isLoading } = useAdminFetchOrders({
+    page,
+    limit: 10,
+    search: useDebouncedQueryParams(search),
+  });
   const orders = data?.data || [];
   const pagination = data?.pagination || { page: 1, pages: 1 };
 

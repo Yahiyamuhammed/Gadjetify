@@ -5,13 +5,15 @@ import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-import data from "@/components/data.json";
-import { useFetchSummaryData, useFetchTopBrand } from "@/hooks/queries/useAdminDashboardQueries";
+import {
+  useFetchSummaryData,
+  useFetchTopBrand,
+} from "@/hooks/queries/useAdminDashboardQueries";
 import { DataTable } from "@/components/admin/dashboard/data-table";
 
 export default function AdminDashboard() {
   const { data: summary, isLoading: summaryIsLoading } = useFetchSummaryData();
-  const {data}=useFetchTopBrand()
+  const { data } = useFetchTopBrand();
   return (
     <SidebarProvider
       style={{

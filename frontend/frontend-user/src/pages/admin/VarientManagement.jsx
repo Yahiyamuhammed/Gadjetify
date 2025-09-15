@@ -14,6 +14,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { useDebouncedQueryParams } from "@/hooks/useDebouncedQueryParams";
 
 const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
   const queryClient = useQueryClient();
@@ -41,7 +42,11 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
     isError,
     error,
     isLoading: varientsLoading,
-  } = useFetchVarients({ page, limit: 10, search });
+  } = useFetchVarients({
+    page,
+    limit: 10,
+    search: useDebouncedQueryParams(search),
+  });
 
   if (varientsLoading) return <LoadingSpinner fullscreen />;
 
@@ -108,7 +113,6 @@ const VariantList = ({ productId = "68820fe735353dc3039fb04b" }) => {
       },
     });
   };
-  
 
   return (
     <>

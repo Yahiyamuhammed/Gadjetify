@@ -10,6 +10,7 @@ import { useFetchUsers } from "@/hooks/queries/useUserQueries";
 import { useToggleUserBlock } from "@/hooks/mutations/useUserMutations";
 import toast from "react-hot-toast";
 import Pagination from "../../components/common/Pagination";
+import { useDebouncedQueryParams } from "@/hooks/useDebouncedQueryParams";
 
 const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,29 +19,23 @@ const UserManagement = () => {
   const [serverError, setServerError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isLoading, isError, } = useFetchUsers({
-    search: searchTerm,
+  const { data, isLoading, isError } = useFetchUsers({
+    search: useDebouncedQueryParams(searchTerm),
     page: currentPage,
     limit: 5,
   });
   const { mutate: toggleBlock } = useToggleUserBlock();
-const totalPages = data?.totalPages || 1;
-  
+  const totalPages = data?.totalPages || 1;
 
   const users = data?.users || [];
 
-
-  
-  
-const handlePageChange = (page) => {
+  const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
   const handleToggleBlock = () => {
     if (!selectedUser) return;
-
-    
 
     toggleBlock(selectedUser._id, {
       onSuccess: (data) => {
@@ -164,9 +159,7 @@ const handlePageChange = (page) => {
       </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 ">
-          User Management
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-800 ">User Management</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-2">
           Manage and monitor user accounts
         </p>
@@ -187,8 +180,6 @@ const handlePageChange = (page) => {
           controles={modalControles}
         />
       )}
-
-      
 
       <ListItem
         items={users}

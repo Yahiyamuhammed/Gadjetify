@@ -12,6 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getCouponColumns } from "@/components/admin/coupon/CouponColumns";
 import FormDialog from "@/components/common/FormDialog";
 import CouponFormFields from "@/components/admin/coupon/CouponFormFields";
+import { useDebouncedQueryParams } from "@/hooks/useDebouncedQueryParams";
 
 export default function AdminCoupons() {
   const queryClient = useQueryClient();
@@ -31,7 +32,11 @@ export default function AdminCoupons() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data } = useAdminFetchCoupons({ page, limit: 10, search });
+  const { data } = useAdminFetchCoupons({
+    page,
+    limit: 10,
+    search: useDebouncedQueryParams(search),
+  });
   const coupons = data?.data || [];
   const pagination = data?.pagination || { page: 1, pages: 1 };
 

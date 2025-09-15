@@ -183,7 +183,7 @@ export default function CheckoutPage() {
             const { client_secret: clientSecret, paymentIntentId } = res;
             setStripeClientSecret(clientSecret);
             setPaymentIntentId(paymentIntentId);
-            setPendingOrderPayload(payload);
+            setPendingOrderPayload({...payload,paymentIntentId});
             setOpenStripeDialog(true);
           },
           onError: (err) => {

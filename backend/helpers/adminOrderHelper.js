@@ -140,9 +140,14 @@ exports.updateOrderStatusHelper = async ({ orderId, status }) => {
     return { status: 404, message: "Order not found" };
   }
 
+  if (order.status === "Cancelled" || order.status === "Delivered") {
+    return {
+      status: 400,
+      message: `Order already ${order.status.toLowerCase()}, status cannot be changed.`,
+    };
+  }
   order.status = status;
 
-  // optionally: update timestamps
   if (status === "Delivered") {
     order.deliveredAt = new Date();
     order.paymentStatus = "paid";

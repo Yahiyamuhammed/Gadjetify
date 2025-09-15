@@ -1,37 +1,37 @@
-const User=require('../models/userModal')
-const mongoose = require('mongoose');
+const User = require("../models/userModal");
+const mongoose = require("mongoose");
 
-exports.fetchAllUsers=async (search,page,limit)=>{
-    const skip=(page-1)*limit
-    const query={
-        // isVerified:true,
-        $or:[
-            {email:{$regex:search,$options:'i'}},
-            {name:{$regex:search,$options:'i'}}
-        ]
-    }
+exports.fetchAllUsers = async (search, page, limit) => {
+  const skip = (page - 1) * limit;
+  const query = {
+    $or: [
+      { email: { $regex: search, $options: "i" } },
+      { name: { $regex: search, $options: "i" } },
+    ],
+  };
 
-    const totalUsers=await User.countDocuments(query)
-    const totalPages = Math.ceil(totalUsers / limit);
+  const totalUsers = await User.countDocuments(query);
+  const totalPages = Math.ceil(totalUsers / limit);
 
+  const users = await User.find(query)
+    .select("name email createdAt isVerified isBlocked")
+    .sort({ updatedAt: -1 })
+    .skip(skip)
+    .limit(limit);
 
-    const users=await User.find(query).sort({updatedAt:-1}).skip(skip).limit(limit)
+  return { totalUsers, users, currentPage: page, totalPages };
+};
+exports.toggleUserBlockStatus = async (userId) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw { status: 400, message: "Invalid user ID format" };
+  }
+  const user = await User.findById(userId);
+  // console.log(user,'this is user');
+  if (!user) throw { status: 404, message: "User not found" };
 
-    return {totalUsers,users,currentPage: page,totalPages }
-}
-exports.toggleUserBlockStatus=async (userId)=>{
+  // console.log(user);
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        throw { status: 400, message: 'Invalid user ID format' };
-    }
-    const user = await User.findById(userId)
-    // console.log(user,'this is user');
-    if (!user)
-        throw { status: 404, message: 'User not found' }
-
-    // console.log(user);
-    
-    user.isBlocked=!user.isBlocked
-    await user.save()
-    return({isBlocked:user.isBlocked,name:user.name})
-}
+  user.isBlocked = !user.isBlocked;
+  await user.save();
+  return { isBlocked: user.isBlocked, name: user.name };
+};

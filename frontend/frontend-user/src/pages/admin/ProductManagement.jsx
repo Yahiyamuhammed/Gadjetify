@@ -21,6 +21,7 @@ import {
 import { useFetchProducts } from "@/hooks/queries/useProductQueries";
 import DataTableWrapper from "@/components/admin/DataTableWrapper.jsx";
 import { getAdminProductColumns } from "@/components/admin/product/adminProductColumns.jsx";
+import { useDebouncedQueryParams } from "@/hooks/useDebouncedQueryParams.js";
 
 // import { RotatingLines } from "react-loader-spinner";
 // import { successToast, errorToast } from "../../components/toast/index.js"; // 🔗 API PLACEHOLDER
@@ -52,7 +53,7 @@ const ProductManagement = () => {
   } = useFetchProducts({
     page: currentPage,
     limit: pageSize,
-    search: searchTerm,
+    search: useDebouncedQueryParams(searchTerm),
     brand: "",
     isDeleted: filter,
   });
@@ -155,15 +156,14 @@ const ProductManagement = () => {
   };
 
   const productFilterConfig = {
-  value: filter,
-  onChange: setFilter,
-  options: [
-    { value: "null", label: "All Products" },
-    { value: "false", label: "Active Products" },
-    { value: "true", label: "Inactive Products" }
-  ]
-}
-
+    value: filter,
+    onChange: setFilter,
+    options: [
+      { value: "null", label: "All Products" },
+      { value: "false", label: "Active Products" },
+      { value: "true", label: "Inactive Products" },
+    ],
+  };
 
   return (
     <div className="p-4">
@@ -202,9 +202,11 @@ const ProductManagement = () => {
         columns={getAdminProductColumns(handleStatusChange, handleEditClick)}
         filterFn={(val) => setSearchTerm(val.toLowerCase())}
         addButton={"Add Product"}
-        onAdd={()=>{setIsModalFormOpen(true);setEditingProduct('')}}
-          dropdownFilter={productFilterConfig}
-
+        onAdd={() => {
+          setIsModalFormOpen(true);
+          setEditingProduct("");
+        }}
+        dropdownFilter={productFilterConfig}
       />
 
       {/* Pagination */}
@@ -215,7 +217,6 @@ const ProductManagement = () => {
           onPageChange={handlePageChange}
         />
       </div>
-
     </div>
   );
 };
