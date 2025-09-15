@@ -63,11 +63,6 @@ const addressFields = [
     options: ["home", "office"],
   },
   {
-    name: "isPrimary",
-    label: "Set as Primary Address",
-    type: "checkbox",
-  },
-  {
     name: "alternatePhone",
     label: "Alternate Phone Number (Optional)",
     type: "text",
