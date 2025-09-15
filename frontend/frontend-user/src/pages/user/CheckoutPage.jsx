@@ -169,7 +169,7 @@ export default function CheckoutPage() {
     const payload = {
       addressId: selectedAddressId,
       paymentMethod,
-      finalTotal: data.summary.total,
+      finalTotal: data.summary.total.toFixed(2),
       items: data.items,
       summary: data.summary,
     };
@@ -177,7 +177,7 @@ export default function CheckoutPage() {
       handlePlaceOrder(payload);
     } else if (paymentMethod === "Online Payment") {
       createPaymentIntent(
-        { amount: payload.finalTotal * 100 },
+        { amount: Math.round(payload.finalTotal * 100) },
         {
           onSuccess: (res) => {
             const { client_secret: clientSecret, paymentIntentId } = res;
