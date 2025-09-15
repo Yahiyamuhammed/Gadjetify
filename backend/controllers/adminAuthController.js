@@ -16,13 +16,13 @@ exports.adminLogin = async (req, res) => {
     const token = jwt.sign(
       { adminId: admin._id, isAdmin: true },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: process.env.JWT_EXPIRY }
     );
     res.cookie("admin_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: Number(process.env.COOKIE_MAX_AGE),
     });
 
     res.status(200).json({
