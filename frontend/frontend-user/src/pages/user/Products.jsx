@@ -9,6 +9,7 @@ import { useUserFetchProducts } from "../../hooks/queries/useUserProductQueries"
 import { useFetchUserBrands } from "../../hooks/queries/useBrandQueries";
 import SpinningButton from "@/components/SpinningButton";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { useDebouncedQueryParams } from "@/hooks/useDebouncedQueryParams";
 
 const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +23,7 @@ const Products = () => {
   const [maxPrice, setMaxPrice] = useState("");
 
   const { data, isLoading, isError, error } = useUserFetchProducts({
-    search: searchTerm,
+    search: useDebouncedQueryParams(searchTerm),
     brand: selectedBrand,
     sort: sortBy,
     page: currentPage,
@@ -35,7 +36,10 @@ const Products = () => {
   const totalPages = data?.totalPages || 1;
 
   // console.log(products);
-  const { data: brandData = [] } = useFetchUserBrands({ search: "", limit: "" });
+  const { data: brandData = [] } = useFetchUserBrands({
+    search: "",
+    limit: "",
+  });
 
   const brands = (brandData?.brands || []).filter((b) => !b.isDeleted);
 
@@ -126,7 +130,7 @@ const Products = () => {
               <ProductCard key={product._id} product={product} />
             ))
           ) : isLoading ? (
-            <LoadingSpinner fullscreen/>
+            <LoadingSpinner fullscreen />
           ) : isError ? (
             <p className="text-red-500">Error: {error.message}</p>
           ) : (
